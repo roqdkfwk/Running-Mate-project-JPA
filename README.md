@@ -1,7 +1,3 @@
-# project
-ssafy 상 last pjt
-
-
 # 프로젝트 이름 : Running Mate
 
 # 팀원 소개
