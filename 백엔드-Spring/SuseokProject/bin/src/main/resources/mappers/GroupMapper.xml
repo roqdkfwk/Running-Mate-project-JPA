@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suseok.run.model.dao.GroupDao">
+
+
+	<select id="selectAll">
+		select * from `Group`
+	</select>
+
+	<select id="selectById">
+		select * from `Group`
+		where group_id = #{groupId}
+	</select>
+
+    <!-- 그룹 검색 -->
+    <select id="search" parameterType="String" resultType="Group">
+        SELECT * FROM `Group` WHERE group_name LIKE CONCAT('%', #{con}, '%')
+    </select>
+
+    <!-- 그룹 삽입 -->
+    <insert id="insert" parameterType="Group">
+        INSERT INTO `Group` (group_name, group_admin, goal_pace, goal_frequency, goal_total_distance, con_pace, con_frequency, con_total_distance, pace, frequency, total_distance)
+        VALUES (#{groupName}, #{groupAdmin}, #{goalPace}, #{goalFrequency}, #{goalTotalDistance}, #{conPace}, #{conFrequency}, #{conTotalDistance}, #{pace}, #{frequency}, #{totalDistance})
+    </insert>
+
+    <!-- 그룹 참가 -->
+    <insert id="join" parameterType="map">
+        INSERT INTO `Group_member_info` (group_id, user_seq)
+        VALUES (#{groupId}, (SELECT user_seq FROM `User` WHERE user_id = #{userId}))
+    </insert>
+
+    <!-- 그룹 탈퇴 -->
+    <delete id="exit" parameterType="map">
+        DELETE FROM `Group_member_info` WHERE group_id = #{groupId} AND user_seq = (SELECT user_seq FROM `User` WHERE user_id = #{userId})
+    </delete>
+
+    <!-- 그룹 업데이트 -->
+    <update id="update" parameterType="Group">
+        UPDATE `Group`
+        SET group_name = #{groupName}, group_admin = #{groupAdmin}, goal_pace = #{goalPace}, goal_frequency = #{goalFrequency}, 
+            goal_total_distance = #{goalTotalDistance}, con_pace = #{conPace}, con_frequency = #{conFrequency}, con_total_distance = #{conTotalDistance},
+            pace = #{pace}, frequency = #{frequency}, total_distance = #{totalDistance}
+        WHERE id = #{groupId}
+    </update>
+
+    <!-- 그룹 멤버 삭제 (추방) -->
+    <delete id="deleteMember" parameterType="map">
+        DELETE FROM `Group_member_info` WHERE group_id = #{groupId} AND user_seq = #{memberId}
+    </delete>
+
+</mapper>

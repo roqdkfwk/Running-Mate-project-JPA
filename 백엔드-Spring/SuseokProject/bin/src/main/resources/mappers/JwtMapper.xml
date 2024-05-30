@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suseok.run.model.dao.JwtDao">
+
+    <insert id="insert" parameterType="JwtToken">
+        INSERT INTO Jwt (user_seq, refresh_token)
+        VALUES (#{userSeq}, #{refreshToken})
+    </insert>
+
+    <delete id="deleteRefreshToken" parameterType="String">
+        DELETE FROM Jwt WHERE user_seq = #{userSeq}
+    </delete>
+
+    <select id="selectByUserId" parameterType="String" resultType="JwtToken">
+        SELECT * FROM Jwt WHERE user_seq = #{userSeq}
+    </select>
+
+</mapper>
