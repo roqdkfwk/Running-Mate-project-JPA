@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suseok.run.model.dao.BoardDao">
+
+    <!-- 특정 그룹의 모든 게시글 조회 -->
+    <select id="selectAllByGroupId" parameterType="int" resultType="Board">
+        SELECT * FROM board WHERE group_id = #{groupId}
+    </select>
+
+    <!-- 게시글 ID로 게시글 조회 -->
+    <select id="selectById" parameterType="int" resultType="Board">
+        SELECT * FROM board WHERE id = #{boardId}
+    </select>
+
+    <!-- 게시글 검색 -->
+    <select id="search" parameterType="String" resultType="Board">
+        SELECT * FROM board WHERE title LIKE CONCAT('%', #{con}, '%')
+        OR content LIKE CONCAT('%', #{con}, '%')
+    </select>
+
+    <!-- 게시글 삭제 -->
+    <delete id="delete" parameterType="int">
+        DELETE FROM board WHERE id = #{boardId}
+    </delete>
+
+    <!-- 게시글 업데이트 -->
+    <update id="update" parameterType="Board">
+        UPDATE board
+        SET title = #{title}, content = #{content}, img = #{img}, notice = #{notice}, created_at = #{createdAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 게시글 삽입 -->
+    <insert id="insert" parameterType="Board" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO board (group_id, writer_seq, title, content, img, notice)
+        VALUES ( #{groupId}, #{writerSeq}, #{title}, #{content}, #{img}, #{notice})
+    </insert>
+
+    <!-- 댓글 삭제 -->
+    <delete id="deleteReply" parameterType="map">
+        DELETE FROM reply WHERE board_id = #{boardId} AND id = #{replyId}
+    </delete>
+
+    <!-- 댓글 삽입 -->
+    <insert id="insertReply" parameterType="Reply">
+        INSERT INTO reply (board_id, writer_seq, content)
+        VALUES (#{boardId}, #{writerSeq}, #{content})
+    </insert>
+
+    <!-- 댓글 ID로 댓글 조회 -->
+    <select id="selectReplyById" parameterType="int" resultType="Reply">
+        SELECT * FROM reply WHERE id = #{replyId}
+    </select>
+
+</mapper>

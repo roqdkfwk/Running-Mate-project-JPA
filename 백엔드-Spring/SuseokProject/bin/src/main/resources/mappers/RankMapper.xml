@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suseok.run.model.dao.RankDao">
+
+    <!-- 전체 유저 랭킹 조회 -->
+    <select id="selectAllOrderBy" parameterType="String" resultType="UserRankRecord">
+        SELECT *
+        FROM user_rank_record
+        <choose>
+            <when test="con == 'total_distance'">
+                ORDER BY total_distance DESC
+            </when>
+            <when test="con == 'highest_pace'">
+                ORDER BY highest_pace ASC
+            </when>
+            <when test="con == 'frequency'">
+                ORDER BY frequency DESC
+            </when>
+            <otherwise>
+                ORDER BY highest_pace DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 라이벌 유저 랭킹 조회 -->
+    <select id="selectAllRivalOrderBy" parameterType="map" resultType="UserRankRecord">
+        SELECT urr.*
+        FROM user_rank_record urr
+        JOIN Rival_info ri ON urr.user_seq = ri.rival_seq
+        WHERE ri.user_seq = (SELECT user_seq FROM User WHERE user_id = #{userId})
+        <choose>
+            <when test="con == 'total_distance'">
+                ORDER BY urr.total_distance DESC
+            </when>
+            <when test="con == 'highest_pace'">
+                ORDER BY urr.highest_pace ASC
+            </when>
+            <when test="con == 'frequency'">
+                ORDER BY urr.frequency DESC
+            </when>
+            <otherwise>
+                ORDER BY urr.highest_pace DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 특정 그룹의 모든 멤버 랭킹 조회 -->
+    <select id="selectAllMemberOrderBy" parameterType="map" resultType="UserRankRecord">
+        SELECT urr.*
+        FROM user_rank_record urr
+        JOIN Group_member_info gmi ON urr.user_seq = gmi.user_seq
+        WHERE gmi.group_id = #{groupId}
+        <choose>
+            <when test="con == 'total_distance'">
+                ORDER BY urr.total_distance DESC
+            </when>
+            <when test="con == 'highest_pace'">
+                ORDER BY urr.highest_pace ASC
+            </when>
+            <when test="con == 'frequency'">
+                ORDER BY urr.frequency DESC
+            </when>
+            <otherwise>
+                ORDER BY urr.highest_pace DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 그룹 랭킹 조회 -->
+    <select id="selectGroupsOrderBy" parameterType="String" resultType="Group">
+        SELECT *
+        FROM `Group`
+        <choose>
+            <when test="con == 'total_distance'">
+                ORDER BY total_distance DESC
+            </when>
+            <when test="con == 'highest_pace'">
+                ORDER BY pace ASC
+            </when>
+            <when test="con == 'frequency'">
+                ORDER BY frequency DESC
+            </when>
+            <otherwise>
+                ORDER BY pace DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 특정 유저의 그룹 랭킹 조회 -->
+    <select id="selectMyGroupsOrderBy" parameterType="map" resultType="Group">
+        SELECT g.*
+        FROM `Group` g
+        JOIN Group_member_info gmi ON g.id = gmi.group_id
+        WHERE gmi.user_seq = (SELECT user_seq FROM User WHERE user_id = #{userId})
+        <choose>
+            <when test="con == 'total_distance'">
+                ORDER BY g.total_distance DESC
+            </when>
+            <when test="con == 'highest_pace'">
+                ORDER BY g.pace ASC
+            </when>
+            <when test="con == 'frequency'">
+                ORDER BY g.frequency ASC
+            </when>
+            <otherwise>
+                ORDER BY g.pace DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 특정 유저의 라이벌 랭킹 조회 -->
+    <select id="selectRival" parameterType="map" resultType="UserRankRecord">
+        SELECT *
+        FROM user_rank_record
+        WHERE user_seq = (SELECT rival_seq FROM Rival_info WHERE user_seq = (SELECT user_seq FROM User WHERE user_id = #{userId}) AND rival_seq = (SELECT user_seq FROM User WHERE user_id = #{rivalId}))
+    </select>
+
+    <!-- 특정 유저의 랭킹 기록 조회 -->
+    <select id="selectByUserId" parameterType="String" resultType="UserRankRecord">
+        SELECT *
+        FROM user_rank_record
+        WHERE user_seq = (SELECT user_seq FROM User WHERE user_id = #{userId})
+    </select>
+    
+        <!-- 특정 유저의 랭킹 기록 조회 -->
+    <select id="selectByUserSeq" parameterType="int" resultType="UserRankRecord">
+        SELECT *
+        FROM user_rank_record
+        WHERE user_seq = #{userSeq}
+    </select>
+
+
+    <!-- 랭킹 기록 삽입 -->
+    <insert id="insertRankRecord" parameterType="UserRankRecord">
+        INSERT INTO user_rank_record (user_seq, frequency, total_distance, highest_pace)
+        VALUES (#{userSeq}, #{frequency}, #{totalDistance}, #{highestPace})
+    </insert>
+
+    <!-- 랭킹 기록 업데이트 -->
+    <update id="updateRankRecord" parameterType="UserRankRecord">
+        UPDATE user_rank_record
+        SET frequency = #{frequency}, total_distance = #{totalDistance}, highest_pace = #{highestPace}
+        WHERE user_seq = #{userSeq}
+    </update>
+    
+
+
+</mapper>
