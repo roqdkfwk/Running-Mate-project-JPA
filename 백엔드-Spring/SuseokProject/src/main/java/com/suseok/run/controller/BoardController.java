@@ -34,21 +34,20 @@ public class BoardController {
 	private static final String FAIL = "fail";
 
 	private int findWriterSeq(String userId) {
+		
 		User user = us.selectById(userId);
 		return user.getUserSeq();
-
 	}
 
 	@GetMapping
 	@Operation(summary = "groupBoard")
 	public ResponseEntity<List<Board>> groupBoard(@PathVariable("groupId") int groupId) {
+		
 		List<Board> boards = bs.selectAllByGroupId(groupId);
 		
-		System.out.println("groupId : " + groupId);
-		
-		if (boards != null) {
+		if (boards != null) 
 			return new ResponseEntity<List<Board>>(boards, HttpStatus.OK);
-		}
+		
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
@@ -59,10 +58,9 @@ public class BoardController {
 		
 		Board board = bs.selectById(boardId);
 		
-		System.out.println(board.toString());
+		if (board != null) 
+			return new ResponseEntity<Board>(board, HttpStatus.OK);
 		
-		if (board != null) {
-			return new ResponseEntity<Board>(board, HttpStatus.OK);}
 		return new ResponseEntity<Board>(HttpStatus.NOT_FOUND);
 	}
 
@@ -71,12 +69,14 @@ public class BoardController {
 	@Operation(summary = "createBoard")
 	public ResponseEntity<Board> createBoard(@PathVariable("groupId") int groupId, @RequestBody Board board,
 			@RequestHeader("userId") String userId) {
+		
 		// userId를 Board 객체에 설정
 		board.setGroupId(groupId);
 		board.setWriterSeq(findWriterSeq(userId));
-		if (bs.insert(board)!=null) {
-			
-			return new ResponseEntity<Board>(board, HttpStatus.CREATED);}
+		
+		if (bs.insert(board)!=null) 			
+			return new ResponseEntity<Board>(board, HttpStatus.CREATED);
+		
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
@@ -86,17 +86,13 @@ public class BoardController {
 	public ResponseEntity<?> updateBoard(@PathVariable("boardId") int boardId, @RequestBody Board board,
 			@RequestHeader("userId") String userId) {
 		
-		System.out.println("updateBoard");
-		
 		// 수정 시에도 userId를 설정할 수 있음
-		if (findWriterSeq(userId) != board.getWriterSeq()) {
-			System.out.println("유저랑 작성자랑 다름");
+		if (findWriterSeq(userId) != board.getWriterSeq()) 
 			return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
-		}
-		if (bs.update(board) != null) {
-			System.out.println("find성공");
+		
+		if (bs.update(board) != null) 
 			return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
-		}
+		
 		return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
 	}
 	
@@ -105,11 +101,9 @@ public class BoardController {
 	@Operation(summary = "deleteBoard")
 	public ResponseEntity<?> deleteBoard(@PathVariable("boardId") int boardId,
 			@RequestHeader("userId") String userId) {
-		System.out.println("요청은 왔음");
-		if (findWriterSeq(userId) != bs.selectById(boardId).getWriterSeq()) {
-			System.out.println("작성자가 아님");
-			return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);}
-		System.out.println("작성자는 맞음");
+		
+		if (findWriterSeq(userId) != bs.selectById(boardId).getWriterSeq())
+			return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
 		if (bs.delete(boardId))
 			return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
 		
@@ -119,9 +113,12 @@ public class BoardController {
 	@GetMapping("/search")
 	@Operation(summary = "searchBoard")
 	public ResponseEntity<?> searchBoard(@RequestParam String con, @RequestHeader("userId") String userId) {
+		
 		List<Board> boards = bs.search(con); // 검색 조회
+		
 		if (boards == null || boards.size() == 0)
 			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		
 		return new ResponseEntity<List<Board>>(boards, HttpStatus.OK);
 	}
 
@@ -129,6 +126,7 @@ public class BoardController {
 	@PostMapping("/{boardId}/reply")
 	@Operation(summary = "createReply")
 	public ResponseEntity<?> createReply(@RequestBody Reply reply, @RequestHeader("userId") String userId) {
+		
 		if (bs.insertReply(reply))
 			return new ResponseEntity<>(HttpStatus.OK);
 
@@ -140,8 +138,10 @@ public class BoardController {
 	@Operation(summary = "deleteReply")
 	public ResponseEntity<?> deleteReply(@PathVariable("boardId") int boardId, @PathVariable("replyId") int replyId,
 			@RequestHeader("userId") String userId) {
+		
 		if (findWriterSeq(userId) != bs.selectReplyById(replyId).getWriterSeq())
 			return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+		
 		if (bs.deleteReply(boardId, replyId))
 			return new ResponseEntity<>(HttpStatus.OK);
 

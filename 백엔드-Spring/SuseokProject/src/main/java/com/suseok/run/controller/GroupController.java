@@ -44,9 +44,6 @@ public class GroupController {
 	@Operation(summary = "createGroup")
 	public ResponseEntity<Group> createGroup(@RequestBody Group group, @RequestHeader("userId") String userId) {
 
-		System.out.println("Group : " + group.getGroupName());
-		System.out.println("userId : " + userId);
-		
 		if (gs.insert(group,userId))
 			return new ResponseEntity<>(group, HttpStatus.CREATED);
 		else
@@ -56,21 +53,25 @@ public class GroupController {
 	@GetMapping("/{groupId}")
 	@Operation(summary = "selectGroupById")
 	public ResponseEntity<Group> selectGroupById(@PathVariable("groupId") int groupId) {
+		
 		return new ResponseEntity<>(gs.selectById(groupId),HttpStatus.OK);
 	}
 	
 	@GetMapping
 	@Operation(summary = "groupList")
 	public ResponseEntity<List<Group>> groupList() {
+		
 		return new ResponseEntity<List<Group>>(gs.selectAll(),HttpStatus.OK);
 	}
 
-//	@AuthRequired
+	@AuthRequired
 	@GetMapping("/join/{groupId}")
 	@Operation(summary = "joinGroup")
 	public ResponseEntity<String> joinGroup(@PathVariable("groupId") int groupId,
 			@RequestHeader("userId") String userId) {
+		
 		gs.join(groupId, userId);
+		
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -79,7 +80,9 @@ public class GroupController {
 	@Operation(summary = "exitGroup")
 	public ResponseEntity<String> exitGroup(@PathVariable("groupId") int groupId,
 			@RequestHeader("userId") String userId) {
+		
 		gs.exit(groupId, userId);
+		
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -88,9 +91,10 @@ public class GroupController {
 	@Operation(summary = "updateGroupInfo")
 	public ResponseEntity<Group> updateGroupInfo(@PathVariable("groupId") int groupId, @RequestBody Group group,
 			@RequestHeader("userId") String userId) {
+		
 		// 관리자만 허용 //관리자만 보이는 버튼
-	
 		group.setGroupId(groupId);
+		
 		if (gs.update(group,userId))
 			return new ResponseEntity<Group>(group, HttpStatus.ACCEPTED);
 		else
@@ -102,18 +106,20 @@ public class GroupController {
 	@Operation(summary = "deleteGroupMember")
 	public ResponseEntity<?> deleteGroupMember(@PathVariable("groupId") int groupId, @RequestBody Group group,
 			@PathVariable("memberId") int memberId, @RequestHeader("userId") String userId) {
+		
 		// if 유저아이디 == groupid 의 leader이면 바꾸기
-
-
 		if (gs.kickOut(groupId, userId, memberId))
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@PostMapping("/search")
 	@Operation(summary = "searchGroup")
 	public ResponseEntity<List<Group>> searchGroup(@RequestParam String con) {
+		
 		List<Group> groups = gs.search(con);
+		
 		if (groups != null)
 			return new ResponseEntity<List<Group>>(groups, HttpStatus.OK);
 		else

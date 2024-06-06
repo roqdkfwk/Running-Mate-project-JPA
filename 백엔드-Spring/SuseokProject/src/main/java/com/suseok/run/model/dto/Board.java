@@ -28,8 +28,6 @@ public class Board {
 		this.createdAt = createdAt;
 		this.notice = notice;
 	}
-
-	
 	
 	public String getWriterNick() {
 		return writerNick;
@@ -46,7 +44,6 @@ public class Board {
 	public void setGroupId(int groupId) {
 		this.groupId = groupId;
 	}
-
 
 	public int getId() {
 		return id;

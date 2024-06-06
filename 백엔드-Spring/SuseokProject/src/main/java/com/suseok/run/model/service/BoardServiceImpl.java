@@ -15,7 +15,6 @@ import com.suseok.run.model.dto.Reply;
 @Service
 public class BoardServiceImpl implements BoardService {
 
-
 	@Autowired
 	BoardDao bd;
 	
@@ -31,14 +30,17 @@ public class BoardServiceImpl implements BoardService {
 			String writerNick = ud.selectBySeq(boards.get(i).getWriterSeq()).getUserNick();
 			boards.get(i).setWriterNick(writerNick);
 		 }
+		 
 		return boards;
 	}
 
 	@Override
 	public Board selectById(int boardId) {
+		
 		Board board = bd.selectById(boardId);
 		String writerNick = ud.selectBySeq(board.getWriterSeq()).getUserNick();
 		board.setWriterNick(writerNick);
+		
 		return board;
 	}
 	
@@ -47,7 +49,6 @@ public class BoardServiceImpl implements BoardService {
 		return bd.search(con);
 	}
 
-
 	@Override
 	public boolean delete(int boardId) {
 		return bd.delete(boardId);
@@ -55,10 +56,11 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public Board update(Board board) {
-		bd.update(board);
 		
+		bd.update(board);		
 		String writerNick = ud.selectBySeq(board.getWriterSeq()).getUserNick();
 		board.setWriterNick(writerNick);
+		
 		return board;
 	}
 
@@ -82,8 +84,5 @@ public class BoardServiceImpl implements BoardService {
 	public Reply selectReplyById(int replyId) {
 		return bd.selectReplyById(replyId);
 	}
-
-	
-
 
 }

@@ -25,5 +25,4 @@ public interface GroupService {
 
 	boolean kickOut(int groupId, String userId, int memberId);
 
-
 }

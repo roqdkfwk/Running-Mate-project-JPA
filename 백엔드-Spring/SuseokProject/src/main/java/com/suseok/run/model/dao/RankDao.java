@@ -7,7 +7,6 @@ import com.suseok.run.model.dto.UserRankRecord;
 
 public interface RankDao {
 
-
 	boolean insertRankRecord(UserRankRecord userRankRecord);
 	
 	UserRankRecord selectByUserId(String userId);
@@ -27,8 +26,5 @@ public interface RankDao {
 	UserRankRecord selectRival(String userId, String rivalId);
 
 	boolean updateRankRecord(UserRankRecord urr);
-
-
-
 
 }

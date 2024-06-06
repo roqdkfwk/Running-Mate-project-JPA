@@ -7,7 +7,6 @@ import com.suseok.run.model.dto.UserRankRecord;
 
 public interface RankService {
 
-
 	// 내 랭크레코드
 	UserRankRecord selectByUser(String userId);
 
@@ -36,6 +35,4 @@ public interface RankService {
 
 	boolean insertRankRecord(UserRankRecord record, String userId);
 
-
-	
 }

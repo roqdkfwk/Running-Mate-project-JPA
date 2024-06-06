@@ -20,7 +20,6 @@ public class User {
 	public User() {
 	}
 
-
 	public User(int userSeq, String userId, String userPwd, String userName, String userNick, String email,
 			Timestamp createdAt, Timestamp updatedAt, String address, String img, String phone, boolean exposure) {
 		super();
@@ -38,16 +37,13 @@ public class User {
 		this.exposure = exposure;
 	}
 
-
 	public boolean isExposure() {
 		return exposure;
 	}
 
-
 	public void setExposure(boolean exposure) {
 		this.exposure = exposure;
 	}
-
 
 	public int getUserSeq() {
 		return userSeq;

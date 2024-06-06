@@ -59,11 +59,6 @@ public class AuthController {
 			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
 		}
 		
-//		System.out.println(result.get("accessToken"));
-//		System.out.println();
-		
-		
-		
 		return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
 	}
 	
@@ -74,7 +69,5 @@ public class AuthController {
 		as.invalidateToken(userId, response);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-
-
 
 }

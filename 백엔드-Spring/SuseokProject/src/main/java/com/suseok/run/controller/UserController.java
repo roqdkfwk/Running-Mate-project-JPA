@@ -41,8 +41,8 @@ public class UserController {
 	@PostMapping("/signup")
 	@Operation(summary = "signup")
 	public ResponseEntity<?> signup(@RequestBody User user) {
-		if (us.insert(user)) 
-			
+		
+		if (us.insert(user)) 			
 			return new ResponseEntity<User>(user,HttpStatus.CREATED);
 		else
 			return new ResponseEntity<String>(FAIL ,HttpStatus.BAD_REQUEST);
@@ -51,14 +51,15 @@ public class UserController {
 	@GetMapping
 	@Operation(summary = "selectAllUsers")
 	public ResponseEntity<List<User>> selectAllUsers() {
+		
 		return new ResponseEntity<List<User>>(us.selectAll(),HttpStatus.OK);
 	}
 
 	@GetMapping("/signup/ci/{checkId}")
 	@Operation(summary = "checkId")
 	public ResponseEntity<?> checkId(@PathVariable String checkId) {
+		
 		if (us.selectById(checkId) != null) {
-			System.out.println("이미 있는 아이디임");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
 		else
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -67,6 +68,7 @@ public class UserController {
 	@GetMapping("/signup/cn/{checkNick}")
 	@Operation(summary = "checkNick")
 	public ResponseEntity<?> checkNick(@PathVariable String checkNick) {
+		
 		if (us.selectByNick(checkNick) != null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		else
@@ -76,7 +78,9 @@ public class UserController {
 	@PostMapping("/findId")
     @Operation(summary = "findId")
     public ResponseEntity<?> findId(@RequestBody User user) {
+		
         User foundUser = us.findId(user.getUserName(), user.getPhone());
+        
         if (foundUser == null) {
             foundUser = us.findId(user.getUserName(), user.getEmail());
         }
@@ -91,7 +95,9 @@ public class UserController {
     @PostMapping("/findPwd")
     @Operation(summary = "findPwd")
     public ResponseEntity<?> findPwd(@RequestBody User user) {
+    	
         User foundUser = us.findPwd(user.getUserName(), user.getPhone(), user.getUserId());
+        
         if (foundUser == null) {
             foundUser = us.findPwd(user.getUserName(), user.getEmail(), user.getUserId());
         }
@@ -101,7 +107,7 @@ public class UserController {
         }
         // 새로운 비밀번호 생성 
         us.sendNewPassword(foundUser);
-        //(보냈다 치고 ^^)
+        
         return new ResponseEntity<>(HttpStatus.OK);
     }
 	
@@ -109,8 +115,10 @@ public class UserController {
 	@DeleteMapping("/withdraw")
 	@Operation(summary = "withdraw")
 	public ResponseEntity<?> withdraw(@RequestHeader("userId") String userId) {
+		
 		if(us.delete(userId))
 			return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
+		
 		return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 	}
 	
@@ -124,6 +132,7 @@ public class UserController {
 
 		if (user != null)
 			return new ResponseEntity<User>(user, HttpStatus.OK);
+		
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
@@ -131,10 +140,12 @@ public class UserController {
 	@PutMapping
 	@Operation(summary = "updateMyPage")
 	public ResponseEntity<?> updateMyPage(@RequestHeader("userId") String userId, @RequestBody User user) {
+		
 		if (userId != user.getUserId())
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		if (us.update(user))
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
@@ -142,18 +153,22 @@ public class UserController {
 	@GetMapping("/add/{rivalId}")
 	@Operation(summary = "addRival")
 	public ResponseEntity<?> addRival(@RequestHeader("userId") String userId, @PathVariable("rivalId") String rivalId) {
-		System.out.println("여기에 오긴함");
+		
 		if (us.addRival(userId, rivalId))
 			return new ResponseEntity<>(HttpStatus.OK);
+		
 		return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 	}
 
 	@PostMapping("/search")
 	@Operation(summary = "searchUser")
 	public ResponseEntity<List<User>> searchUser(@RequestParam String con) {
+		
 		List<User> users = us.search(con);
+		
 		if (users != null)
 			return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+		
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 

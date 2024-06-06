@@ -17,11 +17,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-
 	private final JwtUtil jwtUtil;
 	private final JwtDao jd;
 	private final UserService us;
-
 	private int refreshTokenExpireTime;
 
 	public AuthServiceImpl(JwtUtil jwtUtil, UserService us,JwtDao jd) {
@@ -32,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	public Map<String, Object> login(User user, HttpServletResponse response) {
+		
 		Map<String, Object> result = new HashMap<>();
 
 		User dbUser = us.loginUser(user);
@@ -57,6 +56,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	public void invalidateToken(String userId, HttpServletResponse response) {
+		
 		// 쿠키에서 refreshToken 삭제
 		Cookie cookie = new Cookie("refreshToken", null);
 		cookie.setMaxAge(0);
