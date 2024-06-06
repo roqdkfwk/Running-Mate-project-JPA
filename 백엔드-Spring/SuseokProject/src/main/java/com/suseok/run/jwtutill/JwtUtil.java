@@ -6,12 +6,10 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import com.suseok.run.model.dao.JwtDao;
 import com.suseok.run.model.dto.JwtToken;
 import com.suseok.run.model.dto.User;
 import com.suseok.run.model.service.UserService;
-
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,7 +17,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtUtil {
 
-	private String jwtKey = "sooa-seokmin-love-forever";
+	private String jwtKey = "final-project-of-sooa-and-seokmin";
 
 	private int accessTokenExpireTime = 3600;
 
@@ -58,6 +56,7 @@ public class JwtUtil {
 
 	// Access Token 생성 메서드
 	public String createAccessToken(String userId) {
+		
 		long currentTime = System.currentTimeMillis(); // 현재 시간
 
 		JwtBuilder jwtAccessTokenBuilder = Jwts.builder().claim("userId", userId).setIssuedAt(new Date(currentTime))
@@ -69,11 +68,13 @@ public class JwtUtil {
 
 	// Refresh Token 생성 메서드
 	public String createRefreshToken(String userId) {
+		
 		long currentTime = System.currentTimeMillis(); // 현재 시간
 
 		JwtBuilder jwtRefreshTokenBuilder = Jwts.builder().claim("userId", userId).setIssuedAt(new Date(currentTime))
 				.setExpiration(new Date(currentTime + refreshTokenExpireTime * 1000))
 				.signWith(SignatureAlgorithm.HS256, jwtKey.getBytes(StandardCharsets.UTF_8));
+		
 		User user = us.selectById(userId);
 		int userSeq = user.getUserSeq();
 
@@ -84,17 +85,17 @@ public class JwtUtil {
 		return jwtRefreshTokenBuilder.compact();
 	}
 
+	// JWT 토큰이 유효한지 검증한다.
+	// 유효하면 true, 유효하지 않으면 false를 반환한다.
 	public boolean validate(String token) {
+		
 		try {
 			Jwts.parser().setSigningKey(jwtKey.getBytes("UTF-8")).parseClaimsJws(token);
-			System.out.println(token);
 		} catch (Exception e) { // token을 파싱하는데 에러가 발생했다면 유효한 토큰이 아님.
-			System.out.println(e);
 			return false;
 		}
-		System.out.println("valid");
+		
 		return true;
-
 	}
 
 }

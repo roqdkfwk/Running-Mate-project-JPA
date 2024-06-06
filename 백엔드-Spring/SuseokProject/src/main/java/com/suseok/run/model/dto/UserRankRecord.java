@@ -13,25 +13,20 @@ public class UserRankRecord {
 	public UserRankRecord() {
 	}
 
-	
 	public UserRankRecord(int userSeq, double frequency, double totalDistance, double highestPace) {
 		this.userSeq = userSeq;
 		this.frequency = frequency;
 		this.totalDistance = totalDistance;
 		this.highestPace = highestPace;
 	}
-	
-
 
 	public boolean isMyRival() {
 		return myRival;
 	}
 
-
 	public void setMyRival(boolean myRival) {
 		this.myRival = myRival;
 	}
-
 
 	public String getUserId() {
 		return userId;
@@ -56,8 +51,6 @@ public class UserRankRecord {
 	public void setUserNick(String userNick) {
 		this.userNick = userNick;
 	}
-
-
 
 	public int getUserSeq() {
 		return userSeq;
@@ -91,14 +84,11 @@ public class UserRankRecord {
 		this.highestPace = highestPace;
 	}
 
-
 	@Override
 	public String toString() {
 		return "UserRankRecord [userSeq=" + userSeq + ", userName=" + userName + ", userNick=" + userNick + ", userId="
 				+ userId + ", isMyRival=" + myRival + ", frequency=" + frequency + ", totalDistance=" + totalDistance
 				+ ", highestPace=" + highestPace + "]";
 	}
-
-
 
 }

@@ -35,9 +35,9 @@ public class RankController {
 	@PostMapping("/records")
 	@Operation(summary = "UserRankRecord갱신")
 	public ResponseEntity<?> saveRecords(@RequestBody UserRankRecord record, @RequestHeader("userId") String userId) {
-		System.out.println(record);
+		
 		rs.insertRankRecord(record, userId);
-		System.out.println("userRankRecord가 갱신되었습니다");
+		
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -61,30 +61,28 @@ public class RankController {
 			@RequestHeader("userId") String userId) {
 
 		UserRankRecord userRankRecord = rs.selectByUser(rivalId);
-		System.out.println("라이벌 레코드" + userRankRecord);
+		
 		if (userRankRecord != null)
 			return new ResponseEntity<UserRankRecord>(userRankRecord, HttpStatus.OK);
 		else
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
 	}
 
 	@GetMapping("/rank/user")
 	@Operation(summary = "totalUserRank", description = "condition 으로 orderBy(pace, frequency, distance)구분")
 	public ResponseEntity<?> totalUserRank(@RequestParam String con, @RequestHeader("userId") String userId) {
+		
 		// 라이벌 테이블에서 라이벌만 뽑아와서 걔들의 record를 나열해야 함
-		System.out.println("유저랭크 요청 옴");
-		System.out.println(userId);
 		if (userId != null) {
 			List<UserRankRecord> userRecords = rs.selectAllOrderBy(con, userId);
-			System.out.println(userRecords);
+			
 			if (userRecords != null)
 				return new ResponseEntity<List<UserRankRecord>>(userRecords, HttpStatus.OK);
 			else
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {
 			List<UserRankRecord> userRecords = rs.selectAllOrderBy(con);
-			System.out.println(userRecords);
+			
 			if (userRecords != null)
 				return new ResponseEntity<List<UserRankRecord>>(userRecords, HttpStatus.OK);
 			else
@@ -121,11 +119,10 @@ public class RankController {
 	@Operation(summary = "GroupMemberank", description = "groupid로 그룹 구분, condition 으로 orderBy(pace, frequency, distance)구분")
 	public ResponseEntity<List<UserRankRecord>> GroupMemberank(@RequestParam String con,
 			@PathVariable("groupId") int groupId) {
-		System.out.println("그룹멤버 요청 받았슈");
+		
 		List<UserRankRecord> userRecords = rs.selectAllMemberOrderBy(con, groupId);
 
 		if (userRecords != null) {
-			System.out.println(userRecords);
 			return new ResponseEntity<List<UserRankRecord>>(userRecords, HttpStatus.OK);
 		} else
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);

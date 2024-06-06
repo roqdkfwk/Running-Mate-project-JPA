@@ -129,7 +129,6 @@
         WHERE user_seq = #{userSeq}
     </select>
 
-
     <!-- 랭킹 기록 삽입 -->
     <insert id="insertRankRecord" parameterType="UserRankRecord">
         INSERT INTO user_rank_record (user_seq, frequency, total_distance, highest_pace)
@@ -142,7 +141,5 @@
         SET frequency = #{frequency}, total_distance = #{totalDistance}, highest_pace = #{highestPace}
         WHERE user_seq = #{userSeq}
     </update>
-    
-
 
 </mapper>

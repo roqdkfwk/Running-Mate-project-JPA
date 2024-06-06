@@ -39,6 +39,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public boolean join(int groupId, String userId) {
+		
 		// 자격이 되는 사람만가능
 		Group group = gd.selectById(groupId);
 		UserRankRecord urr = rd.selectByUserId(userId);
@@ -60,18 +61,24 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public boolean update(Group group, String userId) {
+		
 		User user = us.selectById(userId);
+		
 		if (group.getGroupAdmin() == user.getUserSeq())
 			return gd.update(group);
+		
 		return false;
 	}
 
 	@Override
 	public boolean kickOut(int groupId, String userId, int memberId) {
+		
 		User user = us.selectById(userId);
 		Group group = gd.selectById(groupId);
+		
 		if (group.getGroupAdmin() == user.getUserSeq())
 			return gd.deleteMember(groupId, memberId);
+		
 		return false;
 	}
 

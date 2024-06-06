@@ -21,7 +21,6 @@ public class Reply {
 		this.createdAt = createdAt;
 	}
 
-
 	public int getReplyId() {
 		return replyId;
 	}

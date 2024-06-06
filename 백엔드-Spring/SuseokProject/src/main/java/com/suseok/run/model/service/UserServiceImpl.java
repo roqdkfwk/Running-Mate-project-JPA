@@ -81,8 +81,6 @@ public class UserServiceImpl implements UserService {
 		update(user);
 		
 		//유저 폰이나 메일로 발송하는 api찾기
-		
-
 	}
 
 	@Override
