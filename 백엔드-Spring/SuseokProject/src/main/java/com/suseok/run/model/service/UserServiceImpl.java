@@ -3,7 +3,6 @@ package com.suseok.run.model.service;
 import java.util.List;
 import java.util.Random;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.suseok.run.model.dao.UserDao;
@@ -12,12 +11,25 @@ import com.suseok.run.model.dto.User;
 @Service
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	UserDao ud;
+	private final UserDao ud;
+
+	public UserServiceImpl(UserDao ud) {
+		this.ud = ud;
+	}
 
 	@Override
 	public User loginUser(User user) {
 		return ud.loginUser(user);
+	}
+
+	@Override
+	public List<User> search(String con) {
+		return ud.search(con);
+	}
+
+	@Override
+	public List<User> selectAll() {
+		return ud.selectAll();
 	}
 
 	@Override
@@ -31,20 +43,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User selectByNick(String userNick) {
+		return ud.selectByNick(userNick);
+	}
+
+	@Override
 	public boolean update(User user) {
 		return ud.update(user);
 	}
 
 	@Override
 	public boolean addRival(String userId, String rivalId) {
+		// userId로 해당 User 객체를 찾은 후 getter로 UserSeq를 찾음
 		int userSeq = ud.selectById(userId).getUserSeq();
 		int rivalSeq = ud.selectById(rivalId).getUserSeq();
 		return ud.addRival(userSeq, rivalSeq);
-	}
-
-	@Override
-	public List<User> search(String con) {
-		return ud.search(con);
 	}
 
 	@Override
@@ -63,14 +76,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void sendNewPassword(User user) {
-
+	public String sendNewPassword(User user) {
 		// 사용할 문자와 숫자 집합
 		final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 		Random random = new Random();
 		StringBuilder sb = new StringBuilder(10);
 
+		// 랜덤으로 10개의 문자를 선택해 임시 비밀번호를 발급
 		for (int i = 0; i < 10; i++) {
 			int index = random.nextInt(CHARACTERS.length());
 			sb.append(CHARACTERS.charAt(index));
@@ -79,18 +92,8 @@ public class UserServiceImpl implements UserService {
 		String randomString = sb.toString();
 		user.setUserPwd(randomString);
 		update(user);
-		
-		//유저 폰이나 메일로 발송하는 api찾기
-	}
 
-	@Override
-	public User selectByNick(String userNick) {
-		return ud.selectByNick(userNick);
-	}
-
-	@Override
-	public List<User> selectAll() {
-		return ud.selectAll();
+		return randomString;
 	}
 
 }

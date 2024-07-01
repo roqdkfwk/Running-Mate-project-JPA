@@ -14,7 +14,7 @@ export const useMainStore = defineStore('main', () => {
   const userStore = useUserStore();
 
   const login = function (user) {
-    console.log("logindata 받음")
+    
     axios.post(`${REST_API}/login`, {
       userId: user.userId,
       userPwd: user.userPwd

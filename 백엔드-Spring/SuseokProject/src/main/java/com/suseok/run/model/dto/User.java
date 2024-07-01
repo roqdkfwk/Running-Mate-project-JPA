@@ -17,8 +17,7 @@ public class User {
 	private String phone;
 	private boolean exposure;
 
-	public User() {
-	}
+	public User() {}
 
 	public User(int userSeq, String userId, String userPwd, String userName, String userNick, String email,
 			Timestamp createdAt, Timestamp updatedAt, String address, String img, String phone, boolean exposure) {

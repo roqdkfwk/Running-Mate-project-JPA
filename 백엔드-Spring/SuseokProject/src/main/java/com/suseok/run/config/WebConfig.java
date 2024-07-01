@@ -1,7 +1,6 @@
 package com.suseok.run.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -25,13 +24,15 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(jwtInterceptor).addPathPatterns("/**").excludePathPatterns("/login/**",
-				"/signup", "/search/**");
+		registry.addInterceptor(jwtInterceptor)	// jwtInterceptor를 등록
+				.addPathPatterns("/**")	// 모든 경로에 대해 interceptor를 적용
+				.excludePathPatterns("/login/**", "/signup", "/search/**");	// 로그인, 회원가입, 검색 경로에 대해서는 interceptor 제외
 	}
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "POST", "PUT", "DELETE");
+		registry.addMapping("/**")	// 모든 경로에 대해 CORS를 적용
+				.allowedOrigins("*")	// 모든 도메인에서의 접근을 허용
+				.allowedMethods("GET", "POST", "PUT", "DELETE");	// 모든 메소드를 허용
 	}
-
 }

@@ -30,7 +30,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class UserController {
 
 	private final UserService us;
-	
 	private final String SUCCESS ="SUCCESS";
 	private final String FAIL ="FAIL";
 	
@@ -42,7 +41,7 @@ public class UserController {
 	@Operation(summary = "signup")
 	public ResponseEntity<?> signup(@RequestBody User user) {
 		
-		if (us.insert(user)) 			
+		if (us.insert(user))
 			return new ResponseEntity<User>(user,HttpStatus.CREATED);
 		else
 			return new ResponseEntity<String>(FAIL ,HttpStatus.BAD_REQUEST);
@@ -51,7 +50,6 @@ public class UserController {
 	@GetMapping
 	@Operation(summary = "selectAllUsers")
 	public ResponseEntity<List<User>> selectAllUsers() {
-		
 		return new ResponseEntity<List<User>>(us.selectAll(),HttpStatus.OK);
 	}
 
@@ -59,8 +57,8 @@ public class UserController {
 	@Operation(summary = "checkId")
 	public ResponseEntity<?> checkId(@PathVariable String checkId) {
 		
-		if (us.selectById(checkId) != null) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
+		if (us.selectById(checkId) != null) 
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		else
 			return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -78,9 +76,7 @@ public class UserController {
 	@PostMapping("/findId")
     @Operation(summary = "findId")
     public ResponseEntity<?> findId(@RequestBody User user) {
-		
         User foundUser = us.findId(user.getUserName(), user.getPhone());
-        
         if (foundUser == null) {
             foundUser = us.findId(user.getUserName(), user.getEmail());
         }
@@ -98,16 +94,15 @@ public class UserController {
     	
         User foundUser = us.findPwd(user.getUserName(), user.getPhone(), user.getUserId());
         
-        if (foundUser == null) {
+        if (foundUser == null) 
             foundUser = us.findPwd(user.getUserName(), user.getEmail(), user.getUserId());
-        }
-
-        if (foundUser == null) {
+        if (foundUser == null) 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        
         // 새로운 비밀번호 생성 
         us.sendNewPassword(foundUser);
         
+        // (보냈다 치고 ^^)
         return new ResponseEntity<>(HttpStatus.OK);
     }
 	
@@ -124,7 +119,6 @@ public class UserController {
 	
 	@AuthRequired 
 	@GetMapping("/myPage")
-
 	@Operation(summary = "myPage", description = "유저 정보")
 	public ResponseEntity<User> myPage(@RequestHeader("userId") String userId) {
 

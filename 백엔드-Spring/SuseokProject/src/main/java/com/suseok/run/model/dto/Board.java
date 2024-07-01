@@ -13,10 +13,9 @@ public class Board {
 	private String img;
 	private Timestamp createdAt;
 	private boolean notice;
-
-	public Board() {
-	}
-
+	
+	public Board() {}
+	
 	public Board(int groupId, int id, int writerSeq, String title, String content, String img, Timestamp createdAt,
 			boolean notice) {
 		this.groupId = groupId;
@@ -27,14 +26,6 @@ public class Board {
 		this.img = img;
 		this.createdAt = createdAt;
 		this.notice = notice;
-	}
-	
-	public String getWriterNick() {
-		return writerNick;
-	}
-
-	public void setWriterNick(String writerNick) {
-		this.writerNick = writerNick;
 	}
 
 	public int getGroupId() {
@@ -59,6 +50,14 @@ public class Board {
 
 	public void setWriterSeq(int writerSeq) {
 		this.writerSeq = writerSeq;
+	}
+
+	public String getWriterNick() {
+		return writerNick;
+	}
+
+	public void setWriterNick(String writerNick) {
+		this.writerNick = writerNick;
 	}
 
 	public String getTitle() {
@@ -100,5 +99,6 @@ public class Board {
 	public void setNotice(boolean notice) {
 		this.notice = notice;
 	}
-
+	
+	
 }

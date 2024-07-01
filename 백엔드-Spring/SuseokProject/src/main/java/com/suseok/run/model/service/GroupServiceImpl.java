@@ -2,27 +2,23 @@ package com.suseok.run.model.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.suseok.run.model.dao.GroupDao;
 import com.suseok.run.model.dao.RankDao;
-import com.suseok.run.model.dao.UserDao;
 import com.suseok.run.model.dto.Group;
 import com.suseok.run.model.dto.User;
 import com.suseok.run.model.dto.UserRankRecord;
 
-@Service
 public class GroupServiceImpl implements GroupService {
 
-	@Autowired
-	GroupDao gd;
+	private final GroupDao gd;
+	private final RankDao rd;
+	private final UserService us;
 
-	@Autowired
-	RankDao rd;
-
-	@Autowired
-	UserService us;
+	public GroupServiceImpl(GroupDao gd, RankDao rd, UserService us) {
+		this.gd = gd;
+		this.rd = rd;
+		this.us = us;
+	}
 
 	@Override
 	public List<Group> search(String con) {
@@ -30,12 +26,14 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public boolean insert(Group group, String userId) {
-		User user = us.selectById(userId);
-		group.setGroupAdmin(user.getUserSeq());
-	
-		return gd.insert(group);
+	public Group selectById(int groupId) {
+		return gd.selectById(groupId);
 	}
+
+	@Override
+	public List<Group> selectAll() {
+		return gd.selectAll();
+	}	
 
 	@Override
 	public boolean join(int groupId, String userId) {
@@ -60,10 +58,18 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
+	public boolean insert(Group group, String userId) {
+		
+		User user = us.selectById(userId);
+		group.setGroupAdmin(user.getUserSeq());
+
+		return gd.insert(group);
+	}
+
+	@Override
 	public boolean update(Group group, String userId) {
 		
 		User user = us.selectById(userId);
-		
 		if (group.getGroupAdmin() == user.getUserSeq())
 			return gd.update(group);
 		
@@ -74,22 +80,11 @@ public class GroupServiceImpl implements GroupService {
 	public boolean kickOut(int groupId, String userId, int memberId) {
 		
 		User user = us.selectById(userId);
-		Group group = gd.selectById(groupId);
-		
+		Group group = gd.selectById(groupId);		
 		if (group.getGroupAdmin() == user.getUserSeq())
 			return gd.deleteMember(groupId, memberId);
 		
 		return false;
-	}
-
-	@Override
-	public Group selectById(int groupId) {
-		return gd.selectById(groupId);
-	}
-
-	@Override
-	public List<Group> selectAll() {
-		return gd.selectAll();
 	}
 
 }

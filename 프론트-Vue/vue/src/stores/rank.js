@@ -12,7 +12,6 @@ export const useRankStore = defineStore('rank', () => {
     const groups= ref([])
     const members= ref([])
     const route = useRoute()
-    
 
     const sortGroupByHighestPace = function () {
 
@@ -65,9 +64,6 @@ export const useRankStore = defineStore('rank', () => {
             });
     }
 
-
-
-
     const sortMemByHighestPace = function () {
 
         axios.get(`${REST_RANK_API}/group/${route.params.groupId}`, {
@@ -115,10 +111,6 @@ export const useRankStore = defineStore('rank', () => {
                 console.log(error);
             });
     }
-
-
-
-
 
     const sortByHighestPace = function () {
 
