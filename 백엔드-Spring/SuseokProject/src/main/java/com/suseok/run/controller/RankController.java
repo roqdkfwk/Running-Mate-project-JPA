@@ -47,7 +47,7 @@ public class RankController {
 	public ResponseEntity<UserRankRecord> myRR(@RequestHeader("userId") String userId) {
 
 		UserRankRecord userRankRecord = rs.selectByUser(userId);
-
+		
 		if (userRankRecord == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
@@ -66,6 +66,7 @@ public class RankController {
 			return new ResponseEntity<UserRankRecord>(userRankRecord, HttpStatus.OK);
 		else
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
 	}
 
 	@GetMapping("/rank/user")
@@ -75,14 +76,12 @@ public class RankController {
 		// 라이벌 테이블에서 라이벌만 뽑아와서 걔들의 record를 나열해야 함
 		if (userId != null) {
 			List<UserRankRecord> userRecords = rs.selectAllOrderBy(con, userId);
-			
 			if (userRecords != null)
 				return new ResponseEntity<List<UserRankRecord>>(userRecords, HttpStatus.OK);
 			else
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {
 			List<UserRankRecord> userRecords = rs.selectAllOrderBy(con);
-			
 			if (userRecords != null)
 				return new ResponseEntity<List<UserRankRecord>>(userRecords, HttpStatus.OK);
 			else
@@ -95,7 +94,7 @@ public class RankController {
 	public ResponseEntity<?> totalGroupRank(@RequestParam String con) {
 
 		List<Group> groups = rs.selectGroupsOrderBy(con);
-
+		
 		if (groups != null)
 			return new ResponseEntity<List<Group>>(groups, HttpStatus.OK);
 		else
@@ -122,10 +121,9 @@ public class RankController {
 		
 		List<UserRankRecord> userRecords = rs.selectAllMemberOrderBy(con, groupId);
 
-		if (userRecords != null) {
+		if (userRecords != null) 
 			return new ResponseEntity<List<UserRankRecord>>(userRecords, HttpStatus.OK);
-		} else
+		else
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
-
 }

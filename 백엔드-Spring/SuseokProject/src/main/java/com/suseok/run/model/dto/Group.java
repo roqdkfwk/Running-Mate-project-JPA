@@ -1,6 +1,7 @@
 package com.suseok.run.model.dto;
 
 public class Group {
+	
 	private int groupId;
 	private String groupName;
 	private int groupAdmin;
@@ -14,8 +15,7 @@ public class Group {
 	private Double frequency;
 	private Double totalDistance;
 
-	public Group() {
-	}
+	public Group() {}
 
 	public Group(int groupId, String groupName, int groupAdmin, Double goalPace, Double goalFrequency,
 			Double goalTotalDistance, Double conPace, Double conFrequency, Double conTotalDistance, Double pace,

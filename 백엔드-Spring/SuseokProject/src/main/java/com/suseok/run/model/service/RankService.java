@@ -34,5 +34,4 @@ public interface RankService {
 	boolean updateRankRecord(UserRankRecord record, int userSeq);
 
 	boolean insertRankRecord(UserRankRecord record, String userId);
-
 }

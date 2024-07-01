@@ -9,8 +9,7 @@ public class Reply {
 	private String content;
 	private Timestamp createdAt;
 
-	public Reply() {
-	}
+	public Reply() {}
 
 	public Reply(int replyId, int boardId, int writerSeq, String content, Timestamp createdAt) {
 		super();

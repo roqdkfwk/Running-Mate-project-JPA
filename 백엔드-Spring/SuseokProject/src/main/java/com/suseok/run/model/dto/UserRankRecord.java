@@ -10,9 +10,8 @@ public class UserRankRecord {
 	private double totalDistance; // 유저가 달린 누적 거리
 	private double highestPace; // 최고 속력
 
-	public UserRankRecord() {
-	}
-
+	public UserRankRecord() {}
+	
 	public UserRankRecord(int userSeq, double frequency, double totalDistance, double highestPace) {
 		this.userSeq = userSeq;
 		this.frequency = frequency;

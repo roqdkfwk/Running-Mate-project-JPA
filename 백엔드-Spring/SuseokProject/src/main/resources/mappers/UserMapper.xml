@@ -31,8 +31,7 @@
 
 	<update id="update" parameterType="User">
 		UPDATE User
-		SET user_pwd = #{userPwd}, user_name = #{userName}, user_nick =
-		#{userNick}, email = #{email},
+		SET user_pwd = #{userPwd}, user_name = #{userName}, user_nick = #{userNick}, email = #{email},
 		address = #{address}, img = #{img}, phone = #{phone}, exposure = #{exposure}
 		WHERE user_id = #{userId}
 	</update>
