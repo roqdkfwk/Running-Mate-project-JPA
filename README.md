@@ -158,3 +158,10 @@
 - 로그인 기능
 - 회원가입 기능
 
+
+### 07.01 수정사항
+WebConfig 주석
+GroupController, RankController, UserController 필요없는 주석 제거 및 가독성 개선
+BoardServiceImpl에서 BoardDao, UserDao 필드 주입 -> 생성자 주입으로 코드 변경
+GroupServiceImpl에서 GroupDao, RankDao, UserService 필드 주입 -> 생성자 주입으로 코드 변경
+RankServiceImpl에서 UserDao, RankDao 필드 주입 -> 생성자 주입으로 코드 변경
