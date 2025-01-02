@@ -40,7 +40,9 @@ public class UserController {
 
 	@PostMapping("/signup")
 	@Operation(summary = "signup")
-	public ResponseEntity<?> signup(@RequestBody User user) {
+	public ResponseEntity<?> signup(
+			@RequestBody User user
+	) {
 		if (us.insert(user))
 			return new ResponseEntity<User>(user,HttpStatus.CREATED);
 		else
@@ -55,9 +57,10 @@ public class UserController {
 
 	@GetMapping("/signup/ci/{checkId}")
 	@Operation(summary = "checkId")
-	public ResponseEntity<?> checkId(@PathVariable String checkId) {
+	public ResponseEntity<?> checkId(
+			@PathVariable String checkId
+	) {
 		if (us.selectById(checkId) != null) {
-			System.out.println("이미 있는 아이디");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
 		else
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -65,7 +68,9 @@ public class UserController {
 	
 	@GetMapping("/signup/cn/{checkNick}")
 	@Operation(summary = "checkNick")
-	public ResponseEntity<?> checkNick(@PathVariable String checkNick) {
+	public ResponseEntity<?> checkNick(
+			@PathVariable String checkNick
+	) {
 		if (us.selectByNick(checkNick) != null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		else
@@ -74,7 +79,9 @@ public class UserController {
 	
 	@PostMapping("/findId")
     @Operation(summary = "findId")
-    public ResponseEntity<?> findId(@RequestBody User user) {
+    public ResponseEntity<?> findId(
+			@RequestBody User user
+	) {
         User foundUser = us.findId(user.getUserName(), user.getPhone());
         if (foundUser == null) {
             foundUser = us.findId(user.getUserName(), user.getEmail());
@@ -89,7 +96,9 @@ public class UserController {
 
     @PostMapping("/findPwd")
     @Operation(summary = "findPwd")
-    public ResponseEntity<?> findPwd(@RequestBody User user) {
+    public ResponseEntity<?> findPwd(
+			@RequestBody User user
+	) {
         User foundUser = us.findPwd(user.getUserName(), user.getPhone(), user.getUserId());
         if (foundUser == null) {
             foundUser = us.findPwd(user.getUserName(), user.getEmail(), user.getUserId());
@@ -106,7 +115,9 @@ public class UserController {
 	@AuthRequired
 	@DeleteMapping("/withdraw")
 	@Operation(summary = "withdraw")
-	public ResponseEntity<?> withdraw(@RequestHeader("userId") String userId) {
+	public ResponseEntity<?> withdraw(
+			@RequestHeader("userId") String userId
+	) {
 		if(us.delete(userId))
 			return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
 		return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
@@ -116,10 +127,10 @@ public class UserController {
 	@GetMapping("/myPage")
 
 	@Operation(summary = "myPage", description = "유저 정보")
-	public ResponseEntity<User> myPage(@RequestHeader("userId") String userId) {
-
+	public ResponseEntity<User> myPage(
+			@RequestHeader("userId") String userId
+	) {
 		User user = us.selectById(userId);
-
 		if (user != null)
 			return new ResponseEntity<User>(user, HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -128,7 +139,10 @@ public class UserController {
 	@AuthRequired 
 	@PutMapping
 	@Operation(summary = "updateMyPage")
-	public ResponseEntity<?> updateMyPage(@RequestHeader("userId") String userId, @RequestBody User user) {
+	public ResponseEntity<?> updateMyPage(
+			@RequestHeader("userId") String userId,
+			@RequestBody User user
+	) {
 		if (userId != user.getUserId())
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		if (us.update(user))
@@ -139,7 +153,10 @@ public class UserController {
 	@AuthRequired 
 	@GetMapping("/add/{rivalId}")
 	@Operation(summary = "addRival")
-	public ResponseEntity<?> addRival(@RequestHeader("userId") String userId, @PathVariable("rivalId") String rivalId) {
+	public ResponseEntity<?> addRival(
+			@RequestHeader("userId") String userId,
+			@PathVariable("rivalId") String rivalId
+	) {
 		if (us.addRival(userId, rivalId))
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
@@ -147,11 +164,12 @@ public class UserController {
 
 	@PostMapping("/search")
 	@Operation(summary = "searchUser")
-	public ResponseEntity<List<User>> searchUser(@RequestParam String con) {
+	public ResponseEntity<List<User>> searchUser(
+			@RequestParam String con
+	) {
 		List<User> users = us.search(con);
 		if (users != null)
 			return new ResponseEntity<List<User>>(users, HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
-
 }

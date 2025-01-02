@@ -36,7 +36,6 @@ public class AuthController {
 		this.as = as;
 	}
 
-
 	@GetMapping
 	public ResponseEntity<?> home() {
 		return new ResponseEntity<>(HttpStatus.OK);
@@ -49,8 +48,10 @@ public class AuthController {
 	
 	@PostMapping("/login")
 	@Operation(summary = "login")
-	public ResponseEntity<?> login(@RequestBody User user, HttpServletResponse response)
-			throws UnsupportedEncodingException {
+	public ResponseEntity<?> login(
+			@RequestBody User user,
+			HttpServletResponse response
+	) throws UnsupportedEncodingException {
 		Map<String, Object> result = as.login(user, response);
 		if (result.containsKey("message")) {
 			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
@@ -62,11 +63,11 @@ public class AuthController {
 	@AuthRequired
 	@DeleteMapping("/logout")
 	@Operation(summary = "logout")
-	public ResponseEntity<?> logout(@RequestHeader("userId") String userId, HttpServletResponse response) {
+	public ResponseEntity<?> logout(
+			@RequestHeader("userId") String userId,
+			HttpServletResponse response
+	) {
 		//프론트에서 엑세스토큰 삭제 후 요청
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-
-
-
 }

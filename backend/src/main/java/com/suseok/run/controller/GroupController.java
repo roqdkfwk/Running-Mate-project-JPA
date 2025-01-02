@@ -43,11 +43,10 @@ public class GroupController {
 	@AuthRequired
 	@PostMapping
 	@Operation(summary = "createGroup")
-	public ResponseEntity<Group> createGroup(@RequestBody Group group, @RequestHeader("userId") String userId) {
-
-		System.out.println("Group : " + group.getGroupName());
-		System.out.println("userId : " + userId);
-		
+	public ResponseEntity<Group> createGroup(
+			@RequestBody Group group,
+			@RequestHeader("userId") String userId
+	) {
 		if (gs.insert(group,userId))
 			return new ResponseEntity<>(group, HttpStatus.CREATED);
 		else
@@ -56,7 +55,9 @@ public class GroupController {
 	
 	@GetMapping("/{groupId}")
 	@Operation(summary = "selectGroupById")
-	public ResponseEntity<Group> selectGroupById(@PathVariable("groupId") int groupId) {
+	public ResponseEntity<Group> selectGroupById(
+			@PathVariable("groupId") int groupId
+	) {
 		return new ResponseEntity<>(gs.selectById(groupId),HttpStatus.OK);
 	}
 	
@@ -69,8 +70,10 @@ public class GroupController {
 //	@AuthRequired
 	@GetMapping("/join/{groupId}")
 	@Operation(summary = "joinGroup")
-	public ResponseEntity<String> joinGroup(@PathVariable("groupId") int groupId,
-			@RequestHeader("userId") String userId) {
+	public ResponseEntity<String> joinGroup(
+			@PathVariable("groupId") int groupId,
+			@RequestHeader("userId") String userId
+	) {
 		gs.join(groupId, userId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -78,8 +81,10 @@ public class GroupController {
 	@AuthRequired
 	@DeleteMapping("/exit/{groupId}")
 	@Operation(summary = "exitGroup")
-	public ResponseEntity<String> exitGroup(@PathVariable("groupId") int groupId,
-			@RequestHeader("userId") String userId) {
+	public ResponseEntity<String> exitGroup(
+			@PathVariable("groupId") int groupId,
+			@RequestHeader("userId") String userId
+	) {
 		gs.exit(groupId, userId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -87,8 +92,11 @@ public class GroupController {
 	@AuthRequired
 	@PutMapping("/{groupId}")
 	@Operation(summary = "updateGroupInfo")
-	public ResponseEntity<Group> updateGroupInfo(@PathVariable("groupId") int groupId, @RequestBody Group group,
-			@RequestHeader("userId") String userId) {
+	public ResponseEntity<Group> updateGroupInfo(
+			@PathVariable("groupId") int groupId,
+			@RequestBody Group group,
+			@RequestHeader("userId") String userId
+	) {
 		group.setGroupId(groupId);
 		if (gs.update(group,userId))
 			return new ResponseEntity<Group>(group, HttpStatus.ACCEPTED);
@@ -99,9 +107,12 @@ public class GroupController {
 	@AuthRequired
 	@DeleteMapping("/{groupId}/delete/{memberId}")
 	@Operation(summary = "deleteGroupMember")
-	public ResponseEntity<?> deleteGroupMember(@PathVariable("groupId") int groupId, @RequestBody Group group,
-			@PathVariable("memberId") int memberId, @RequestHeader("userId") String userId) {
-
+	public ResponseEntity<?> deleteGroupMember(
+			@PathVariable("groupId") int groupId,
+			@RequestBody Group group,
+			@PathVariable("memberId") int memberId,
+			@RequestHeader("userId") String userId
+	) {
 		if (gs.kickOut(groupId, userId, memberId))
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -109,12 +120,13 @@ public class GroupController {
 
 	@PostMapping("/search")
 	@Operation(summary = "searchGroup")
-	public ResponseEntity<List<Group>> searchGroup(@RequestParam String con) {
+	public ResponseEntity<List<Group>> searchGroup(
+			@RequestParam String con
+	) {
 		List<Group> groups = gs.search(con);
 		if (groups != null)
 			return new ResponseEntity<List<Group>>(groups, HttpStatus.OK);
 		else
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
-
 }
