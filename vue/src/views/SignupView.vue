@@ -67,6 +67,14 @@ const nickChecked = ref(false) // 아이디 중복확인 여부를 저장
 
 // store에 있는 checkId 함수를 실행
 const checkId = function () {
+  // 아이디 입력값 검증: 알파벳과 숫자만 허용
+  if (!/^[a-zA-Z0-9]+$/.test(form.value.userId)) {
+    alert("아이디는 알파벳과 숫자만 입력 가능합니다.");
+    idChecked.value = false; // 중복 확인 상태 초기화
+    return; // 서버 요청 중단
+  }
+
+  // 유효한 경우에만 서버로 요청 전송
   store.checkId(form.value.userId)
     .then((response) => {
       alert("사용 가능한 아이디입니다.")
@@ -91,11 +99,13 @@ const checkNick = function () {
 }
 
 const submitForm = function () {
+  // 아이디 중복확인 메시지 출력
   if (!idChecked.value) {
-    alert('사용 불가능한 아이디입니다.') // 아이디 중복확인 메시지 출력
+    alert('사용 불가능한 아이디입니다.')
     return
   }
 
+  // 닉네임 중복확인 메시지 출력
   if (!nickChecked.value) {
     alert('사용 불가능한 닉네임입니다.')
     return
