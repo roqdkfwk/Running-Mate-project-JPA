@@ -10,6 +10,7 @@
       <!-- 비밀번호 입력란 -->
       <div class="input-group long-input">
         <input type="password" id="password" v-model="form.password" placeholder="비밀번호" required>
+        <div v-if="passwordWarning" class="warning-text">비밀번호는 8~16자리로 입력해야 합니다.</div>
       </div>
       <!-- 비밀번호 확인 입력란 -->
       <div class="input-group long-input">
@@ -85,6 +86,11 @@ const checkId = function () {
       idChecked.value = false
     })
 }
+
+const passwordWarning = computed(() => {
+  const length = form.value.password.length;
+  return length > 0 && (length < 8 || length > 16);
+})
 
 const checkNick = function () {
   store.checkNick(form.value.nickname)
