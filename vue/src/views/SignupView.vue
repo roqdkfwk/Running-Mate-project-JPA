@@ -25,7 +25,8 @@
       </div>
       <!-- 닉네임 입력란과 중복 확인 버튼 -->
       <div class="input-group with-button">
-        <input type="text" id="nickname" v-model="form.nickname" placeholder="닉네임" required>
+        <input type="text" id="nickname" v-model="form.nickname" placeholder="닉네임" required
+               @input="form.nickname = form.nickname.replace(/[^a-zA-Z0-9가-힣]/g, '')">
         <button @click.prevent="checkNick" class="check-button">중복확인</button>
       </div>
       <!-- 이름과 성별 선택 -->
@@ -181,8 +182,7 @@ const searchPostalCode = function () {
   max-width: 500px;
   margin: 50px auto;
   padding: 20px;
-
-  background-color: rgba(255,255,255,0.7);
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
 .input-group {
@@ -195,37 +195,37 @@ const searchPostalCode = function () {
 }
 
 .input-group.with-button {
-  justify-content: space-between;
+  justify-content: flex-start; /* 입력란과 버튼을 왼쪽 정렬 */
 }
 
 .input-group.with-button input {
-  flex: 1 1 65%;
-  /* Adjusted this percentage to make the input slightly narrower */
-  margin-right: 10px;
-  /* Added margin-right to create space between input and button */
+  flex: 1 1 65%; /* 입력란의 너비 비율 */
+  border-radius: 10px; /* 입력란 둥글게 */
+  margin-right: 10px; /* 버튼과 간격 유지 */
+  border: 1px solid #ccc;
+  padding: 8px;
+  box-sizing: border-box;
 }
 
-.check-button {
-  flex: 1 1 25%;
-  /* Adjusted this percentage to make the button slightly wider */
+.input-group.with-button .check-button {
+  flex: 1 1 25%; /* 버튼의 너비 비율 */
+  border-radius: 10px; /* 버튼도 둥글게 */
   padding: 8px 15px;
-  background-color: rgba(255,255,255,0.8);
+  background-color: rgba(255, 255, 255, 0.8);
   color: darkslategray;
-  border: none;
-  border-radius: 4px;
+  border: 1px solid #ccc;
   cursor: pointer;
-  font-family: "Gowun Dodum", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  
 }
 
-.check-button:hover {
-  background-color:  #fadb74;
+.input-group.with-button .check-button:hover {
+  background-color: #fadb74; /* 버튼 호버 시 색상 */
 }
 
 .long-input input {
   width: 100%;
+  border-radius: 10px; /* 일반 입력란 둥글게 */
+  border: 1px solid #ccc;
+  padding: 8px;
 }
 
 .name-gender {
@@ -236,8 +236,8 @@ const searchPostalCode = function () {
 
 .name-gender input[type="text"] {
   width: 70%;
+  border-radius: 10px; /* 이름 입력란 둥글게 */
 }
-
 
 input[type="text"],
 input[type="password"],
@@ -245,7 +245,7 @@ input[type="email"],
 .signup-button {
   padding: 8px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 10px; /* 기본 입력란도 둥글게 */
   font-family: "Gowun Dodum", sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -260,6 +260,7 @@ input[type="email"],
   background-color: rgba(255, 255, 255, 0.8);
   color: darkslategray;
   cursor: pointer;
+  border-radius: 10px; /* 버튼도 둥글게 */
 }
 
 .signup-button:hover {
@@ -301,7 +302,7 @@ input::placeholder {
   border: 1px solid #888;
   width: 80%;
   max-width: 500px;
-  border-radius: 10px;
+  border-radius: 10px; /* 모달도 둥글게 */
 }
 
 .close {
@@ -338,4 +339,5 @@ input::placeholder {
 .tip span {
   color: #555;
   font-style: italic;
-}</style>
+}
+</style>
