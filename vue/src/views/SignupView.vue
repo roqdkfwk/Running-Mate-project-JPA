@@ -20,8 +20,14 @@
       <!-- 비밀번호 불일치 경고 문구 -->
       <div v-if="showPasswordMismatchWarning" class="warning-text">비밀번호가 일치하지 않습니다</div>
       <!-- 이메일 입력란 -->
-      <div class="input-group long-input">
+      <div class="input-group with-button">
         <input type="email" id="email" v-model="form.email" placeholder="이메일" required>
+        <button @click.prevent="sendVerificationCode" class="check-button">인증번호 발송</button>
+      </div>
+      <!-- 이메일 인증 번호 입력란 -->
+      <div class="input-group with-button">
+        <input type="text" id="emailCode" v-model="form.verificationCode" placeholder="인증번호 입력" required>
+        <button @click.prevent="verifyCode" class="check-button">인증번호 확인</button>
       </div>
       <!-- 닉네임 입력란과 중복 확인 버튼 -->
       <div class="input-group with-button">
@@ -46,9 +52,11 @@
 
 <script setup>
 import { useUserStore } from '@/stores/user'
+import { useAuthStore } from '@/stores/auth'
 import { ref, computed } from 'vue'
 
 const store = useUserStore()
+const authStore = useAuthStore()
 
 const form = ref({
   userId: '',
@@ -63,6 +71,28 @@ const form = ref({
   address: '',
   detailedAddress: ''
 })
+
+/**
+ * 인증번호 전송
+ */
+const sendVerificationCode = function () {
+  if (!form.value.email) {
+    alert('이메일을 입력해주세요')
+    return
+  }
+  authStore.sendVerificationCode(form.value.email)
+}
+
+/**
+ * 인증번호 확인
+ */
+const verifyCode = function () {
+  if (!form.value.verificationCode) {
+    alert('인증번호를 입력해주세요.')
+    return
+  }
+  authStore.verifyCode(form.value.email, form.value.verificationCode)
+}
 
 const idChecked = ref(false) // 아이디 중복확인 여부를 저장
 const nickChecked = ref(false) // 아이디 중복확인 여부를 저장
