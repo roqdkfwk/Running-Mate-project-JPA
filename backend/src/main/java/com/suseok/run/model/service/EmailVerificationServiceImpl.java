@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -21,55 +20,61 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
     private final EmailVerificationDao emailVerificationDao;
     private final JavaMailSender javaMailSender;
+    private final String VERIFICATION_CODE = "인증번호";
 
     /**
-     * 이메일 인증 코드 전송
+     * 이메일 인증번호 전송
      */
     public String sendVerificationCode(String email) {
         validateEmailFormat(email);
 
-        EmailVerification existingVerification = emailVerificationDao.selectByEmail(email);
-        if (existingVerification != null) {
-            return "인증번호가 이미 전송되었습니다.";
+        // 1. 기존에 저장된 인증번호가 있는 경우 삭제
+        EmailVerification emailVerification = emailVerificationDao.selectByEmail(email);
+        if (emailVerification != null) {
+            emailVerificationDao.deleteByEmail(email);
         }
 
-        String verificationCode = generateVerificationCode();
-        EmailVerification emailVerification = new EmailVerification();
+        // 2. 새로운 인증번호 생성 및 저장
+        String newVerificationCode = generateVerificationCode();
         emailVerification.setEmail(email);
-        emailVerification.setVerificationCode(verificationCode);
-        emailVerification.setExpiresAt(LocalDateTime.now().plusMinutes(10));
-
+        emailVerification.setVerificationCode(newVerificationCode);
+        emailVerification.setExpiresAt(LocalDateTime.now().plusMinutes(3));
         emailVerificationDao.insertEmailVerification(emailVerification);
-        sendEmail(email, verificationCode);
 
-        return "인증번호가 전송되었습니다.";
+        // 3. 이메일 전송
+        sendEmail(email, newVerificationCode);
+        return VERIFICATION_CODE + "가 전송되었습니다.";
     }
 
     /**
-     * 이메일 인증 코드 검증
+     * 이메일 인증번호 검증
      */
     public String verifyCode(String email, String code) {
         validateEmailFormat(email);
 
+        // 1. 데이터베이스에서 이메일로 인증번호 조회
         EmailVerification emailVerification = emailVerificationDao.selectByEmail(email);
         if (emailVerification == null) {
             throw new IllegalArgumentException("해당 이메일에 대한 인증 요청이 없습니다.");
         }
 
+        // 2. 인증번호 유효성 확인
         if (emailVerification.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("인증번호가 만료되었습니다.");
+            throw new IllegalArgumentException(VERIFICATION_CODE + "가 만료되었습니다.");
         }
 
+        // 3. 인증번호
         if (!emailVerification.getVerificationCode().equals(code)) {
-            throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
+            throw new IllegalArgumentException(VERIFICATION_CODE + "가 일치하지 않습니다.");
         }
 
+        // 4. 인증 완료 후 인증번호 삭제
         emailVerificationDao.deleteByEmail(email);
         return "이메일 인증이 완료되었습니다.";
     }
 
     /**
-     * 이메일 인증 코드 재전송
+     * 이메일 인증번호 재전송
      */
     public String resendVerificationCode(String email) {
         validateEmailFormat(email);
@@ -86,7 +91,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         emailVerificationDao.insertEmailVerification(emailVerification);
         sendEmail(email, newCode);
 
-        return "새 인증번호가 전송되었습니다.";
+        return "새 " + VERIFICATION_CODE + "가 전송되었습니다.";
     }
 
     /**
@@ -99,7 +104,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     }
 
     /**
-     * 이메일 인증 코드 생성
+     * 이메일 인증번호 생성
      */
     private String generateVerificationCode() {
         return String.valueOf(new Random().nextInt(899999) + 100000); // 6자리 난수 생성
@@ -113,8 +118,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(email);
-            helper.setSubject("이메일 인증 코드");
-            helper.setText("인증번호는 다음과 같습니다: " + verificationCode);
+            helper.setSubject("회원가입 " + VERIFICATION_CODE + " 안내");
+            helper.setText(VERIFICATION_CODE + " : " + verificationCode);
             javaMailSender.send(message);
         } catch (MessagingException e) {
             throw new RuntimeException("이메일 전송에 실패했습니다.", e);
