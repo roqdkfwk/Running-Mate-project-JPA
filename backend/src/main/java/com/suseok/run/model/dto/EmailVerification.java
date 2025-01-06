@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class EmailVerification {
-
     private String email;
     private String verificationCode;
     private LocalDateTime expiresAt;
