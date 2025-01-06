@@ -2,7 +2,6 @@ package com.suseok.run.model.service;
 
 import com.suseok.run.model.dao.EmailVerificationDao;
 import com.suseok.run.model.dto.EmailVerification;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -36,6 +35,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
         // 2. 새로운 인증번호 생성 및 저장
         String newVerificationCode = generateVerificationCode();
+        emailVerification = new EmailVerification();
         emailVerification.setEmail(email);
         emailVerification.setVerificationCode(newVerificationCode);
         emailVerification.setExpiresAt(LocalDateTime.now().plusMinutes(3));
