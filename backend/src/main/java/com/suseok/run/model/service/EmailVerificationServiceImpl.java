@@ -1,8 +1,10 @@
 package com.suseok.run.model.service;
 
+import com.suseok.run.common.ConflictException;
 import com.suseok.run.model.dao.EmailVerificationDao;
 import com.suseok.run.model.dto.EmailVerification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     private final EmailVerificationDao emailVerificationDao;
     private final JavaMailSender javaMailSender;
     private final String VERIFICATION_CODE = "인증번호";
+    private final UserService userService;
 
     /**
      * 이메일 인증번호 전송
@@ -27,13 +30,19 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     public String sendVerificationCode(String email) {
         validateEmailFormat(email);
 
-        // 1. 기존에 저장된 인증번호가 있는 경우 삭제
+        // 1. 해당 이메일로 이미 가입한 사용자가 있는 경우
+        if (userService.findByEmail(email) != null) {
+            throw new ConflictException("이미 사용 중인 이메일입니다.");
+
+        }
+
+        // 2. 기존에 저장된 인증번호가 있는 경우 삭제
         EmailVerification emailVerification = emailVerificationDao.selectByEmail(email);
         if (emailVerification != null) {
             emailVerificationDao.deleteByEmail(email);
         }
 
-        // 2. 새로운 인증번호 생성 및 저장
+        // 3. 새로운 인증번호 생성 및 저장
         String newVerificationCode = generateVerificationCode();
         emailVerification = new EmailVerification();
         emailVerification.setEmail(email);
@@ -41,7 +50,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         emailVerification.setExpiresAt(LocalDateTime.now().plusMinutes(3));
         emailVerificationDao.insertEmailVerification(emailVerification);
 
-        // 3. 이메일 전송
+        // 4. 이메일 전송
         sendEmail(email, newVerificationCode);
         return VERIFICATION_CODE + "가 전송되었습니다.";
     }
