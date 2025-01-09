@@ -29,4 +29,6 @@ public interface UserService {
 	String sendNewPassword(User foundUser);
 
 	List<User> selectAll();
+
+	Integer findByEmail(String email);
 }

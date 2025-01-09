@@ -12,7 +12,6 @@ import com.suseok.run.model.dto.User;
 @Service
 public class UserServiceImpl implements UserService {
 
-	// TODO UserReposity
 	@Autowired
 	UserDao ud;
 
@@ -93,4 +92,9 @@ public class UserServiceImpl implements UserService {
 	public List<User> selectAll() {
 		return ud.selectAll();
 	}
+
+	@Override
+	public Integer findByEmail(String email) {
+        return ud.findByEmail(email);
+    }
 }

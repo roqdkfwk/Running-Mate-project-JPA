@@ -61,4 +61,10 @@
 		email = #{phoneOrEmail}) AND user_id = #{id}
 	</select>
 
+	<select id="findByEmail" parameterType="String" resultType="Integer">
+		SELECT user_seq
+		FROM User
+		WHERE email = #{email}
+	</select>
+
 </mapper>

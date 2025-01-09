@@ -30,4 +30,5 @@ public interface UserDao {
 
 	User loginUser(User user);
 
+	Integer findByEmail(String email);
 }
