@@ -28,7 +28,7 @@ public class EmailVerificationController {
             )
             @RequestParam String email
     ) {
-        return ResponseEntity.ok(emailVerificationService.sendVerificationCode(email));
+        return ResponseEntity.ok(emailVerificationService.checkEmailDuplication(email));
     };
 
     /**

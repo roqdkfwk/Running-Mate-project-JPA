@@ -80,9 +80,6 @@ const sendVerificationCode = function () {
     alert('이메일을 입력해주세요')
     return
   }
-  // 버튼을 클릭하는 즉시 알림 표시
-  alert('인증번호가 전송되었습니다.')
-
   authStore.sendVerificationCode(form.value.email)
 }
 

@@ -4,7 +4,6 @@ import com.suseok.run.common.ConflictException;
 import com.suseok.run.model.dao.EmailVerificationDao;
 import com.suseok.run.model.dto.EmailVerification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,7 @@ import jakarta.mail.internet.MimeMessage;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -25,24 +25,32 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     private final UserService userService;
 
     /**
-     * 이메일 인증번호 전송
+     * 이메일 중복 체크
      */
-    public String sendVerificationCode(String email) {
+    public String checkEmailDuplication(String email) {
         validateEmailFormat(email);
 
-        // 1. 해당 이메일로 이미 가입한 사용자가 있는 경우
         if (userService.findByEmail(email) != null) {
             throw new ConflictException("이미 사용 중인 이메일입니다.");
-
         }
 
-        // 2. 기존에 저장된 인증번호가 있는 경우 삭제
+        // 인증 번호를 전송하는 과정을 비동기로 수행
+        CompletableFuture.runAsync(() -> sendVerificationCode(email));
+
+        return VERIFICATION_CODE + "가 전송되었습니다.";
+    }
+
+    /**
+     * 이메일 인증번호 전송
+     */
+    private void sendVerificationCode(String email) {
+        // 1. 기존에 저장된 인증번호가 있는 경우 삭제
         EmailVerification emailVerification = emailVerificationDao.selectByEmail(email);
         if (emailVerification != null) {
             emailVerificationDao.deleteByEmail(email);
         }
 
-        // 3. 새로운 인증번호 생성 및 저장
+        // 2. 새로운 인증번호 생성 및 저장
         String newVerificationCode = generateVerificationCode();
         emailVerification = new EmailVerification();
         emailVerification.setEmail(email);
@@ -50,9 +58,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         emailVerification.setExpiresAt(LocalDateTime.now().plusMinutes(3));
         emailVerificationDao.insertEmailVerification(emailVerification);
 
-        // 4. 이메일 전송
+        // 3. 이메일 전송
         sendEmail(email, newVerificationCode);
-        return VERIFICATION_CODE + "가 전송되었습니다.";
     }
 
     /**
