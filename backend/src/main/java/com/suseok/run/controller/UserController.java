@@ -2,6 +2,7 @@ package com.suseok.run.controller;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.suseok.run.jwtutill.AuthRequired;
-import com.suseok.run.jwtutill.JwtUtil;
 import com.suseok.run.model.dto.User;
-import com.suseok.run.model.service.AuthService;
 import com.suseok.run.model.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,23 +26,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/user")
 @Tag(name = "UserRestController", description = "유저CRUD")
+@RequiredArgsConstructor
 public class UserController {
 
 	// TODO Controller와 Service 로직 분리
-	private final UserService us;
+	private final UserService userService;
 	private final String SUCCESS ="SUCCESS";
 	private final String FAIL ="FAIL";
 	
-	public UserController(UserService us) {
-		this.us = us;
-	}
-
 	@PostMapping("/signup")
 	@Operation(summary = "signup")
 	public ResponseEntity<?> signup(
 			@RequestBody User user
 	) {
-		if (us.insert(user))
+		if (userService.insert(user))
 			return new ResponseEntity<User>(user,HttpStatus.CREATED);
 		else
 			return new ResponseEntity<String>(FAIL ,HttpStatus.BAD_REQUEST);
@@ -52,7 +48,7 @@ public class UserController {
 	@GetMapping
 	@Operation(summary = "selectAllUsers")
 	public ResponseEntity<List<User>> selectAllUsers() {
-		return new ResponseEntity<List<User>>(us.selectAll(),HttpStatus.OK);
+		return new ResponseEntity<List<User>>(userService.selectAll(),HttpStatus.OK);
 	}
 
 	@GetMapping("/signup/ci/{checkId}")
@@ -60,7 +56,7 @@ public class UserController {
 	public ResponseEntity<?> checkId(
 			@PathVariable String checkId
 	) {
-		if (us.selectById(checkId) != null) {
+		if (userService.selectById(checkId) != null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
 		else
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -71,7 +67,7 @@ public class UserController {
 	public ResponseEntity<?> checkNick(
 			@PathVariable String checkNick
 	) {
-		if (us.selectByNick(checkNick) != null)
+		if (userService.selectByNick(checkNick) != null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		else
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -82,9 +78,9 @@ public class UserController {
     public ResponseEntity<?> findId(
 			@RequestBody User user
 	) {
-        User foundUser = us.findId(user.getUserName(), user.getPhone());
+        User foundUser = userService.findId(user.getUserName(), user.getPhone());
         if (foundUser == null) {
-            foundUser = us.findId(user.getUserName(), user.getEmail());
+            foundUser = userService.findId(user.getUserName(), user.getEmail());
         }
 
         if (foundUser == null) {
@@ -99,16 +95,16 @@ public class UserController {
     public ResponseEntity<?> findPwd(
 			@RequestBody User user
 	) {
-        User foundUser = us.findPwd(user.getUserName(), user.getPhone(), user.getUserId());
+        User foundUser = userService.findPwd(user.getUserName(), user.getPhone(), user.getUserId());
         if (foundUser == null) {
-            foundUser = us.findPwd(user.getUserName(), user.getEmail(), user.getUserId());
+            foundUser = userService.findPwd(user.getUserName(), user.getEmail(), user.getUserId());
         }
 
         if (foundUser == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         // 새로운 비밀번호 생성 
-        String newPwd = us.sendNewPassword(foundUser);
+        String newPwd = userService.sendNewPassword(foundUser);
         return new ResponseEntity<>(newPwd, HttpStatus.OK);
     }
 	
@@ -118,7 +114,7 @@ public class UserController {
 	public ResponseEntity<?> withdraw(
 			@RequestHeader("userId") String userId
 	) {
-		if(us.delete(userId))
+		if(userService.delete(userId))
 			return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
 		return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 	}
@@ -130,7 +126,7 @@ public class UserController {
 	public ResponseEntity<User> myPage(
 			@RequestHeader("userId") String userId
 	) {
-		User user = us.selectById(userId);
+		User user = userService.selectById(userId);
 		if (user != null)
 			return new ResponseEntity<User>(user, HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -145,7 +141,7 @@ public class UserController {
 	) {
 		if (userId != user.getUserId())
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		if (us.update(user))
+		if (userService.update(user))
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
@@ -157,7 +153,7 @@ public class UserController {
 			@RequestHeader("userId") String userId,
 			@PathVariable("rivalId") String rivalId
 	) {
-		if (us.addRival(userId, rivalId))
+		if (userService.addRival(userId, rivalId))
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 	}
@@ -167,7 +163,7 @@ public class UserController {
 	public ResponseEntity<List<User>> searchUser(
 			@RequestParam String con
 	) {
-		List<User> users = us.search(con);
+		List<User> users = userService.search(con);
 		if (users != null)
 			return new ResponseEntity<List<User>>(users, HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);

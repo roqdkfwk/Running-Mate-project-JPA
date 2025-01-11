@@ -2,6 +2,7 @@ package com.suseok.run.controller;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,23 +20,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/group/{groupId}/board")
 @Tag(name = "BoardRestController", description = "보드CRUD")
+@RequiredArgsConstructor
 public class BoardController {
 
 	// TODO Controller와 Service 로직 분리
-	private final BoardService bs;
-	private final UserService us;
-
-	public BoardController(BoardService bs, UserService us) {
-		this.bs = bs;
-		this.us = us;
-	}
+	private final BoardService boardService;
+	private final UserService userService;
 
 	// 응답을 편하게 하기 위해 상수로 지정
 	private static final String SUCCESS = "success";
 	private static final String FAIL = "fail";
 
 	private int findWriterSeq(String userId) {
-		User user = us.selectById(userId);
+		User user = userService.selectById(userId);
 		return user.getUserSeq();
 	}
 
@@ -44,7 +41,7 @@ public class BoardController {
 	public ResponseEntity<List<Board>> groupBoard(
 			@PathVariable("groupId") int groupId
 	) {
-		List<Board> boards = bs.selectAllByGroupId(groupId);
+		List<Board> boards = boardService.selectAllByGroupId(groupId);
 		if (boards != null) {
 			return new ResponseEntity<List<Board>>(boards, HttpStatus.OK);
 		}
@@ -57,7 +54,7 @@ public class BoardController {
 			@PathVariable("boardId") int boardId,
 			@RequestHeader("userId") String userId
 	) {
-		Board board = bs.selectById(boardId);
+		Board board = boardService.selectById(boardId);
 		if (board != null) {
 			return new ResponseEntity<Board>(board, HttpStatus.OK);}
 		return new ResponseEntity<Board>(HttpStatus.NOT_FOUND);
@@ -74,7 +71,7 @@ public class BoardController {
 		// userId를 Board 객체에 설정
 		board.setGroupId(groupId);
 		board.setWriterSeq(findWriterSeq(userId));
-		if (bs.insert(board)!=null) {
+		if (boardService.insert(board)!=null) {
 			return new ResponseEntity<Board>(board, HttpStatus.CREATED);}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -92,7 +89,7 @@ public class BoardController {
 			System.out.println("유저랑 작성자랑 다름");
 			return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
 		}
-		if (bs.update(board) != null) {
+		if (boardService.update(board) != null) {
 			System.out.println("find성공");
 			return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
 		}
@@ -106,9 +103,9 @@ public class BoardController {
 			@PathVariable("boardId") int boardId,
 			@RequestHeader("userId") String userId
 	) {
-		if (findWriterSeq(userId) != bs.selectById(boardId).getWriterSeq()) {
+		if (findWriterSeq(userId) != boardService.selectById(boardId).getWriterSeq()) {
 			return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);}
-		if (bs.delete(boardId))
+		if (boardService.delete(boardId))
 			return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
 		return new ResponseEntity<String>(FAIL, HttpStatus.NOT_FOUND);
 	}
@@ -119,7 +116,7 @@ public class BoardController {
 			@RequestParam String con,
 			@RequestHeader("userId") String userId
 	) {
-		List<Board> boards = bs.search(con); // 검색 조회
+		List<Board> boards = boardService.search(con); // 검색 조회
 		if (boards == null || boards.size() == 0)
 			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		return new ResponseEntity<List<Board>>(boards, HttpStatus.OK);
@@ -132,7 +129,7 @@ public class BoardController {
 			@RequestBody Reply reply,
 			@RequestHeader("userId") String userId
 	) {
-		if (bs.insertReply(reply))
+		if (boardService.insertReply(reply))
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -145,9 +142,9 @@ public class BoardController {
 			@PathVariable("replyId") int replyId,
 			@RequestHeader("userId") String userId
 	) {
-		if (findWriterSeq(userId) != bs.selectReplyById(replyId).getWriterSeq())
+		if (findWriterSeq(userId) != boardService.selectReplyById(replyId).getWriterSeq())
 			return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
-		if (bs.deleteReply(boardId, replyId))
+		if (boardService.deleteReply(boardId, replyId))
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
