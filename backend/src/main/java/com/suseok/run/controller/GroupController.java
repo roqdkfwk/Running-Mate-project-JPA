@@ -2,6 +2,7 @@ package com.suseok.run.controller;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,14 +32,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/group")
 @Tag(name = "GroupRestController", description = "그룹CRUD")
+@RequiredArgsConstructor
 public class GroupController {
 
 	// TODO Controller와 Service 로직 분리
-	private final GroupService gs;
-
-	public GroupController(GroupService gs) {
-		this.gs = gs;
-	}
+	private final GroupService groupService;
 
 	@AuthRequired
 	@PostMapping
@@ -47,7 +45,7 @@ public class GroupController {
 			@RequestBody Group group,
 			@RequestHeader("userId") String userId
 	) {
-		if (gs.insert(group,userId))
+		if (groupService.insert(group,userId))
 			return new ResponseEntity<>(group, HttpStatus.CREATED);
 		else
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -58,13 +56,13 @@ public class GroupController {
 	public ResponseEntity<Group> selectGroupById(
 			@PathVariable("groupId") int groupId
 	) {
-		return new ResponseEntity<>(gs.selectById(groupId),HttpStatus.OK);
+		return new ResponseEntity<>(groupService.selectById(groupId),HttpStatus.OK);
 	}
 	
 	@GetMapping
 	@Operation(summary = "groupList")
 	public ResponseEntity<List<Group>> groupList() {
-		return new ResponseEntity<List<Group>>(gs.selectAll(),HttpStatus.OK);
+		return new ResponseEntity<List<Group>>(groupService.selectAll(),HttpStatus.OK);
 	}
 
 //	@AuthRequired
@@ -74,7 +72,7 @@ public class GroupController {
 			@PathVariable("groupId") int groupId,
 			@RequestHeader("userId") String userId
 	) {
-		gs.join(groupId, userId);
+		groupService.join(groupId, userId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -85,7 +83,7 @@ public class GroupController {
 			@PathVariable("groupId") int groupId,
 			@RequestHeader("userId") String userId
 	) {
-		gs.exit(groupId, userId);
+		groupService.exit(groupId, userId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -98,7 +96,7 @@ public class GroupController {
 			@RequestHeader("userId") String userId
 	) {
 		group.setGroupId(groupId);
-		if (gs.update(group,userId))
+		if (groupService.update(group,userId))
 			return new ResponseEntity<Group>(group, HttpStatus.ACCEPTED);
 		else
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -113,7 +111,7 @@ public class GroupController {
 			@PathVariable("memberId") int memberId,
 			@RequestHeader("userId") String userId
 	) {
-		if (gs.kickOut(groupId, userId, memberId))
+		if (groupService.kickOut(groupId, userId, memberId))
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -123,7 +121,7 @@ public class GroupController {
 	public ResponseEntity<List<Group>> searchGroup(
 			@RequestParam String con
 	) {
-		List<Group> groups = gs.search(con);
+		List<Group> groups = groupService.search(con);
 		if (groups != null)
 			return new ResponseEntity<List<Group>>(groups, HttpStatus.OK);
 		else
