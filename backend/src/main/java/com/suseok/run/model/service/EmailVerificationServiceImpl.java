@@ -4,6 +4,8 @@ import com.suseok.run.common.ConflictException;
 import com.suseok.run.model.dao.EmailVerificationDao;
 import com.suseok.run.model.dto.EmailVerification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -23,6 +26,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     private final JavaMailSender javaMailSender;
     private final String VERIFICATION_CODE = "인증번호";
     private final UserService userService;
+    private final RedisTemplate redisTemplate;
 
     /**
      * 이메일 중복 체크
@@ -44,19 +48,13 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
      * 이메일 인증번호 전송
      */
     private void sendVerificationCode(String email) {
-        // 1. 기존에 저장된 인증번호가 있는 경우 삭제
-        EmailVerification emailVerification = emailVerificationDao.selectByEmail(email);
-        if (emailVerification != null) {
-            emailVerificationDao.deleteByEmail(email);
-        }
+        // 1. Redis에 인증 번호가 있는 경우 삭제
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        redisTemplate.delete(email);
 
-        // 2. 새로운 인증번호 생성 및 저장
+        // 2. 새로운 인증번호 새성 및 Redis에 저장
         String newVerificationCode = generateVerificationCode();
-        emailVerification = new EmailVerification();
-        emailVerification.setEmail(email);
-        emailVerification.setVerificationCode(newVerificationCode);
-        emailVerification.setExpiresAt(LocalDateTime.now().plusMinutes(3));
-        emailVerificationDao.insertEmailVerification(emailVerification);
+        valueOps.set(email, newVerificationCode, Duration.ofMinutes(3));
 
         // 3. 이메일 전송
         sendEmail(email, newVerificationCode);
@@ -68,24 +66,21 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     public String verifyCode(String email, String code) {
         validateEmailFormat(email);
 
-        // 1. 데이터베이스에서 이메일로 인증번호 조회
-        EmailVerification emailVerification = emailVerificationDao.selectByEmail(email);
-        if (emailVerification == null) {
+        // 1. Redis에서 인증번호 조회
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        String storedCode = valueOps.get(email);
+
+        if (storedCode == null) {
             throw new IllegalArgumentException("해당 이메일에 대한 인증 요청이 없습니다.");
         }
 
-        // 2. 인증번호 유효성 확인
-        if (emailVerification.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException(VERIFICATION_CODE + "가 만료되었습니다.");
-        }
-
-        // 3. 인증번호
-        if (!emailVerification.getVerificationCode().equals(code)) {
+        // 2. 인증번호 일치 여부 확인
+        if (!storedCode.equals(code)) {
             throw new IllegalArgumentException(VERIFICATION_CODE + "가 일치하지 않습니다.");
         }
 
-        // 4. 인증 완료 후 인증번호 삭제
-        emailVerificationDao.deleteByEmail(email);
+        // 3. 인증 완료 시 Redis에서 삭제
+        redisTemplate.delete(email);
         return "이메일 인증이 완료되었습니다.";
     }
 
