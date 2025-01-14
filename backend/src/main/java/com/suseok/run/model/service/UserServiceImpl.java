@@ -3,63 +3,65 @@ package com.suseok.run.model.service;
 import java.util.List;
 import java.util.Random;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.suseok.run.model.dao.UserDao;
 import com.suseok.run.model.dto.User;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	UserDao ud;
+	private final UserDao userDao;
+	private final RedisTemplate<String, String> redisTemplate;
 
 	@Override
 	public User loginUser(User user) {
-		return ud.loginUser(user);
+		return userDao.loginUser(user);
 	}
 
 	@Override
-	public boolean insert(User user) {
-		return ud.insert(user);
+	public boolean signup(User user) {
+		return userDao.signup(user);
 	}
 
 	@Override
 	public User selectById(String userId) {
-		return ud.selectById(userId);
+		return userDao.selectById(userId);
 	}
 
 	@Override
 	public boolean update(User user) {
-		return ud.update(user);
+		return userDao.update(user);
 	}
 
 	@Override
 	public boolean addRival(String userId, String rivalId) {
-		int userSeq = ud.selectById(userId).getUserSeq();
-		int rivalSeq = ud.selectById(rivalId).getUserSeq();
-		return ud.addRival(userSeq, rivalSeq);
+		int userSeq = userDao.selectById(userId).getUserSeq();
+		int rivalSeq = userDao.selectById(rivalId).getUserSeq();
+		return userDao.addRival(userSeq, rivalSeq);
 	}
 
 	@Override
 	public List<User> search(String con) {
-		return ud.search(con);
+		return userDao.search(con);
 	}
 
 	@Override
 	public boolean delete(String userId) {
-		return ud.delete(userId);
+		return userDao.delete(userId);
 	}
 
 	@Override
 	public User findId(String name, String phoneOrEmail) {
-		return ud.findId(name, phoneOrEmail);
+		return userDao.findId(name, phoneOrEmail);
 	}
 
 	@Override
 	public User findPwd(String name, String phoneOrEmail, String id) {
-		return ud.findPwd(name, phoneOrEmail, id);
+		return userDao.findPwd(name, phoneOrEmail, id);
 	}
 
 	@Override
@@ -85,16 +87,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User selectByNick(String userNick) {
-		return ud.selectByNick(userNick);
+		return userDao.selectByNick(userNick);
 	}
 
 	@Override
 	public List<User> selectAll() {
-		return ud.selectAll();
+		return userDao.selectAll();
 	}
 
 	@Override
 	public Integer findByEmail(String email) {
-        return ud.findByEmail(email);
+        return userDao.findByEmail(email);
     }
 }

@@ -6,7 +6,7 @@ import com.suseok.run.model.dto.User;
 
 public interface UserDao {
 	// CRUD : insert, selectAll, update, delete
-	boolean insert(User user);
+	boolean signup(User user);
 
 	List<User> selectAll();
 

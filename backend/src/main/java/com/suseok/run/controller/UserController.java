@@ -39,7 +39,7 @@ public class UserController {
 	public ResponseEntity<?> signup(
 			@RequestBody User user
 	) {
-		if (userService.insert(user))
+		if (userService.signup(user))
 			return new ResponseEntity<User>(user,HttpStatus.CREATED);
 		else
 			return new ResponseEntity<String>(FAIL ,HttpStatus.BAD_REQUEST);
