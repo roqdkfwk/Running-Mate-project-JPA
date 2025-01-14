@@ -22,10 +22,7 @@ public class EmailVerificationController {
     @Operation(summary = "이메일 인증번호 전송", description = "사용자의 이메일 주소를 입력받아 인증번호를 전송합니다.")
     @PostMapping
     public ResponseEntity<String> sendVerificationCode(
-            @Parameter(
-                    description = "이메일 주소를 입력하세요",
-                    required = true
-            )
+            @Parameter(description = "이메일 주소를 입력하세요", required = true)
             @RequestParam String email
     ) {
         return ResponseEntity.ok(emailVerificationService.checkEmailDuplication(email));
@@ -36,7 +33,9 @@ public class EmailVerificationController {
      */
     @Operation(summary = "이메일 인증번호 검증", description = "입력한 인증번호를 검증합니다.")
     @PostMapping("/verify")
-    public ResponseEntity<String> verifyCode(@RequestBody VerifyReq verifyReq) {
+    public ResponseEntity<String> verifyCode(
+            @RequestBody VerifyReq verifyReq
+    ) {
         return ResponseEntity.ok(emailVerificationService.verifyCode(verifyReq.getEmail(), verifyReq.getCode()));
     }
 
@@ -45,7 +44,9 @@ public class EmailVerificationController {
      */
     @Operation(summary = "이메일 인증번호 재전송", description = "인증번호를 재전송합니다.")
     @PostMapping("/resend")
-    public ResponseEntity<String> resendVerificationCode(@RequestParam String email) {
+    public ResponseEntity<String> resendVerificationCode(
+            @RequestParam String email
+    ) {
         return ResponseEntity.ok(emailVerificationService.resendVerificationCode(email));
     }
 }

@@ -3,6 +3,7 @@ package com.suseok.run.controller;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,13 +25,10 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping({ "", "/" })
 @Tag(name = "AuthRestController", description = "Authentication")
+@RequiredArgsConstructor
 public class AuthController {
 
 	private final AuthService authService;
-
-	public AuthController(AuthService authService) {
-		this.authService = authService;
-	}
 
 	@GetMapping
 	public ResponseEntity<?> home() {

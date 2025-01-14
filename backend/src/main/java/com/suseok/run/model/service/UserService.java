@@ -10,7 +10,7 @@ public interface UserService {
 
 	List<User> search(String con);
 
-	boolean insert(User user);
+	boolean signup(User user);
 
 	User selectById(String userId);
 	

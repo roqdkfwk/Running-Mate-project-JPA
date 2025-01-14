@@ -26,7 +26,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     private final JavaMailSender javaMailSender;
     private final String VERIFICATION_CODE = "인증번호";
     private final UserService userService;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     /**
      * 이메일 중복 체크
@@ -79,8 +79,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
             throw new IllegalArgumentException(VERIFICATION_CODE + "가 일치하지 않습니다.");
         }
 
-        // 3. 인증 완료 시 Redis에서 삭제
-        redisTemplate.delete(email);
         return "이메일 인증이 완료되었습니다.";
     }
 
