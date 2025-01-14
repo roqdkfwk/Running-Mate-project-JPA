@@ -1,5 +1,6 @@
 package com.suseok.run.model.service;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 
@@ -24,7 +25,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean signup(User user) {
-		return userDao.signup(user);
+		if (!userDao.signup(user)) {
+			throw new IllegalStateException("회원가입 중 예상치 못한 오류가 발생했습니다.");
+		}
+
+		redisTemplate.delete(user.getEmail());
+		return true;
 	}
 
 	@Override
