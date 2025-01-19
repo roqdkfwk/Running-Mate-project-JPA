@@ -24,6 +24,4 @@ public interface GroupService {
 	boolean update(Group group, String userId);
 
 	boolean kickOut(int groupId, String userId, int memberId);
-
-
 }
