@@ -24,5 +24,4 @@ public interface BoardService {
 	boolean deleteReply(int boardId, int replyId);
 
 	boolean insertReply(Reply reply);
-
 }

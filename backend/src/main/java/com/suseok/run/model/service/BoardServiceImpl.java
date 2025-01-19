@@ -1,10 +1,8 @@
 package com.suseok.run.model.service;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.suseok.run.model.dao.BoardDao;
@@ -13,22 +11,21 @@ import com.suseok.run.model.dto.Board;
 import com.suseok.run.model.dto.Reply;
 
 @Service
+@RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
 
 	// TODO BoardReposity
-	@Autowired
-	BoardDao bd;
+	private final BoardDao boardDao;
 	
-	@Autowired
-	UserDao ud;
+	private final UserDao userDao;
 	
 	@Override
 	public List<Board> selectAllByGroupId(int groupId) {
 		
-		 List<Board> boards = bd.selectAllByGroupId(groupId);
+		 List<Board> boards = boardDao.selectAllByGroupId(groupId);
 		 
 		 for(int i=0; i<boards.size(); i++) {
-			String writerNick = ud.selectBySeq(boards.get(i).getWriterSeq()).getUserNick();
+			String writerNick = userDao.selectBySeq(boards.get(i).getWriterSeq()).getUserNick();
 			boards.get(i).setWriterNick(writerNick);
 		 }
 		return boards;
@@ -36,53 +33,49 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public Board selectById(int boardId) {
-		Board board = bd.selectById(boardId);
-		String writerNick = ud.selectBySeq(board.getWriterSeq()).getUserNick();
+		Board board = boardDao.selectById(boardId);
+		String writerNick = userDao.selectBySeq(board.getWriterSeq()).getUserNick();
 		board.setWriterNick(writerNick);
 		return board;
 	}
 	
 	@Override
 	public List<Board> search(String con) {
-		return bd.search(con);
+		return boardDao.search(con);
 	}
 
 	@Override
 	public boolean delete(int boardId) {
-		return bd.delete(boardId);
+		return boardDao.delete(boardId);
 	}
 
 	@Override
 	public Board update(Board board) {
-		bd.update(board);
+		boardDao.update(board);
 		
-		String writerNick = ud.selectBySeq(board.getWriterSeq()).getUserNick();
+		String writerNick = userDao.selectBySeq(board.getWriterSeq()).getUserNick();
 		board.setWriterNick(writerNick);
 		return board;
 	}
 
 	@Override
 	public Board insert(Board board) {
-		bd.insert(board);
+		boardDao.insert(board);
 		return board;
 	}
 
 	@Override
 	public boolean deleteReply(int boardId, int replyId) {
-		return bd.deleteReply(boardId,replyId);
+		return boardDao.deleteReply(boardId,replyId);
 	}
 
 	@Override
 	public boolean insertReply(Reply reply) {
-		return bd.insertReply(reply);
+		return boardDao.insertReply(reply);
 	}
 
 	@Override
 	public Reply selectReplyById(int replyId) {
-		return bd.selectReplyById(replyId);
+		return boardDao.selectReplyById(replyId);
 	}
-
-	
-
-
 }
