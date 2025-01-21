@@ -22,7 +22,6 @@ export const useUserStore = defineStore('user', () => {
         }
       })
       .catch((error) => {
-        console.log(error)
       })
   }
 
@@ -31,7 +30,6 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const myPage = function () {
-    console.log("마이페이지는 불렸다")
     return axios.get(`${REST_API}/myPage`, {
       headers: {
         Authorization: `${sessionStorage.getItem('accessToken')}`,
@@ -39,12 +37,9 @@ export const useUserStore = defineStore('user', () => {
       }
     })
     .then((response) => {
-      console.log(response)
       user.value = response.data
     })
     .catch((error) =>{
-      console.log("에러발생")
-      console.log(error)
     })
   }
 
@@ -53,8 +48,6 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const addRival = function (userId, rivalId) {
-    console.log(userId, rivalId)
-    console.log(sessionStorage.getItem('accessToken'))
     if (!sessionStorage.getItem('accessToken')) {
       router.push({ name: 'loginView' }) // 로그인 페이지로 이동
       return
@@ -67,16 +60,13 @@ export const useUserStore = defineStore('user', () => {
     })
       .then((response) => {
         if (response.status === 200) {
-          console.log(response.status)
           alert('라이벌로 등록되었습니다.')
         }
       })
       .catch((error) => {
-        console.log(error);
         alert('이미 라이벌로 등록된 유저 입니다.')
       })
   }
-
 
   // url 수정
   const getAllUsers = function () {
@@ -85,13 +75,10 @@ export const useUserStore = defineStore('user', () => {
     })
       .then((response) => {
         users.value = response.data
-        console.log(users.value)
-        console.log("유저 데이터는 왔음")
       })
       .catch((error) => {
-        console.log(error);
-      });
-  };
+      })
+  }
 
   return {
     user, router, signup, checkId, checkNick, myPage, addRival, getAllUsers, users,
@@ -100,5 +87,4 @@ export const useUserStore = defineStore('user', () => {
 },
 {
   persist: true
-}
-)
+})

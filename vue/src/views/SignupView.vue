@@ -135,6 +135,9 @@ const checkNick = function () {
     })
 }
 
+/**
+ * 회원가입 요청
+ */
 const submitForm = function () {
   // 아이디 중복확인 메시지 출력
   if (!idChecked.value) {
@@ -149,8 +152,6 @@ const submitForm = function () {
   }
 
   if (isPasswordMatch.value) {
-    console.log('Form submitted:', form.value)
-
     const newUser = {
       userId: form.value.userId,
       userPwd: form.value.password,
