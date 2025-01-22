@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
-const REST_API = `http://localhost:8080/user`;
+const REST_API = `http://localhost:8080/users`;
 const REST_RANK_API = `http://localhost:8080/rank`
 
 export const useUserStore = defineStore('user', () => {
@@ -26,7 +26,15 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const checkId = function (userId) {
-    return axios.get(`${REST_API}/signup/ci/${userId}`)
+    return axios.get(`${REST_API}/check-id/${userId}`)
+        .then((response) => {
+          alert("사용 가능한 아이디입니다.")
+          return true
+        })
+        .catch((error) => {
+          alert("이미 사용 중인 아이디입니다.")
+          return false
+        })
   }
 
   const myPage = function () {
