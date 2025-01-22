@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 
+import com.suseok.run.common.ConflictException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,14 @@ public class UserServiceImpl implements UserService {
 		}
 
 		redisTemplate.delete(user.getEmail());
+		return true;
+	}
+
+	@Override
+	public boolean checkId(String userId) {
+		if (userDao.selectById(userId) != null) {
+			throw new ConflictException("이미 사용 중인 아이디입니다.");
+		}
 		return true;
 	}
 

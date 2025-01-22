@@ -24,25 +24,20 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @Tag(name = "UserRestController", description = "유저CRUD")
 @RequiredArgsConstructor
 public class UserController {
 
 	// TODO Controller와 Service 로직 분리
 	private final UserService userService;
-	private final String SUCCESS ="SUCCESS";
-	private final String FAIL ="FAIL";
-	
+
 	@PostMapping("/signup")
 	@Operation(summary = "signup")
-	public ResponseEntity<?> signup(
+	public ResponseEntity<Boolean> signup(
 			@RequestBody User user
 	) {
-		if (userService.signup(user))
-			return new ResponseEntity<User>(user,HttpStatus.CREATED);
-		else
-			return new ResponseEntity<String>(FAIL ,HttpStatus.BAD_REQUEST);
+		return ResponseEntity.status(HttpStatus.CREATED).body(userService.signup(user));
 	}
 	
 	@GetMapping
@@ -51,15 +46,12 @@ public class UserController {
 		return new ResponseEntity<List<User>>(userService.selectAll(),HttpStatus.OK);
 	}
 
-	@GetMapping("/signup/ci/{checkId}")
-	@Operation(summary = "checkId")
-	public ResponseEntity<?> checkId(
-			@PathVariable String checkId
+	@GetMapping("/check-id/{userId}")
+	@Operation(summary = "아이디 중복확인")
+	public ResponseEntity<Boolean> checkId(
+			@PathVariable String userId
 	) {
-		if (userService.selectById(checkId) != null) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
-		else
-			return new ResponseEntity<>(HttpStatus.OK);
+		return ResponseEntity.status(HttpStatus.OK).body(userService.checkId(userId));
 	}
 	
 	@GetMapping("/signup/cn/{checkNick}")

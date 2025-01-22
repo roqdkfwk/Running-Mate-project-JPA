@@ -106,16 +106,8 @@ const checkId = function () {
     return; // 서버 요청 중단
   }
 
-  // 유효한 경우에만 서버로 요청 전송
-  store.checkId(form.value.userId)
-    .then((response) => {
-      alert("사용 가능한 아이디입니다.")
-      idChecked.value = true
-    })
-    .catch((error) => {
-      alert("이미 사용 중인 아이디입니다.")
-      idChecked.value = false
-    })
+  // 아이디 중복확인 결과
+  idChecked.value = store.checkId(form.value.userId)
 }
 
 const passwordWarning = computed(() => {
