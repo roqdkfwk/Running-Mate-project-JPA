@@ -12,6 +12,8 @@ public interface UserService {
 
 	boolean signup(User user);
 
+	boolean checkId(String userId);
+
 	User selectById(String userId);
 	
 	User selectByNick(String userNick);
