@@ -1,5 +1,6 @@
 package com.suseok.run.model.service;
 
+import com.suseok.run.common.BadRequestException;
 import com.suseok.run.common.ConflictException;
 import com.suseok.run.model.dao.EmailVerificationDao;
 import com.suseok.run.model.dto.EmailVerification;
@@ -40,7 +41,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
         // 인증 번호를 전송하는 과정을 비동기로 수행
         CompletableFuture.runAsync(() -> sendVerificationCode(email));
-
         return VERIFICATION_CODE + "가 전송되었습니다.";
     }
 
@@ -76,7 +76,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
         // 2. 인증번호 일치 여부 확인
         if (!storedCode.equals(code)) {
-            throw new IllegalArgumentException(VERIFICATION_CODE + "가 일치하지 않습니다.");
+            throw new BadRequestException(VERIFICATION_CODE + "가 일치하지 않습니다.");
         }
 
         return "이메일 인증이 완료되었습니다.";
