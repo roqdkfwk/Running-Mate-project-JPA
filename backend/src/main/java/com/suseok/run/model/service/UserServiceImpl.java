@@ -1,16 +1,17 @@
 package com.suseok.run.model.service;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Random;
-
 import com.suseok.run.common.ConflictException;
+import com.suseok.run.common.NotFoundException;
+import com.suseok.run.model.dao.UserDao;
+import com.suseok.run.model.dto.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.suseok.run.model.dao.UserDao;
-import com.suseok.run.model.dto.User;
+import java.time.Duration;
+import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -24,22 +25,25 @@ public class UserServiceImpl implements UserService {
 		return userDao.loginUser(user);
 	}
 
+	@Transactional
 	@Override
-	public boolean signup(User user) {
+	public void signup(User user) {
 		if (!userDao.signup(user)) {
 			throw new IllegalStateException("회원가입 중 예상치 못한 오류가 발생했습니다.");
 		}
 
+		redisTemplate.delete(user.getUserId());
+		redisTemplate.delete(user.getUserNick());
 		redisTemplate.delete(user.getEmail());
-		return true;
 	}
 
 	@Override
-	public boolean checkId(String userId) {
-		if (userDao.selectById(userId) != null) {
+	public void checkId(String userId) {
+		if (redisTemplate.hasKey(userId) || userDao.selectById(userId) != null) {
 			throw new ConflictException("이미 사용 중인 아이디입니다.");
 		}
-		return true;
+
+		redisTemplate.opsForValue().set(userId, "true", Duration.ofMinutes(10));
 	}
 
 	@Override
@@ -70,8 +74,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User findId(String name, String phoneOrEmail) {
-		return userDao.findId(name, phoneOrEmail);
+	public String findId(String name, String phoneOrEmail) {
+		String userId = userDao.findId(name, phoneOrEmail);
+		if (userId == null) {
+			throw new NotFoundException("찾을 수 없는 회원입니다.");
+		}
+		return userId;
 	}
 
 	@Override
@@ -102,6 +110,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User selectByNick(String userNick) {
+		if (redisTemplate.hasKey(userNick) || userDao.selectByNick(userNick) != null) {
+			throw new ConflictException("이미 사용 중인 닉네임입니다.");
+		}
+
+		redisTemplate.opsForValue().set(userNick, "true", Duration.ofMinutes(10));
 		return userDao.selectByNick(userNick);
 	}
 

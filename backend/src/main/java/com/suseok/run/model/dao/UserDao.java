@@ -1,8 +1,8 @@
 package com.suseok.run.model.dao;
 
-import java.util.List;
-
 import com.suseok.run.model.dto.User;
+
+import java.util.List;
 
 public interface UserDao {
 	// CRUD : insert, selectAll, update, delete
@@ -24,7 +24,7 @@ public interface UserDao {
 
 	boolean addRival(int userSeq, int rivalSeq); 
 
-	User findId(String name, String phoneOrEmail);
+	String findId(String name, String phoneOrEmail);
 
 	User findPwd(String name, String phoneOrEmail, String id);
 
