@@ -69,8 +69,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean delete(String userId) {
-		return userDao.delete(userId);
+	public void delete(String userId) {
+		if (!userDao.delete(userId)) {
+			throw new IllegalStateException("회원탈퇴 중 예기치 못한 오류가 발생했습니다.");
+		}
 	}
 
 	@Override

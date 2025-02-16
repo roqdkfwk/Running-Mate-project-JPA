@@ -88,9 +88,8 @@ public class UserController {
 	public ResponseEntity<?> withdraw(
 			@RequestHeader("userId") String userId
 	) {
-		if(userService.delete(userId))
-			return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
-		return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+		userService.delete(userId);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
 	@AuthRequired 
