@@ -1,81 +1,101 @@
 package com.suseok.run.model.service;
 
-import java.util.List;
-
+import com.suseok.run.common.NotFoundException;
+import com.suseok.run.model.dto.Board;
+import com.suseok.run.model.dto.Group;
+import com.suseok.run.model.dto.Request.CreateBoardReq;
+import com.suseok.run.model.dto.Request.UpdateBoardReq;
+import com.suseok.run.model.dto.Response.UpdateBoardRes;
+import com.suseok.run.model.dto.User;
+import com.suseok.run.model.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import com.suseok.run.model.dao.BoardDao;
-import com.suseok.run.model.dao.UserDao;
-import com.suseok.run.model.dto.Board;
-import com.suseok.run.model.dto.Reply;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
 
-	// TODO BoardReposity
-	private final BoardDao boardDao;
-	
-	private final UserDao userDao;
-	
+	private final BoardRepository boardRepository;
+
+	/**
+	 * 게시글 작성
+	 * @return
+	 */
 	@Override
-	public List<Board> selectAllByGroupId(int groupId) {
-		
-		 List<Board> boards = boardDao.selectAllByGroupId(groupId);
-		 
-		 for(int i=0; i<boards.size(); i++) {
-			String writerNick = userDao.selectBySeq(boards.get(i).getWriterSeq()).getUserNick();
-			boards.get(i).setWriterNick(writerNick);
-		 }
-		return boards;
+	public Long createBoard(
+			Long userSeq,
+			Long groupId,
+			CreateBoardReq createBoardReq) {
+		// 1. 게시글 작성자
+
+		// 2. 게시글을 작성할 게시판(그룹)
+
+		// 3. 게시글 생성 및 저장
+		Board board = createBoardReq.toEntity(new User(), new Group());
+		boardRepository.save(board);
+		return board.getBoardId();
 	}
 
+	/**
+	 * 게시글 수정
+	 */
 	@Override
-	public Board selectById(int boardId) {
-		Board board = boardDao.selectById(boardId);
-		String writerNick = userDao.selectBySeq(board.getWriterSeq()).getUserNick();
-		board.setWriterNick(writerNick);
-		return board;
-	}
-	
-	@Override
-	public List<Board> search(String con) {
-		return boardDao.search(con);
+	public void updateBoard(
+			Long boardId,
+			UpdateBoardReq updateBoardReq
+	) {
+		Board board = boardRepository.findById(boardId).orElseThrow(
+				() -> new NotFoundException("존재하지 않는 게시글입니다.")
+		);
+
+		updateBoardReq.toEntity(board, updateBoardReq);
+		boardRepository.save(board);
 	}
 
+	/**
+	 * 게시글 삭제
+	 * @param boardId
+	 * @param userSeq
+	 */
 	@Override
-	public boolean delete(int boardId) {
-		return boardDao.delete(boardId);
+	public void deleteBoard(Long boardId, Long userSeq) {
+
 	}
 
+	/**
+	 * 게시판 내 게시글 목록 조회
+	 * @param groupId
+	 * @return
+	 */
 	@Override
-	public Board update(Board board) {
-		boardDao.update(board);
-		
-		String writerNick = userDao.selectBySeq(board.getWriterSeq()).getUserNick();
-		board.setWriterNick(writerNick);
-		return board;
+	public List<Board> getBoardsByGroup(Long groupId) {
+		return List.of();
 	}
 
+	/**
+	 * 게시글 상세 조회
+	 * @param boardId
+	 * @return
+	 */
 	@Override
-	public Board insert(Board board) {
-		boardDao.insert(board);
-		return board;
+	public Board getBoard(Long boardId) {
+		return boardRepository.findById(boardId).orElseThrow(
+				() -> new NotFoundException("존재하지 않는 게시글입니다.")
+		);
 	}
 
+	/**
+	 * 게시글 검색
+	 * @param con
+	 * @return
+	 */
 	@Override
-	public boolean deleteReply(int boardId, int replyId) {
-		return boardDao.deleteReply(boardId,replyId);
+	public List<Board> searchBoards(String con) {
+
+		return new ArrayList<>();
 	}
 
-	@Override
-	public boolean insertReply(Reply reply) {
-		return boardDao.insertReply(reply);
-	}
-
-	@Override
-	public Reply selectReplyById(int replyId) {
-		return boardDao.selectReplyById(replyId);
-	}
 }

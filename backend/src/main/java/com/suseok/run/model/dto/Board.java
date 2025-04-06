@@ -1,9 +1,7 @@
 package com.suseok.run.model.dto;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,7 +9,9 @@ import java.util.List;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Board {
 
@@ -31,7 +31,8 @@ public class Board {
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
 
-	private boolean notice;
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_seq")
@@ -42,9 +43,6 @@ public class Board {
 	private Group group;
 
 	@OneToMany(mappedBy = "board")
+	@Column(name = "reply_list", nullable = false)
 	private List<Reply> replyList = new ArrayList<>();
-
-	public boolean isNotice() {
-		return notice;
-	}
 }

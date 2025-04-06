@@ -1,27 +1,22 @@
 package com.suseok.run.model.service;
 
-import java.util.List;
-
 import com.suseok.run.model.dto.Board;
-import com.suseok.run.model.dto.Reply;
+import com.suseok.run.model.dto.Request.CreateBoardReq;
+import com.suseok.run.model.dto.Request.UpdateBoardReq;
+
+import java.util.List;
 
 public interface BoardService {
 
-	List<Board> search(String con);
+	Long createBoard(Long userSeq, Long groupId, CreateBoardReq createBoardReq);
 
-	Board selectById(int boardId);
+	void updateBoard(Long boardId, UpdateBoardReq updateBoardReq);
 
-	List<Board> selectAllByGroupId(int groupId);
+	void deleteBoard(Long boardId, Long userSeq);
 
-	boolean delete(int boardId);
+	Board getBoard(Long boardId);
 
-	Board update(Board board);
+	List<Board> getBoardsByGroup(Long groupId);
 
-	Board insert(Board board);
-	
-	Reply selectReplyById(int replyId);
-
-	boolean deleteReply(int boardId, int replyId);
-
-	boolean insertReply(Reply reply);
+	List<Board> searchBoards(String con);
 }
