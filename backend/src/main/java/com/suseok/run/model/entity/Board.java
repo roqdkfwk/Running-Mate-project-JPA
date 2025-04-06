@@ -1,4 +1,4 @@
-package com.suseok.run.model.dto;
+package com.suseok.run.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,7 +42,6 @@ public class Board {
 	@JoinColumn(name = "group_id")
 	private Group group;
 
-	@OneToMany(mappedBy = "board")
-	@Column(name = "reply_list", nullable = false)
+	@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Reply> replyList = new ArrayList<>();
 }

@@ -1,10 +1,13 @@
 package com.suseok.run.controller;
 
 import com.suseok.run.jwtutill.AuthRequired;
-import com.suseok.run.model.dto.Request.FindIdReq;
-import com.suseok.run.model.dto.User;
+import com.suseok.run.model.entity.Request.CreateUserReq;
+import com.suseok.run.model.entity.Request.FindIdReq;
+import com.suseok.run.model.entity.User;
 import com.suseok.run.model.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,46 +18,53 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-@Tag(name = "UserRestController", description = "유저CRUD")
+@Tag(name = "UserRestController", description = "유저 CRUD")
 @RequiredArgsConstructor
 public class UserController {
 
-	// TODO Controller와 Service 로직 분리
 	private final UserService userService;
 
 	@PostMapping("/signup")
 	@Operation(summary = "회원가입")
 	public ResponseEntity<Void> signup(
-			@RequestBody User user
+			@RequestBody CreateUserReq createUserReq
 	) {
-		userService.signup(user);
+		userService.signup(createUserReq);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@GetMapping("/users/{userId}/exists")
+	@GetMapping("/check-id")
 	@Operation(summary = "아이디 중복 확인")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "400", description = "잘못된 아이디 형식입니다."),
+			@ApiResponse(responseCode = "409", description = "이미 사용 중인 아이디입니다.")
+	})
 	public ResponseEntity<Void> checkId(
-			@PathVariable String userId
+			@RequestParam String userId
 	) {
 		userService.checkId(userId);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
+	@GetMapping("/check-nickname")
+	@Operation(summary = "닉네임 중복 확인")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "400", description = "잘못된 닉네임 형식입니다."),
+			@ApiResponse(responseCode = "409", description = "이미 사용 중인 닉네임입니다.")
+	})
+	public ResponseEntity<?> checkNick(
+			@RequestParam String nickname
+	) {
+		userService.selectByNick(nickname);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
 	@GetMapping
 	@Operation(summary = "selectAllUsers")
 	public ResponseEntity<List<User>> selectAllUsers() {
 		return new ResponseEntity<List<User>>(userService.selectAll(),HttpStatus.OK);
 	}
 
-	@GetMapping("/users/{nickname}/exists")
-	@Operation(summary = "닉네임 중복 확인")
-	public ResponseEntity<?> checkNick(
-			@PathVariable String nickname
-	) {
-		userService.selectByNick(nickname);
-		return ResponseEntity.status(HttpStatus.OK).build();
-	}
-	
 	@PostMapping("/findId")
     @Operation(summary = "아이디 찾기")
     public ResponseEntity<?> findId(
@@ -92,19 +102,7 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
-	@AuthRequired 
-	@GetMapping("/myPage")
-	@Operation(summary = "마이페이지", description = "유저 정보")
-	public ResponseEntity<User> myPage(
-			@RequestHeader("userId") String userId
-	) {
-		User user = userService.selectById(userId);
-		if (user != null)
-			return new ResponseEntity<User>(user, HttpStatus.OK);
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-	}
-
-	@AuthRequired 
+	@AuthRequired
 	@PutMapping
 	@Operation(summary = "updateMyPage")
 	public ResponseEntity<?> updateMyPage(
@@ -116,18 +114,6 @@ public class UserController {
 		if (userService.update(user))
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-	}
-
-	@AuthRequired 
-	@GetMapping("/add/{rivalId}")
-	@Operation(summary = "라이벌 추가")
-	public ResponseEntity<?> addRival(
-			@RequestHeader("userId") String userId,
-			@PathVariable("rivalId") String rivalId
-	) {
-		if (userService.addRival(userId, rivalId))
-			return new ResponseEntity<>(HttpStatus.OK);
-		return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 	}
 
 	@PostMapping("/search")

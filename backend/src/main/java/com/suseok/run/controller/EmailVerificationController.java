@@ -1,10 +1,9 @@
 package com.suseok.run.controller;
 
-import com.suseok.run.model.dto.Request.VerifyReq;
+import com.suseok.run.model.entity.Request.VerifyReq;
 import com.suseok.run.model.service.EmailVerificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

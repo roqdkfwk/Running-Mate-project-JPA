@@ -1,4 +1,4 @@
-package com.suseok.run.model.dto.Response;
+package com.suseok.run.model.entity.Response;
 
 import lombok.Builder;
 

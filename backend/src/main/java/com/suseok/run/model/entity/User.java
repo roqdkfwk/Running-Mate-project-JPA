@@ -1,10 +1,7 @@
-package com.suseok.run.model.dto;
+package com.suseok.run.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class User {
 
 	@Id
@@ -26,7 +24,7 @@ public class User {
 	private String userId;
 
 	@Column(name = "user_pwd", nullable = false)
-	private String userPwd;
+	private String userPw;
 
 	@Column(name = "user_name", nullable = false)
 	private String userName;
@@ -40,16 +38,13 @@ public class User {
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
 
-	@Column(name = "updated_at", nullable = false)
-	private LocalDateTime updatedAt;
-
 	private String address;
 	private String img;
 	private String phone;
 	private boolean exposure;
 
-	@ManyToMany(mappedBy = "members")
-	private List<Group> groupList = new ArrayList<>();
+	@OneToMany(mappedBy = "user")
+	private List<UserGroup> userGroupList = new ArrayList<>();
 
 	@OneToOne(mappedBy = "groupAdmin")
 	private Group group;

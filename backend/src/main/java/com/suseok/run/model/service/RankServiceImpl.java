@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.suseok.run.model.dao.RankDao;
 import com.suseok.run.model.dao.UserDao;
-import com.suseok.run.model.dto.Group;
-import com.suseok.run.model.dto.UserRankRecord;
+import com.suseok.run.model.entity.Group;
+import com.suseok.run.model.entity.UserRankRecord;
 
 @Service
 @RequiredArgsConstructor
@@ -86,17 +86,5 @@ public class RankServiceImpl implements RankService {
 	public boolean updateRankRecord(UserRankRecord record, int userSeq) {
 
 		return rankDao.updateRankRecord(record);
-	}
-
-	@Override
-	public boolean insertRankRecord(UserRankRecord record, String userId) {
-		int us = userDao.selectById(userId).getUserSeq();
-		record.setUserSeq(us);
-		UserRankRecord urr = rankDao.selectByUserId(userId);
-		if (urr != null) {
-
-			return updateRankRecord(record, us);
-		}
-		return rankDao.insertRankRecord(record);
 	}
 }

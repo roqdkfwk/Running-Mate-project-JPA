@@ -1,7 +1,7 @@
 package com.suseok.run.controller;
 
-import com.suseok.run.model.dto.Request.CreateBoardReq;
-import com.suseok.run.model.dto.Request.UpdateBoardReq;
+import com.suseok.run.model.entity.Request.CreateBoardReq;
+import com.suseok.run.model.entity.Request.UpdateBoardReq;
 import com.suseok.run.model.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,7 +39,7 @@ public class BoardController {
 		return ResponseEntity.status(200).build();
 	}
 
-	@GetMapping("/{boardId")
+	@GetMapping("/{boardId}")
 	@Operation(summary = "게시글 상세보기")
 	public ResponseEntity<Void> getBoard(@PathVariable("boardId") Long boardId) {
 		return ResponseEntity.status(200).build();

@@ -3,7 +3,7 @@ package com.suseok.run.model.service;
 import com.suseok.run.common.BadRequestException;
 import com.suseok.run.common.ConflictException;
 import com.suseok.run.model.dao.EmailVerificationDao;
-import com.suseok.run.model.dto.EmailVerification;
+import com.suseok.run.model.entity.EmailVerification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;

@@ -1,8 +1,8 @@
 package com.suseok.run.model.service;
 
-import com.suseok.run.model.dto.Board;
-import com.suseok.run.model.dto.Request.CreateBoardReq;
-import com.suseok.run.model.dto.Request.UpdateBoardReq;
+import com.suseok.run.model.entity.Board;
+import com.suseok.run.model.entity.Request.CreateBoardReq;
+import com.suseok.run.model.entity.Request.UpdateBoardReq;
 
 import java.util.List;
 

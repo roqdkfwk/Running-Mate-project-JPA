@@ -2,8 +2,8 @@ package com.suseok.run.model.service;
 
 import java.util.List;
 
-import com.suseok.run.model.dto.Group;
-import com.suseok.run.model.dto.UserRankRecord;
+import com.suseok.run.model.entity.Group;
+import com.suseok.run.model.entity.UserRankRecord;
 
 public interface RankService {
 
@@ -33,9 +33,4 @@ public interface RankService {
 	UserRankRecord selectRival(String userId, String rivalId);
 
 	boolean updateRankRecord(UserRankRecord record, int userSeq);
-
-	boolean insertRankRecord(UserRankRecord record, String userId);
-
-
-	
 }

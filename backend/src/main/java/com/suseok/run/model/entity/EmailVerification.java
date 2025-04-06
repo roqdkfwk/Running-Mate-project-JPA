@@ -1,4 +1,4 @@
-package com.suseok.run.model.dto;
+package com.suseok.run.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;

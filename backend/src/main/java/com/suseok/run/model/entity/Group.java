@@ -1,4 +1,4 @@
-package com.suseok.run.model.dto;
+package com.suseok.run.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "`group`")
 public class Group {
 
 	@Id
@@ -26,6 +27,12 @@ public class Group {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "group_admin", unique = true)
 	private User groupAdmin;
+
+	@OneToMany(mappedBy = "group")
+	private List<UserGroup> userGroupList = new ArrayList<>();
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	private List<User> members = new ArrayList<>();
 
 	@OneToMany(mappedBy = "group")
 	private List<Board> boards = new ArrayList<>();

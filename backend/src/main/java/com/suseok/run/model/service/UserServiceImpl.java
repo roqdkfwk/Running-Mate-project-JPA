@@ -3,7 +3,9 @@ package com.suseok.run.model.service;
 import com.suseok.run.common.ConflictException;
 import com.suseok.run.common.NotFoundException;
 import com.suseok.run.model.dao.UserDao;
-import com.suseok.run.model.dto.User;
+import com.suseok.run.model.entity.Request.CreateUserReq;
+import com.suseok.run.model.entity.User;
+import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+	private final UserRepository userRepository;
 	private final UserDao userDao;
 	private final RedisTemplate<String, String> redisTemplate;
 
@@ -27,10 +30,11 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public void signup(User user) {
-		if (!userDao.signup(user)) {
-			throw new IllegalStateException("회원가입 중 예상치 못한 오류가 발생했습니다.");
-		}
+	public void signup(CreateUserReq createUserReq) {
+		// 1. 중복확인
+
+		User user = createUserReq.toEntity();
+		userRepository.save(user);
 
 		redisTemplate.delete(user.getUserId());
 		redisTemplate.delete(user.getUserNick());
@@ -39,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void checkId(String userId) {
-		if (redisTemplate.hasKey(userId) || userDao.selectById(userId) != null) {
+		if (redisTemplate.hasKey(userId) || userRepository.findByUserId(userId).isPresent()) {
 			throw new ConflictException("이미 사용 중인 아이디입니다.");
 		}
 
@@ -47,20 +51,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User selectById(String userId) {
-		return userDao.selectById(userId);
-	}
-
-	@Override
 	public boolean update(User user) {
 		return userDao.update(user);
-	}
-
-	@Override
-	public boolean addRival(String userId, String rivalId) {
-		int userSeq = userDao.selectById(userId).getUserSeq();
-		int rivalSeq = userDao.selectById(rivalId).getUserSeq();
-		return userDao.addRival(userSeq, rivalSeq);
 	}
 
 	@Override
@@ -104,7 +96,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		String randomString = sb.toString();
-		user.setUserPwd(randomString);
+		user.setUserPw(randomString);
 		update(user);
 		
 		return randomString;

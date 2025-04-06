@@ -1,12 +1,11 @@
 package com.suseok.run.model.service;
 
 import com.suseok.run.common.NotFoundException;
-import com.suseok.run.model.dto.Board;
-import com.suseok.run.model.dto.Group;
-import com.suseok.run.model.dto.Request.CreateBoardReq;
-import com.suseok.run.model.dto.Request.UpdateBoardReq;
-import com.suseok.run.model.dto.Response.UpdateBoardRes;
-import com.suseok.run.model.dto.User;
+import com.suseok.run.model.entity.Board;
+import com.suseok.run.model.entity.Group;
+import com.suseok.run.model.entity.Request.CreateBoardReq;
+import com.suseok.run.model.entity.Request.UpdateBoardReq;
+import com.suseok.run.model.entity.User;
 import com.suseok.run.model.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

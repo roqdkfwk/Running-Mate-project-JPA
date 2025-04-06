@@ -1,26 +1,17 @@
 package com.suseok.run.controller;
 
-import java.util.List;
-
+import com.suseok.run.jwtutill.AuthRequired;
+import com.suseok.run.model.entity.Group;
+import com.suseok.run.model.entity.UserRankRecord;
+import com.suseok.run.model.service.RankService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.suseok.run.jwtutill.AuthRequired;
-import com.suseok.run.model.dto.Group;
-import com.suseok.run.model.dto.UserRankRecord;
-import com.suseok.run.model.service.RankService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -30,16 +21,6 @@ public class RankController {
 
 	// TODO Controller와 Service 로직 분리
 	private final RankService rankService;
-
-	@PostMapping("/records")
-	@Operation(summary = "UserRankRecord갱신")
-	public ResponseEntity<?> saveRecords(
-			@RequestBody UserRankRecord record,
-			@RequestHeader("userId") String userId
-	) {
-		rankService.insertRankRecord(record, userId);
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
 
 	@AuthRequired
 	@GetMapping("/myRR")

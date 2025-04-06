@@ -1,8 +1,8 @@
-package com.suseok.run.model.dto.Request;
+package com.suseok.run.model.entity.Request;
 
-import com.suseok.run.model.dto.Board;
-import com.suseok.run.model.dto.Group;
-import com.suseok.run.model.dto.User;
+import com.suseok.run.model.entity.Board;
+import com.suseok.run.model.entity.Group;
+import com.suseok.run.model.entity.User;
 
 import java.time.LocalDateTime;
 

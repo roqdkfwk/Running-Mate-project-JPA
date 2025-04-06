@@ -2,8 +2,8 @@ package com.suseok.run.model.dao;
 
 import java.util.List;
 
-import com.suseok.run.model.dto.Board;
-import com.suseok.run.model.dto.Reply;
+import com.suseok.run.model.entity.Board;
+import com.suseok.run.model.entity.Reply;
 
 public interface BoardDao {
 	// CRUD : insert, selectAll, update, delete
