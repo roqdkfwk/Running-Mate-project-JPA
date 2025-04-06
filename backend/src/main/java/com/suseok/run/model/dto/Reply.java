@@ -1,25 +1,34 @@
 package com.suseok.run.model.dto;
 
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Entity
 public class Reply {
-	private int replyId;
-	private int boardId;
-	private int writerSeq;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "reply_id", nullable = false, unique = true)
+	private Long replyId;
+
+	@Column(nullable = false)
 	private String content;
-	private Timestamp createdAt;
 
-	// 기본 생성자, 모든 필드 갖는 생성자 삭제
-	
-	// getter, setter 삭제
+	@Column(name = "created_at", nullable = false)
+	private LocalDateTime createdAt;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "board_id")
+	private Board board;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_seq")
+	private User author;
 }

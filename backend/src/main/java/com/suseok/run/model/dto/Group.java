@@ -1,18 +1,35 @@
 package com.suseok.run.model.dto;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Group {
-	private int groupId;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long groupId;
+
+	@Column(name = "group_name", nullable = false, unique = true)
 	private String groupName;
-	private int groupAdmin;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "group_admin", unique = true)
+	private User groupAdmin;
+
+	@OneToMany(mappedBy = "group")
+	private List<Board> boards = new ArrayList<>();
+
 	private Double goalPace;
 	private Double goalFrequency;
 	private Double goalTotalDistance;
@@ -22,9 +39,4 @@ public class Group {
 	private Double pace;
 	private Double frequency;
 	private Double totalDistance;
-
-	// 기본 생성자, 모든 필드 갖는 생성자 삭제
-
-	// getter, setter 삭제
-
 }

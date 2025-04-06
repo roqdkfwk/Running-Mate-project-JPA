@@ -1,38 +1,48 @@
 package com.suseok.run.model.dto;
 
-import java.sql.Timestamp;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
+@RequiredArgsConstructor
+@Entity
 public class Board {
 
-	private int groupId;
-	private int id;
-	private int writerSeq;
-	private String writerNick;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "board_id", nullable = false, unique = true)
+	private Long boardId;
+
+	@Column(nullable = false)
 	private String title;
+
+	@Column(nullable = false)
 	private String content;
+
 	private String img;
-	private Timestamp createdAt;
+
+	@Column(name = "created_at", nullable = false)
+	private LocalDateTime createdAt;
+
 	private boolean notice;
 
-	public Board() {
-	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_seq")
+	private User author;
 
-	public Board(int groupId, int id, int writerSeq, String title, String content, String img, Timestamp createdAt,
-			boolean notice) {
-		this.groupId = groupId;
-		this.id = id;
-		this.writerSeq = writerSeq;
-		this.title = title;
-		this.content = content;
-		this.img = img;
-		this.createdAt = createdAt;
-		this.notice = notice;
-	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "group_id")
+	private Group group;
 
-	// getter, setter 삭제
+	@OneToMany(mappedBy = "board")
+	private List<Reply> replyList = new ArrayList<>();
 
 	public boolean isNotice() {
 		return notice;
