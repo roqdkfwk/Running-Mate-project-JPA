@@ -59,6 +59,16 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
+	@AuthRequired
+	@DeleteMapping
+	@Operation(summary = "회원탈퇴")
+	public ResponseEntity<?> withdraw(
+			@RequestBody String userId
+	) {
+		userService.delete(userId);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
 	@GetMapping
 	@Operation(summary = "selectAllUsers")
 	public ResponseEntity<List<User>> selectAllUsers() {
@@ -87,21 +97,12 @@ public class UserController {
         if (foundUser == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        // 새로운 비밀번호 생성 
+        // 새로운 비밀번호 생성
         String newPwd = userService.sendNewPassword(foundUser);
         return new ResponseEntity<>(newPwd, HttpStatus.OK);
     }
-	
-	@AuthRequired
-	@DeleteMapping("/withdraw")
-	@Operation(summary = "회원탈퇴")
-	public ResponseEntity<?> withdraw(
-			@RequestHeader("userId") String userId
-	) {
-		userService.delete(userId);
-		return ResponseEntity.status(HttpStatus.OK).build();
-	}
-	
+
+
 	@AuthRequired
 	@PutMapping
 	@Operation(summary = "updateMyPage")

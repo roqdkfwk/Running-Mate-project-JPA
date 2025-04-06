@@ -15,11 +15,11 @@ public interface UserService {
 
 	void checkId(String userId);
 
+	void delete(String userId);
+
 	User selectByNick(String userNick);
 
 	boolean update(User user);
-
-	void delete(String userId);
 
 	String findId(String name, String phoneOrEmail);
 
