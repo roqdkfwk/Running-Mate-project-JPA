@@ -1,10 +1,12 @@
 package com.suseok.run.model.service;
 
+import com.suseok.run.common.BadRequestException;
 import com.suseok.run.common.ConflictException;
 import com.suseok.run.model.dao.EmailVerificationDao;
 import com.suseok.run.model.dto.EmailVerification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.MailSendException;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -12,8 +14,10 @@ import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -23,36 +27,37 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     private final JavaMailSender javaMailSender;
     private final String VERIFICATION_CODE = "인증번호";
     private final UserService userService;
+    private final RedisTemplate<String, String> redisTemplate;
+
+    /**
+     * 이메일 중복 체크
+     */
+    public String checkEmailDuplication(String email) {
+        validateEmailFormat(email);
+
+        if (userService.findByEmail(email) != null) {
+            throw new ConflictException("이미 사용 중인 이메일입니다.");
+        }
+
+        // 인증 번호를 전송하는 과정을 비동기로 수행
+        CompletableFuture.runAsync(() -> sendVerificationCode(email));
+        return VERIFICATION_CODE + "가 전송되었습니다.";
+    }
 
     /**
      * 이메일 인증번호 전송
      */
-    public String sendVerificationCode(String email) {
-        validateEmailFormat(email);
+    private void sendVerificationCode(String email) {
+        // 1. Redis에 인증 번호가 있는 경우 삭제
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        redisTemplate.delete(email);
 
-        // 1. 해당 이메일로 이미 가입한 사용자가 있는 경우
-        if (userService.findByEmail(email) != null) {
-            throw new ConflictException("이미 사용 중인 이메일입니다.");
-
-        }
-
-        // 2. 기존에 저장된 인증번호가 있는 경우 삭제
-        EmailVerification emailVerification = emailVerificationDao.selectByEmail(email);
-        if (emailVerification != null) {
-            emailVerificationDao.deleteByEmail(email);
-        }
-
-        // 3. 새로운 인증번호 생성 및 저장
+        // 2. 새로운 인증번호 새성 및 Redis에 저장
         String newVerificationCode = generateVerificationCode();
-        emailVerification = new EmailVerification();
-        emailVerification.setEmail(email);
-        emailVerification.setVerificationCode(newVerificationCode);
-        emailVerification.setExpiresAt(LocalDateTime.now().plusMinutes(3));
-        emailVerificationDao.insertEmailVerification(emailVerification);
+        valueOps.set(email, newVerificationCode, Duration.ofMinutes(3));
 
-        // 4. 이메일 전송
+        // 3. 이메일 전송
         sendEmail(email, newVerificationCode);
-        return VERIFICATION_CODE + "가 전송되었습니다.";
     }
 
     /**
@@ -61,24 +66,19 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     public String verifyCode(String email, String code) {
         validateEmailFormat(email);
 
-        // 1. 데이터베이스에서 이메일로 인증번호 조회
-        EmailVerification emailVerification = emailVerificationDao.selectByEmail(email);
-        if (emailVerification == null) {
+        // 1. Redis에서 인증번호 조회
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        String storedCode = valueOps.get(email);
+
+        if (storedCode == null) {
             throw new IllegalArgumentException("해당 이메일에 대한 인증 요청이 없습니다.");
         }
 
-        // 2. 인증번호 유효성 확인
-        if (emailVerification.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException(VERIFICATION_CODE + "가 만료되었습니다.");
+        // 2. 인증번호 일치 여부 확인
+        if (!storedCode.equals(code)) {
+            throw new BadRequestException(VERIFICATION_CODE + "가 일치하지 않습니다.");
         }
 
-        // 3. 인증번호
-        if (!emailVerification.getVerificationCode().equals(code)) {
-            throw new IllegalArgumentException(VERIFICATION_CODE + "가 일치하지 않습니다.");
-        }
-
-        // 4. 인증 완료 후 인증번호 삭제
-        emailVerificationDao.deleteByEmail(email);
         return "이메일 인증이 완료되었습니다.";
     }
 

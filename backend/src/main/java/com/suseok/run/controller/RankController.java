@@ -2,6 +2,7 @@ package com.suseok.run.controller;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,14 +25,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping
 @Tag(name = "RankRecordRestController", description = "랭킹R")
+@RequiredArgsConstructor
 public class RankController {
 
 	// TODO Controller와 Service 로직 분리
-	private final RankService rs;
-
-	public RankController(RankService rs) {
-		this.rs = rs;
-	}
+	private final RankService rankService;
 
 	@PostMapping("/records")
 	@Operation(summary = "UserRankRecord갱신")
@@ -39,7 +37,7 @@ public class RankController {
 			@RequestBody UserRankRecord record,
 			@RequestHeader("userId") String userId
 	) {
-		rs.insertRankRecord(record, userId);
+		rankService.insertRankRecord(record, userId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -49,7 +47,7 @@ public class RankController {
 	public ResponseEntity<UserRankRecord> myRR(
 			@RequestHeader("userId") String userId
 	) {
-		UserRankRecord userRankRecord = rs.selectByUser(userId);
+		UserRankRecord userRankRecord = rankService.selectByUser(userId);
 		if (userRankRecord == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		return new ResponseEntity<UserRankRecord>(userRankRecord, HttpStatus.OK);
@@ -62,7 +60,7 @@ public class RankController {
 			@PathVariable("rivalId") String rivalId,
 			@RequestHeader("userId") String userId
 	) {
-		UserRankRecord userRankRecord = rs.selectByUser(rivalId);
+		UserRankRecord userRankRecord = rankService.selectByUser(rivalId);
 		if (userRankRecord != null)
 			return new ResponseEntity<UserRankRecord>(userRankRecord, HttpStatus.OK);
 		else
@@ -76,13 +74,13 @@ public class RankController {
 			@RequestHeader("userId") String userId
 	) {
 		if (userId != null) {
-			List<UserRankRecord> userRecords = rs.selectAllOrderBy(con, userId);
+			List<UserRankRecord> userRecords = rankService.selectAllOrderBy(con, userId);
 			if (userRecords != null)
 				return new ResponseEntity<List<UserRankRecord>>(userRecords, HttpStatus.OK);
 			else
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {
-			List<UserRankRecord> userRecords = rs.selectAllOrderBy(con);
+			List<UserRankRecord> userRecords = rankService.selectAllOrderBy(con);
 			if (userRecords != null)
 				return new ResponseEntity<List<UserRankRecord>>(userRecords, HttpStatus.OK);
 			else
@@ -95,7 +93,7 @@ public class RankController {
 	public ResponseEntity<?> totalGroupRank(
 			@RequestParam String con
 	) {
-		List<Group> groups = rs.selectGroupsOrderBy(con);
+		List<Group> groups = rankService.selectGroupsOrderBy(con);
 		if (groups != null)
 			return new ResponseEntity<List<Group>>(groups, HttpStatus.OK);
 		else
@@ -109,7 +107,7 @@ public class RankController {
 			@RequestParam String con,
 			@RequestHeader("userId") String userId
 	) {
-		List<Group> groups = rs.selectMyGroupsOrderBy(con, userId);
+		List<Group> groups = rankService.selectMyGroupsOrderBy(con, userId);
 		if (groups != null)
 			return new ResponseEntity<List<Group>>(groups, HttpStatus.OK);
 		else
@@ -122,7 +120,7 @@ public class RankController {
 			@RequestParam String con,
 			@PathVariable("groupId") int groupId
 	) {
-		List<UserRankRecord> userRecords = rs.selectAllMemberOrderBy(con, groupId);
+		List<UserRankRecord> userRecords = rankService.selectAllMemberOrderBy(con, groupId);
 		if (userRecords != null) {
 			return new ResponseEntity<List<UserRankRecord>>(userRecords, HttpStatus.OK);
 		} else

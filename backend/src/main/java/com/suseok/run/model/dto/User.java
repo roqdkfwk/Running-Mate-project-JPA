@@ -29,5 +29,4 @@ public class User {
 	// 기본 생성자, 모든 필드 갖는 생성자 삭제
 	
 	// getter, setter 삭제 
-
 }

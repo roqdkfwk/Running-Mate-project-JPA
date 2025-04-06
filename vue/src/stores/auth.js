@@ -16,10 +16,16 @@ export const useAuthStore = defineStore('auth', () => {
             { params: { email }
             })
             .then((response) => {
-                // alert('인증번호가 전송되었습니다.')
+                alert('인증번호가 전송되었습니다.')
             })
             .catch((error) => {
-                // alert('인증번호 전송에 실패했습니다. 다시 시도해주세요.')
+                switch (error.response.status) {
+                    case 409:
+                        alert(error.response.data.message)
+                        break;
+                    default:
+                        alert('인증번호 전송 실패')
+                }
             })
     }
 

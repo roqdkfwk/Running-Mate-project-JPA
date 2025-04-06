@@ -1,8 +1,8 @@
 package com.suseok.run.model.service;
 
-import java.util.List;
-
 import com.suseok.run.model.dto.User;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -10,7 +10,9 @@ public interface UserService {
 
 	List<User> search(String con);
 
-	boolean insert(User user);
+	void signup(User user);
+
+	void checkId(String userId);
 
 	User selectById(String userId);
 	
@@ -20,9 +22,9 @@ public interface UserService {
 
 	boolean addRival(String userId, String rivalId);
 
-	boolean delete(String userId);
+	void delete(String userId);
 
-	User findId(String name, String phoneOrEmail);
+	String findId(String name, String phoneOrEmail);
 
 	User findPwd(String name, String phoneOrEmail, String id);
 

@@ -1,11 +1,9 @@
 package com.suseok.run.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.suseok.run.jwtutill.AuthRequired;
 import com.suseok.run.model.dto.User;
 import com.suseok.run.model.service.AuthService;
-import com.suseok.run.model.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,13 +25,10 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping({ "", "/" })
 @Tag(name = "AuthRestController", description = "Authentication")
+@RequiredArgsConstructor
 public class AuthController {
 
-	private final AuthService as;
-
-	public AuthController(AuthService as) {
-		this.as = as;
-	}
+	private final AuthService authService;
 
 	@GetMapping
 	public ResponseEntity<?> home() {
@@ -52,7 +46,7 @@ public class AuthController {
 			@RequestBody User user,
 			HttpServletResponse response
 	) throws UnsupportedEncodingException {
-		Map<String, Object> result = as.login(user, response);
+		Map<String, Object> result = authService.login(user, response);
 		if (result.containsKey("message")) {
 			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
 		}

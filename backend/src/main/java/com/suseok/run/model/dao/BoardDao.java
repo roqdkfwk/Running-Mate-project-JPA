@@ -1,9 +1,9 @@
 package com.suseok.run.model.dao;
 
-import java.util.List;
-
 import com.suseok.run.model.dto.Board;
 import com.suseok.run.model.dto.Reply;
+
+import java.util.List;
 
 public interface BoardDao {
 	// CRUD : insert, selectAll, update, delete
@@ -16,7 +16,7 @@ public interface BoardDao {
 
 	boolean update(Board board);
 
-	boolean delete(int boardId);
+	void deleteBoard(int userSeq, int boardId);
 
 	List<Board> search(String con);
 

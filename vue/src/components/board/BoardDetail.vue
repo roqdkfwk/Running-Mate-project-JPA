@@ -56,10 +56,12 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+// 게시글 수정
 const updateBoard = function() {
   store.updateBoard(board.value, route.params.groupId)
 }
 
+// 게시글 삭제
 const deleteBoard = () => {
   const { groupId, id } = route.params;
   console.log(groupId, id)

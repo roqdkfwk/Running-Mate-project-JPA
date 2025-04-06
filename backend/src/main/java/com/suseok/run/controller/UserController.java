@@ -1,136 +1,104 @@
 package com.suseok.run.controller;
 
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.suseok.run.jwtutill.AuthRequired;
-import com.suseok.run.jwtutill.JwtUtil;
+import com.suseok.run.model.dto.Request.FindIdReq;
 import com.suseok.run.model.dto.User;
-import com.suseok.run.model.service.AuthService;
 import com.suseok.run.model.service.UserService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @Tag(name = "UserRestController", description = "유저CRUD")
+@RequiredArgsConstructor
 public class UserController {
 
 	// TODO Controller와 Service 로직 분리
-	private final UserService us;
-	private final String SUCCESS ="SUCCESS";
-	private final String FAIL ="FAIL";
-	
-	public UserController(UserService us) {
-		this.us = us;
-	}
+	private final UserService userService;
 
 	@PostMapping("/signup")
-	@Operation(summary = "signup")
-	public ResponseEntity<?> signup(
+	@Operation(summary = "회원가입")
+	public ResponseEntity<Void> signup(
 			@RequestBody User user
 	) {
-		if (us.insert(user))
-			return new ResponseEntity<User>(user,HttpStatus.CREATED);
-		else
-			return new ResponseEntity<String>(FAIL ,HttpStatus.BAD_REQUEST);
+		userService.signup(user);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	@GetMapping("/users/{userId}/exists")
+	@Operation(summary = "아이디 중복 확인")
+	public ResponseEntity<Void> checkId(
+			@PathVariable String userId
+	) {
+		userService.checkId(userId);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
 	@GetMapping
 	@Operation(summary = "selectAllUsers")
 	public ResponseEntity<List<User>> selectAllUsers() {
-		return new ResponseEntity<List<User>>(us.selectAll(),HttpStatus.OK);
+		return new ResponseEntity<List<User>>(userService.selectAll(),HttpStatus.OK);
 	}
 
-	@GetMapping("/signup/ci/{checkId}")
-	@Operation(summary = "checkId")
-	public ResponseEntity<?> checkId(
-			@PathVariable String checkId
-	) {
-		if (us.selectById(checkId) != null) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
-		else
-			return new ResponseEntity<>(HttpStatus.OK);
-	}
-	
-	@GetMapping("/signup/cn/{checkNick}")
-	@Operation(summary = "checkNick")
+	@GetMapping("/users/{nickname}/exists")
+	@Operation(summary = "닉네임 중복 확인")
 	public ResponseEntity<?> checkNick(
-			@PathVariable String checkNick
+			@PathVariable String nickname
 	) {
-		if (us.selectByNick(checkNick) != null)
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		else
-			return new ResponseEntity<>(HttpStatus.OK);
+		userService.selectByNick(nickname);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
 	@PostMapping("/findId")
-    @Operation(summary = "findId")
+    @Operation(summary = "아이디 찾기")
     public ResponseEntity<?> findId(
-			@RequestBody User user
+			@RequestBody FindIdReq findIdReq
 	) {
-        User foundUser = us.findId(user.getUserName(), user.getPhone());
-        if (foundUser == null) {
-            foundUser = us.findId(user.getUserName(), user.getEmail());
-        }
-
-        if (foundUser == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>(foundUser.getUserId(), HttpStatus.OK);
+		String userId = userService.findId(findIdReq.getUserName(), findIdReq.getPhoneOrEmail());
+		return ResponseEntity.status(HttpStatus.OK).body(userId);
     }
 
     @PostMapping("/findPwd")
-    @Operation(summary = "findPwd")
+    @Operation(summary = "비밀번호 찾기")
     public ResponseEntity<?> findPwd(
 			@RequestBody User user
 	) {
-        User foundUser = us.findPwd(user.getUserName(), user.getPhone(), user.getUserId());
+        User foundUser = userService.findPwd(user.getUserName(), user.getPhone(), user.getUserId());
         if (foundUser == null) {
-            foundUser = us.findPwd(user.getUserName(), user.getEmail(), user.getUserId());
+            foundUser = userService.findPwd(user.getUserName(), user.getEmail(), user.getUserId());
         }
 
         if (foundUser == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         // 새로운 비밀번호 생성 
-        String newPwd = us.sendNewPassword(foundUser);
+        String newPwd = userService.sendNewPassword(foundUser);
         return new ResponseEntity<>(newPwd, HttpStatus.OK);
     }
 	
 	@AuthRequired
 	@DeleteMapping("/withdraw")
-	@Operation(summary = "withdraw")
+	@Operation(summary = "회원탈퇴")
 	public ResponseEntity<?> withdraw(
 			@RequestHeader("userId") String userId
 	) {
-		if(us.delete(userId))
-			return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
-		return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+		userService.delete(userId);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
 	@AuthRequired 
 	@GetMapping("/myPage")
-
-	@Operation(summary = "myPage", description = "유저 정보")
+	@Operation(summary = "마이페이지", description = "유저 정보")
 	public ResponseEntity<User> myPage(
 			@RequestHeader("userId") String userId
 	) {
-		User user = us.selectById(userId);
+		User user = userService.selectById(userId);
 		if (user != null)
 			return new ResponseEntity<User>(user, HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -145,19 +113,19 @@ public class UserController {
 	) {
 		if (userId != user.getUserId())
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		if (us.update(user))
+		if (userService.update(user))
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	@AuthRequired 
 	@GetMapping("/add/{rivalId}")
-	@Operation(summary = "addRival")
+	@Operation(summary = "라이벌 추가")
 	public ResponseEntity<?> addRival(
 			@RequestHeader("userId") String userId,
 			@PathVariable("rivalId") String rivalId
 	) {
-		if (us.addRival(userId, rivalId))
+		if (userService.addRival(userId, rivalId))
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 	}
@@ -167,7 +135,7 @@ public class UserController {
 	public ResponseEntity<List<User>> searchUser(
 			@RequestParam String con
 	) {
-		List<User> users = us.search(con);
+		List<User> users = userService.search(con);
 		if (users != null)
 			return new ResponseEntity<List<User>>(users, HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);

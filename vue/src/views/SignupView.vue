@@ -80,9 +80,6 @@ const sendVerificationCode = function () {
     alert('이메일을 입력해주세요')
     return
   }
-  // 버튼을 클릭하는 즉시 알림 표시
-  alert('인증번호가 전송되었습니다.')
-
   authStore.sendVerificationCode(form.value.email)
 }
 
@@ -109,16 +106,8 @@ const checkId = function () {
     return; // 서버 요청 중단
   }
 
-  // 유효한 경우에만 서버로 요청 전송
-  store.checkId(form.value.userId)
-    .then((response) => {
-      alert("사용 가능한 아이디입니다.")
-      idChecked.value = true
-    })
-    .catch((error) => {
-      alert("이미 사용 중인 아이디입니다.")
-      idChecked.value = false
-    })
+  // 아이디 중복확인 결과
+  idChecked.value = store.checkId(form.value.userId)
 }
 
 const passwordWarning = computed(() => {
@@ -138,6 +127,9 @@ const checkNick = function () {
     })
 }
 
+/**
+ * 회원가입 요청
+ */
 const submitForm = function () {
   // 아이디 중복확인 메시지 출력
   if (!idChecked.value) {
@@ -152,8 +144,6 @@ const submitForm = function () {
   }
 
   if (isPasswordMatch.value) {
-    console.log('Form submitted:', form.value)
-
     const newUser = {
       userId: form.value.userId,
       userPwd: form.value.password,

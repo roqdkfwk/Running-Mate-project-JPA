@@ -164,10 +164,15 @@
 - 로그인 기능
 - 회원가입 기능
 
-### 07.01 수정사항
+### 리팩토링 사항
 
-- WebConfig 주석
-- GroupController, RankController, UserController 필요없는 주석 제거 및 가독성 개선
-- BoardServiceImpl에서 BoardDao, UserDao 필드 주입 -> 생성자 주입으로 코드 변경
-- GroupServiceImpl에서 GroupDao, RankDao, UserService 필드 주입 -> 생성자 주입으로 코드 변경
-- RankServiceImpl에서 UserDao, RankDao 필드 주입 -> 생성자 주입으로 코드 변경
+- Getter, Setter 어노테이션으로 보일러 플레이트 코드 제거
+- Controller 의존성 주입 생성자 주입으로 변경
+- 
+
+### 개발
+
+- 이메일 본인인증 기능 구현
+  - 인증번호 전송
+  - 인증번호 확인
+- 이메일 중복가입 방지 기능 구현

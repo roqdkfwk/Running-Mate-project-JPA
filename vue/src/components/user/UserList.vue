@@ -20,6 +20,13 @@ const totalPages = computed(() => {
   return Math.ceil(filteredUsers.value.length / pageSize);
 });
 
+/**
+ * 제공된 검색어, 검색 필터, 그리고 라이벌 사용자만 표시할지에 대한 조건에 따라 사용자 목록을 필터링하는 computed 속성입니다.
+ *
+ * 필터링 과정은 다음을 포함합니다:
+ * 1. 지정된 검색 필터 필드로 검색어와 일치하는 사용자를 필터링합니다.
+ * 2. 추가적으로, 라이벌로 표시된 사용자만 포함하도록 필터링할 수 있습니다.
+ */
 const filteredUsers = computed(() => {
   let users = props.users;
   if (props.searchQuery) {
@@ -31,6 +38,19 @@ const filteredUsers = computed(() => {
   return users;
 });
 
+/**
+ * 지정된 정렬 기준에 따라 사용자 배열을 정렬하여 반환하는 computed 속성입니다.
+ * 정렬은 `sortBy` 속성의 현재 값에 따라 결정됩니다.
+ *
+ * - `sortBy.value`가 'highest_pace'인 경우, `highestPace` 기준으로 오름차순 정렬됩니다.
+ * - `sortBy.value`가 'frequency'인 경우, `frequency` 기준으로 내림차순 정렬됩니다.
+ * - `sortBy.value`가 'total_distance'인 경우, `totalDistance` 기준으로 내림차순 정렬됩니다.
+ * - `sortBy.value`가 다른 값을 가지는 경우, `filteredUsers.value`의 원래 순서가 반환됩니다.
+ *
+ * 의존성:
+ *  - `filteredUsers.value`: 정렬 대상이 되는 사용자 객체 배열.
+ *  - `sortBy.value`: 정렬 기준을 정의하는 문자열.
+ */
 const sortedUsers = computed(() => {
   if (sortBy.value === 'highest_pace') {
     return [...filteredUsers.value].sort((a, b) => a.highestPace - b.highestPace); // highest_pace 기준 정렬 로직
@@ -43,6 +63,20 @@ const sortedUsers = computed(() => {
   }
 });
 
+/**
+ * 현재 페이지와 페이지 크기를 기반으로 사용자 목록의 페이징된 하위 집합을 반환하는 computed 속성입니다.
+ *
+ * `paginatedUsers`는 현재 페이지에 표시할 `sortedUsers` 배열의 일부분을 동적으로 계산합니다.
+ * 현재 페이지 번호와 페이지 크기를 사용하여 시작 및 종료 인덱스를 결정하고, 그에 따라 `sortedUsers` 배열을 슬라이스합니다.
+ *
+ * 의존성:
+ * - `currentPage`: 시작 인덱스를 결정하기 위해 사용되는 현재 페이지 번호.
+ * - `pageSize`: 종료 인덱스를 계산하는 데 사용되는 한 페이지당 항목 수.
+ * - `sortedUsers`: 페이징의 소스 데이터로 사용되는 원하는 순서로 정렬된 사용자 배열.
+ *
+ * 반환값:
+ * 현재 페이지에 대한 사용자 하위 집합을 포함하는 배열.
+ */
 const paginatedUsers = computed(() => {
   const start = (currentPage.value - 1) * pageSize;
   const end = start + pageSize;

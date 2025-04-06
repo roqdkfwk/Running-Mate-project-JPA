@@ -1,9 +1,9 @@
 package com.suseok.run.model.service;
 
-import java.util.List;
-
 import com.suseok.run.model.dto.Board;
 import com.suseok.run.model.dto.Reply;
+
+import java.util.List;
 
 public interface BoardService {
 
@@ -13,7 +13,7 @@ public interface BoardService {
 
 	List<Board> selectAllByGroupId(int groupId);
 
-	boolean delete(int boardId);
+	void deleteBoard(int userSeq, int boardId);
 
 	Board update(Board board);
 
@@ -24,5 +24,4 @@ public interface BoardService {
 	boolean deleteReply(int boardId, int replyId);
 
 	boolean insertReply(Reply reply);
-
 }
