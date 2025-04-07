@@ -51,6 +51,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void checkNick(String userNick) {
+		if (redisTemplate.hasKey(userNick) || userRepository.findByNick(userNick).isPresent()) {
+			throw new ConflictException("이미 사용 중인 닉네임입니다.");
+		}
+
+		redisTemplate.opsForValue().set(userNick, "true", Duration.ofMinutes(10));
+	}
+
+	@Override
 	public boolean update(User user) {
 		return userDao.update(user);
 	}
@@ -79,7 +88,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User findPwd(String name, String phoneOrEmail, String id) {
+	public User findPw(String name, String phoneOrEmail, String id) {
 		return userDao.findPwd(name, phoneOrEmail, id);
 	}
 

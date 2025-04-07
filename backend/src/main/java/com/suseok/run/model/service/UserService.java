@@ -15,6 +15,8 @@ public interface UserService {
 
 	void checkId(String userId);
 
+	void checkNick(String userNick);
+
 	void delete(String userId);
 
 	User selectByNick(String userNick);
@@ -23,7 +25,7 @@ public interface UserService {
 
 	String findId(String name, String phoneOrEmail);
 
-	User findPwd(String name, String phoneOrEmail, String id);
+	User findPw(String name, String phoneOrEmail, String id);
 
 	String sendNewPassword(User foundUser);
 
