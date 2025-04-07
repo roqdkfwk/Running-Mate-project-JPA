@@ -4,6 +4,8 @@ import com.suseok.run.common.ConflictException;
 import com.suseok.run.common.NotFoundException;
 import com.suseok.run.model.dao.UserDao;
 import com.suseok.run.model.entity.Request.CreateUserReq;
+import com.suseok.run.model.entity.Request.UpdateUserReq;
+import com.suseok.run.model.entity.Response.UpdateUserRes;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void signup(CreateUserReq createUserReq) {
 		// 1. 중복확인
+		if (userRepository.findByUserId(createUserReq.getUserId()).isPresent()) {
+			throw new ConflictException("이미 존재하는 회원입니다.");
+		}
 
+		// 2. 회원생성
 		User user = createUserReq.toEntity();
 		userRepository.save(user);
 
@@ -51,7 +57,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void checkNick(String userNick) {
+	public void checkNickname(String userNick) {
 		if (redisTemplate.hasKey(userNick) || userRepository.findByNick(userNick).isPresent()) {
 			throw new ConflictException("이미 사용 중인 닉네임입니다.");
 		}
@@ -60,8 +66,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean update(User user) {
-		return userDao.update(user);
+	public UpdateUserRes update(
+			Long userSeq,
+			UpdateUserReq updateUserReq
+	) {
+		User user = userRepository.findById(userSeq).orElseThrow(
+				() -> new NotFoundException("존재하지 않는 사용자입니다.")
+		);
+
+		updateUserReq.toEntity(user);
+		return UpdateUserRes.fromEntity(user);
 	}
 
 	@Override
@@ -108,7 +122,7 @@ public class UserServiceImpl implements UserService {
 
 		String randomString = sb.toString();
 		user.setUserPw(randomString);
-		update(user);
+//		update(user);
 		
 		return randomString;
 	}

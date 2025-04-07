@@ -3,6 +3,8 @@ package com.suseok.run.controller;
 import com.suseok.run.jwtutill.AuthRequired;
 import com.suseok.run.model.entity.Request.CreateUserReq;
 import com.suseok.run.model.entity.Request.FindIdReq;
+import com.suseok.run.model.entity.Request.UpdateUserReq;
+import com.suseok.run.model.entity.Response.UpdateUserRes;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +38,7 @@ public class UserController {
 	@GetMapping("/check-id")
 	@Operation(summary = "아이디 중복 확인")
 	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "사용할 수 있는 아이디입니다."),
 			@ApiResponse(responseCode = "400", description = "잘못된 아이디 형식입니다."),
 			@ApiResponse(responseCode = "409", description = "이미 사용 중인 아이디입니다.")
 	})
@@ -49,24 +52,37 @@ public class UserController {
 	@GetMapping("/check-nickname")
 	@Operation(summary = "닉네임 중복 확인")
 	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "사용할 수 있는 닉네임입니다."),
 			@ApiResponse(responseCode = "400", description = "잘못된 닉네임 형식입니다."),
 			@ApiResponse(responseCode = "409", description = "이미 사용 중인 닉네임입니다.")
 	})
-	public ResponseEntity<?> checkNick(
+	public ResponseEntity<Void> checkNick(
 			@RequestParam String nickname
 	) {
-		userService.selectByNick(nickname);
+		userService.checkNickname(nickname);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	@AuthRequired
 	@DeleteMapping
 	@Operation(summary = "회원탈퇴")
-	public ResponseEntity<?> withdraw(
+	public ResponseEntity<Void> withdraw(
 			@RequestBody String userId
 	) {
 		userService.delete(userId);
 		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@AuthRequired
+	@PutMapping
+	@Operation(summary = "회원정보수정")
+	public ResponseEntity<UpdateUserRes> updateMyPage(
+//			userSeq필요
+			@RequestBody UpdateUserReq updateUserReq
+	) {
+		Long userSeq = 1L;
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(userService.update(userSeq, updateUserReq));
 	}
 
 	@GetMapping
@@ -89,9 +105,9 @@ public class UserController {
     public ResponseEntity<?> findPwd(
 			@RequestBody User user
 	) {
-        User foundUser = userService.findPwd(user.getUserName(), user.getPhone(), user.getUserId());
+        User foundUser = userService.findPw(user.getUserName(), user.getPhone(), user.getUserId());
         if (foundUser == null) {
-            foundUser = userService.findPwd(user.getUserName(), user.getEmail(), user.getUserId());
+            foundUser = userService.findPw(user.getUserName(), user.getEmail(), user.getUserId());
         }
 
         if (foundUser == null) {
@@ -102,20 +118,6 @@ public class UserController {
         return new ResponseEntity<>(newPwd, HttpStatus.OK);
     }
 
-
-	@AuthRequired
-	@PutMapping
-	@Operation(summary = "updateMyPage")
-	public ResponseEntity<?> updateMyPage(
-			@RequestHeader("userId") String userId,
-			@RequestBody User user
-	) {
-		if (userId != user.getUserId())
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		if (userService.update(user))
-			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-	}
 
 	@PostMapping("/search")
 	@Operation(summary = "searchUser")

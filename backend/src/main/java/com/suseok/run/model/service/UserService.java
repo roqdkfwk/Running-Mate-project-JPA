@@ -1,6 +1,8 @@
 package com.suseok.run.model.service;
 
 import com.suseok.run.model.entity.Request.CreateUserReq;
+import com.suseok.run.model.entity.Request.UpdateUserReq;
+import com.suseok.run.model.entity.Response.UpdateUserRes;
 import com.suseok.run.model.entity.User;
 
 import java.util.List;
@@ -15,13 +17,13 @@ public interface UserService {
 
 	void checkId(String userId);
 
-	void checkNick(String userNick);
+	void checkNickname(String userNick);
 
 	void delete(String userId);
 
-	User selectByNick(String userNick);
+	UpdateUserRes update(Long userSeq, UpdateUserReq updateUserReq);
 
-	boolean update(User user);
+	User selectByNick(String userNick);
 
 	String findId(String name, String phoneOrEmail);
 
