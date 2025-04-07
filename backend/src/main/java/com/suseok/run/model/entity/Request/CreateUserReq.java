@@ -1,9 +1,11 @@
 package com.suseok.run.model.entity.Request;
 
 import com.suseok.run.model.entity.User;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class CreateUserReq {
 
     private String userId;
