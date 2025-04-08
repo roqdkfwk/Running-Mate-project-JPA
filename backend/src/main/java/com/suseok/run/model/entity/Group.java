@@ -31,9 +31,6 @@ public class Group {
 	@OneToMany(mappedBy = "group")
 	private List<UserGroup> userGroupList = new ArrayList<>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	private List<User> members = new ArrayList<>();
-
 	@OneToMany(mappedBy = "group")
 	private List<Post> posts = new ArrayList<>();
 
