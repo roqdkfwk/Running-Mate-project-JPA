@@ -1,7 +1,10 @@
 package com.suseok.run.model.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -10,12 +13,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Reply {
+public class Comment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "reply_id", nullable = false, unique = true)
-	private Long replyId;
+	@Column(name = "comment_id", nullable = false, unique = true)
+	private Long commentId;
 
 	@Column(nullable = false)
 	private String content;
@@ -24,8 +27,8 @@ public class Reply {
 	private LocalDateTime createdAt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "board_id")
-	private Board board;
+	@JoinColumn(name = "post_id")
+	private Post post;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_seq")
