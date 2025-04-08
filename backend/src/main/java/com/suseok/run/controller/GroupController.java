@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/group")
+@RequestMapping("/groups")
 @Tag(name = "GroupRestController", description = "그룹 CRUD")
 @RequiredArgsConstructor
 public class GroupController {
