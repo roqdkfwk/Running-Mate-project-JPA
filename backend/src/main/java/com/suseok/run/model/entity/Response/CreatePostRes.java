@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public class CreateBoardRes {
+public class CreatePostRes {
 
     private String title;
     private String content;

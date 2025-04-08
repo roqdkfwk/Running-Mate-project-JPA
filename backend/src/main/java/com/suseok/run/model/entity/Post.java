@@ -13,12 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Board {
+public class Post {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "board_id", nullable = false, unique = true)
-	private Long boardId;
+	@Column(name = "post_id", nullable = false, unique = true)
+	private Long postId;
 
 	@Column(nullable = false)
 	private String title;
@@ -42,6 +42,6 @@ public class Board {
 	@JoinColumn(name = "group_id")
 	private Group group;
 
-	@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Reply> replyList = new ArrayList<>();
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Comment> commentList = new ArrayList<>();
 }

@@ -1,12 +1,12 @@
 package com.suseok.run.model.service;
 
 import com.suseok.run.common.NotFoundException;
-import com.suseok.run.model.entity.Board;
 import com.suseok.run.model.entity.Group;
-import com.suseok.run.model.entity.Request.CreateBoardReq;
-import com.suseok.run.model.entity.Request.UpdateBoardReq;
+import com.suseok.run.model.entity.Post;
+import com.suseok.run.model.entity.Request.CreatePostReq;
+import com.suseok.run.model.entity.Request.UpdatePostReq;
 import com.suseok.run.model.entity.User;
-import com.suseok.run.model.repository.BoardRepository;
+import com.suseok.run.model.repository.PostRespository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,52 +15,52 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BoardServiceImpl implements BoardService {
+public class PostServiceImpl implements PostService {
 
-	private final BoardRepository boardRepository;
+	private final PostRespository postRepository;
 
 	/**
 	 * 게시글 작성
 	 * @return
 	 */
 	@Override
-	public Long createBoard(
+	public Long createPost(
 			Long userSeq,
 			Long groupId,
-			CreateBoardReq createBoardReq) {
+			CreatePostReq createPostReq) {
 		// 1. 게시글 작성자
 
 		// 2. 게시글을 작성할 게시판(그룹)
 
 		// 3. 게시글 생성 및 저장
-		Board board = createBoardReq.toEntity(new User(), new Group());
-		boardRepository.save(board);
-		return board.getBoardId();
+		Post post = createPostReq.toEntity(new User(), new Group());
+		postRepository.save(post);
+		return post.getPostId();
 	}
 
 	/**
 	 * 게시글 수정
 	 */
 	@Override
-	public void updateBoard(
-			Long boardId,
-			UpdateBoardReq updateBoardReq
+	public void updatePost(
+			Long postId,
+			UpdatePostReq updatePostReq
 	) {
-		Board board = boardRepository.findById(boardId).orElseThrow(
+		Post post = postRepository.findById(postId).orElseThrow(
 				() -> new NotFoundException("존재하지 않는 게시글입니다.")
 		);
 
-		updateBoardReq.toEntity(board, updateBoardReq);
-		boardRepository.save(board);
+		updatePostReq.toEntity(post, updatePostReq);
+		postRepository.save(post);
 	}
 
 	/**
 	 * 게시글 삭제
-	 * @param boardId
+	 * @param postId
 	 * @param userSeq
 	 */
 	@Override
-	public void deleteBoard(Long boardId, Long userSeq) {
+	public void deletePost(Long postId, Long userSeq) {
 
 	}
 
@@ -70,29 +70,29 @@ public class BoardServiceImpl implements BoardService {
 	 * @return
 	 */
 	@Override
-	public List<Board> getBoardsByGroup(Long groupId) {
+	public List<Post> getPostsByGroup(Long groupId) {
 		return List.of();
 	}
 
 	/**
 	 * 게시글 상세 조회
-	 * @param boardId
+	 * @param postId
 	 * @return
 	 */
 	@Override
-	public Board getBoard(Long boardId) {
-		return boardRepository.findById(boardId).orElseThrow(
+	public Post getPost(Long postId) {
+		return postRepository.findById(postId).orElseThrow(
 				() -> new NotFoundException("존재하지 않는 게시글입니다.")
 		);
 	}
 
-	/**
-	 * 게시글 검색
+    /**
+     * 게시글 검색
 	 * @param con
-	 * @return
+     * @return
 	 */
 	@Override
-	public List<Board> searchBoards(String con) {
+	public List<Post> searchPosts(String con) {
 
 		return new ArrayList<>();
 	}

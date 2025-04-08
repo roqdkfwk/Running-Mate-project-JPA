@@ -50,5 +50,5 @@ public class User {
 	private Group group;
 
 	@OneToMany(mappedBy = "author")
-	private List<Board> boardList = new ArrayList<>();
+	private List<Post> postList = new ArrayList<>();
 }

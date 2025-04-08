@@ -35,7 +35,7 @@ public class Group {
 	private List<User> members = new ArrayList<>();
 
 	@OneToMany(mappedBy = "group")
-	private List<Board> boards = new ArrayList<>();
+	private List<Post> posts = new ArrayList<>();
 
 	private Double goalPace;
 	private Double goalFrequency;
