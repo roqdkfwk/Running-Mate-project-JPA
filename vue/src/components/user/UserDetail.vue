@@ -9,14 +9,11 @@
         <h3>상대방의 기록</h3>
       </div>
 
-
       <div class="record-item">
-        <span class="value">{{ Math.floor(myRecord.highestPace / 60) }}' {{ Math.floor(myRecord.highestPace % 60)
-          }}''</span>
+        <span class="value">{{ Math.floor(myRecord.highestPace / 60) }}' {{ Math.floor(myRecord.highestPace % 60) }}''</span>
       </div>
       <div class="record-item">
-        <span class="value">{{ Math.floor(rivalRecord.highestPace / 60) }}' {{ Math.floor(rivalRecord.highestPace % 60)
-          }}''</span>
+        <span class="value">{{ Math.floor(rivalRecord.highestPace / 60) }}' {{ Math.floor(rivalRecord.highestPace % 60) }}''</span>
       </div>
 
       <div class="record-item">
