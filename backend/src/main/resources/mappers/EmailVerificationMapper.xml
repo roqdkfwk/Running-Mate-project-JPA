@@ -15,7 +15,7 @@
     </insert>
 
     <!-- Get email verification record by email -->
-    <select id="selectByEmail" resultType="com.suseok.run.model.dto.EmailVerification">
+    <select id="selectByEmail" resultType="com.suseok.run.model.entity.EmailVerification">
         SELECT * FROM email_verification WHERE email = #{email};
     </select>
 

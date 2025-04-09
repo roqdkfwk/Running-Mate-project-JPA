@@ -1,6 +1,6 @@
 package com.suseok.run.model.dao;
 
-import com.suseok.run.model.dto.EmailVerification;
+import com.suseok.run.model.entity.EmailVerification;
 import org.apache.ibatis.annotations.Param;
 
 public interface EmailVerificationDao {

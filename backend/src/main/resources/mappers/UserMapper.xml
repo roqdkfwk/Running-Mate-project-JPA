@@ -3,34 +3,14 @@
 <mapper namespace="com.suseok.run.model.dao.UserDao">
 
 	<select id="loginUser" parameterType="User" resultType="User">
-		SELECT *
-		FROM User
-		WHERE user_id = #{userId}
-		  AND user_pwd = #{userPwd}
+		SELECT * FROM User WHERE user_id = #{userId} AND user_pwd = #{userPwd}
 	</select>
 
 	<insert id="signup" parameterType="User">
-		INSERT INTO User (
-			user_id
-			, user_password
-			, user_name
-			, user_nickname
-			, email
-			, address
-			, image
-			, phone
-			, exposure
-		) VALUES (
-		    #{userId}
-			, #{userPassword}
-			, #{userName}
-			, #{userNickname}
-			, #{email}
-			, #{address}
-			, #{image}
-			, #{phone}
-			, #{exposure}
-		)
+		INSERT INTO User (user_id, user_pwd, user_name, user_nick, email, address,
+		img, phone, exposure)
+		VALUES (#{userId}, #{userPwd}, #{userName}, #{userNick}, #{email},
+		#{address}, #{img}, #{phone}, #{exposure})
 	</insert>
 
 	<select id="selectById" parameterType="String" resultType="User">
@@ -51,33 +31,20 @@
 
 	<update id="update" parameterType="User">
 		UPDATE User
-		SET user_pwd = #{userPwd}
-		  , user_name = #{userName}
-		  , user_nick = #{userNick}
-		  , email = #{email}
-		  , address = #{address}
-		  , img = #{img}
-		  , phone = #{phone}
-		  , exposure = #{exposure}
+		SET user_pwd = #{userPwd}, user_name = #{userName}, user_nick =
+		#{userNick}, email = #{email},
+		address = #{address}, img = #{img}, phone = #{phone}, exposure = #{exposure}
 		WHERE user_id = #{userId}
 	</update>
 
 	<insert id="addRival">
-		INSERT INTO Rival_info (
-			user_seq
-			, rival_seq
-		) VALUES (
-		    #{userSeq}
-			, #{rivalSeq}
-		)
+		INSERT INTO Rival_info (user_seq, rival_seq) VALUES (#{userSeq}, #{rivalSeq})
 	</insert>
 
 	<select id="search" parameterType="String" resultType="User">
-		SELECT *
-		FROM User
-		WHERE user_id LIKE CONCAT('%', #{con}, '%')
-			OR user_name LIKE CONCAT('%', #{con}, '%')
-			OR user_nick LIKE CONCAT('%', #{con}, '%')
+		SELECT * FROM User WHERE user_id LIKE CONCAT('%', #{con}, '%')
+		OR user_name LIKE CONCAT('%', #{con}, '%')
+		OR user_nick LIKE CONCAT('%', #{con}, '%')
 	</select>
 
 	<delete id="delete" parameterType="String">
@@ -93,12 +60,8 @@
 	</select>
 
 	<select id="findPwd" parameterType="map" resultType="User">
-		SELECT *
-		FROM User
-		WHERE user_name = #{name}
-		  AND (phone = #{phoneOrEmail}
-		    OR email = #{phoneOrEmail})
-		  AND user_id = #{id}
+		SELECT * FROM User WHERE user_name = #{name} AND (phone = #{phoneOrEmail} OR
+		email = #{phoneOrEmail}) AND user_id = #{id}
 	</select>
 
 	<select id="findByEmail" parameterType="String" resultType="Integer">

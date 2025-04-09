@@ -1,4 +1,4 @@
-package com.suseok.run.model.dto.Request;
+package com.suseok.run.model.entity.Request;
 
 import lombok.Data;
 import lombok.NonNull;

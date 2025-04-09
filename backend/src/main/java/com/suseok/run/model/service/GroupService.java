@@ -1,27 +1,18 @@
 package com.suseok.run.model.service;
 
-import java.util.List;
-
-import com.suseok.run.model.dto.Group;
+import com.suseok.run.model.entity.Request.CreateGroupReq;
 
 public interface GroupService {
 
-	//그룹 찾기
-	List<Group> search(String con);
-	
-	Group selectById(int groupId);
-	
-	List<Group> selectAll();
+    void createGroup(Long userSeq, CreateGroupReq createGroupReq);
 
-	//그룹 가입
-	boolean join(int groupId, String userId);
+    void updateGroup();
 
-	//그룹 탈퇴
-	boolean exit(int groupId, String userId);
+    void deleteGroup();
 
-	boolean insert(Group group, String userId);
+    void joinGroup();
 
-	boolean update(Group group, String userId);
+    void leaveGroup();
 
-	boolean kickOut(int groupId, String userId, int memberId);
+    void kickMember();
 }

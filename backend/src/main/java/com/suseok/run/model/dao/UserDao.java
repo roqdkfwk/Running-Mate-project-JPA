@@ -1,9 +1,8 @@
 package com.suseok.run.model.dao;
 
-import com.suseok.run.model.dto.User;
+import com.suseok.run.model.entity.User;
 
 import java.util.List;
-import java.util.HashSet;
 
 public interface UserDao {
 	// CRUD : insert, selectAll, update, delete

@@ -2,17 +2,17 @@ package com.suseok.run.model.service;
 
 import com.suseok.run.common.BadRequestException;
 import com.suseok.run.common.ConflictException;
-import com.suseok.run.model.dao.EmailVerificationDao;
-import com.suseok.run.model.dto.EmailVerification;
+import com.suseok.run.common.NotFoundException;
+import com.suseok.run.model.entity.EmailVerification;
+import com.suseok.run.model.repository.EmailVerificationRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class EmailVerificationServiceImpl implements EmailVerificationService {
 
-    private final EmailVerificationDao emailVerificationDao;
+    private final EmailVerificationRepository emailVerificationRepository;
     private final JavaMailSender javaMailSender;
     private final String VERIFICATION_CODE = "인증번호";
     private final UserService userService;
@@ -88,7 +88,10 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     public String resendVerificationCode(String email) {
         validateEmailFormat(email);
 
-        EmailVerification emailVerification = emailVerificationDao.selectByEmail(email);
+        EmailVerification emailVerification = emailVerificationRepository.findByEmail(email).orElseThrow(
+                () -> new NotFoundException("존재하지 않는 이메일입니다.")
+        );
+
         if (emailVerification == null) {
             throw new IllegalArgumentException("해당 이메일에 대한 인증 요청이 없습니다.");
         }
@@ -97,7 +100,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         emailVerification.setVerificationCode(newCode);
         emailVerification.setExpiresAt(LocalDateTime.now().plusMinutes(10));
 
-        emailVerificationDao.insertEmailVerification(emailVerification);
+        emailVerificationRepository.save(emailVerification);
         sendEmail(email, newCode);
 
         return "새 " + VERIFICATION_CODE + "가 전송되었습니다.";
