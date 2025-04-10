@@ -1,10 +1,7 @@
 package com.suseok.run.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "`group`")
+@Builder
 public class Group {
 
 	@Id
@@ -24,6 +22,9 @@ public class Group {
 	@Column(name = "group_name", nullable = false, unique = true)
 	private String groupName;
 
+	@Column(name = "group_desc")
+	private String groupDesc;
+
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "group_admin", unique = true)
 	private User groupAdmin;
@@ -31,7 +32,7 @@ public class Group {
 	@OneToMany(mappedBy = "group")
 	private List<UserGroup> userGroupList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "group")
+	@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Post> posts = new ArrayList<>();
 
 	private Double goalPace;

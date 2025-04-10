@@ -8,11 +8,11 @@ public interface GroupService {
 
     void updateGroup();
 
-    void deleteGroup();
+    void deleteGroup(Long userSeq, Long groupId);
 
-    void joinGroup();
+    void joinGroup(Long userSeq, Long groupId);
 
-    void leaveGroup();
+    void leaveGroup(Long userSeq, Long groupId);
 
     void kickMember();
 }

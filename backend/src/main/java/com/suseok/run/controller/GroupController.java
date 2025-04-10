@@ -17,11 +17,12 @@ public class GroupController {
 
     private final GroupService groupService;
 
+    // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @PostMapping
     @Operation(summary = "그룹 생성")
     public ResponseEntity<Void> createGroup(
             Long userSeq,
-            CreateGroupReq createGroupReq
+            @RequestBody CreateGroupReq createGroupReq
     ) {
         groupService.createGroup(userSeq, createGroupReq);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -34,24 +35,35 @@ public class GroupController {
         return ResponseEntity.ok().build();
     }
 
+    // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @DeleteMapping
     @Operation(summary = "그룹 삭제")
-    public ResponseEntity<Void> deleteGroup() {
-        groupService.deleteGroup();
+    public ResponseEntity<Void> deleteGroup(
+            Long userSeq,
+            @PathVariable Long groupId
+    ) {
+        groupService.deleteGroup(userSeq, groupId);
         return ResponseEntity.ok().build();
     }
 
+    // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @PostMapping("/{groupId}/members")
     @Operation(summary = "그룹 가입")
-    public ResponseEntity<Void> joinGroup() {
-        groupService.joinGroup();
+    public ResponseEntity<Void> joinGroup(
+            Long userSeq,
+            @PathVariable Long groupId
+    ) {
+        groupService.joinGroup(userSeq, groupId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{groupId}/members")
     @Operation(summary = "그룹 탈퇴")
-    public ResponseEntity<Void> leaveGroup() {
-        groupService.leaveGroup();
+    public ResponseEntity<Void> leaveGroup(
+            Long userSeq,
+            @PathVariable Long groupId
+    ) {
+        groupService.leaveGroup(userSeq, groupId);
         return ResponseEntity.ok().build();
     }
 
