@@ -40,8 +40,11 @@ public class CommentController {
     // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @DeleteMapping
     @Operation(summary = "댓글 삭제")
-    public ResponseEntity<Void> deleteComment() {
-        commentService.deleteComment();
+    public ResponseEntity<Void> deleteComment(
+            Long userSeq,
+            Long commentId
+    ) {
+        commentService.deleteComment(userSeq, commentId);
         return ResponseEntity.status(200).build();
     }
 }

@@ -8,5 +8,5 @@ public interface CommentService {
 
     void updateComment();
 
-    void deleteComment();
+    void deleteComment(Long userSeq, Long commentId);
 }

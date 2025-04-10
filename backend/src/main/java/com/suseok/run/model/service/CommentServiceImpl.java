@@ -1,5 +1,6 @@
 package com.suseok.run.model.service;
 
+import com.suseok.run.common.AccessDeniedException;
 import com.suseok.run.common.NotFoundException;
 import com.suseok.run.model.entity.Comment;
 import com.suseok.run.model.entity.Post;
@@ -48,7 +49,18 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment() {
+    public void deleteComment(
+            Long userSeq,
+            Long commentId
+    ) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException("")
+        );
 
+        if (!comment.getAuthor().getUserSeq().equals(userSeq)) {
+            throw new AccessDeniedException("");
+        }
+
+        commentRepository.delete(comment);
     }
 }
