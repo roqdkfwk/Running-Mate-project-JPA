@@ -84,49 +84,4 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(userService.update(userSeq, updateUserReq));
 	}
-
-	@GetMapping
-	@Operation(summary = "selectAllUsers")
-	public ResponseEntity<List<User>> selectAllUsers() {
-		return new ResponseEntity<List<User>>(userService.selectAll(),HttpStatus.OK);
-	}
-
-	@PostMapping("/findId")
-    @Operation(summary = "아이디 찾기")
-    public ResponseEntity<?> findId(
-			@RequestBody FindIdReq findIdReq
-	) {
-		String userId = userService.findId(findIdReq.getUserName(), findIdReq.getPhoneOrEmail());
-		return ResponseEntity.status(HttpStatus.OK).body(userId);
-    }
-
-    @PostMapping("/findPwd")
-    @Operation(summary = "비밀번호 찾기")
-    public ResponseEntity<?> findPwd(
-			@RequestBody User user
-	) {
-        User foundUser = userService.findPw(user.getUserName(), user.getPhone(), user.getUserId());
-        if (foundUser == null) {
-            foundUser = userService.findPw(user.getUserName(), user.getEmail(), user.getUserId());
-        }
-
-        if (foundUser == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        // 새로운 비밀번호 생성
-        String newPwd = userService.sendNewPassword(foundUser);
-        return new ResponseEntity<>(newPwd, HttpStatus.OK);
-    }
-
-
-	@PostMapping("/search")
-	@Operation(summary = "searchUser")
-	public ResponseEntity<List<User>> searchUser(
-			@RequestParam String con
-	) {
-		List<User> users = userService.search(con);
-		if (users != null)
-			return new ResponseEntity<List<User>>(users, HttpStatus.OK);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
 }

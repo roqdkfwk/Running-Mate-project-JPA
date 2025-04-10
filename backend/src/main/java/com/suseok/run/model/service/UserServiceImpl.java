@@ -2,7 +2,6 @@ package com.suseok.run.model.service;
 
 import com.suseok.run.common.ConflictException;
 import com.suseok.run.common.NotFoundException;
-import com.suseok.run.model.dao.UserDao;
 import com.suseok.run.model.entity.Request.CreateUserReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;
 import com.suseok.run.model.entity.Response.UpdateUserRes;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Random;
 
 @Service
@@ -22,13 +20,7 @@ import java.util.Random;
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
-	private final UserDao userDao;
 	private final RedisTemplate<String, String> redisTemplate;
-
-	@Override
-	public User loginUser(User user) {
-		return userDao.loginUser(user);
-	}
 
 	@Transactional
 	@Override
@@ -58,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void checkNickname(String userNick) {
-		if (redisTemplate.hasKey(userNick) || userRepository.findByNick(userNick).isPresent()) {
+		if (redisTemplate.hasKey(userNick) || userRepository.findByUserNick(userNick).isPresent()) {
 			throw new ConflictException("이미 사용 중인 닉네임입니다.");
 		}
 
@@ -79,31 +71,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<User> search(String con) {
-		return userDao.search(con);
-	}
-
-	@Override
 	public void delete(String userId) {
 		User user = userRepository.findById(1L).orElseThrow(
 				() -> new IllegalStateException("회원탈퇴 중 예기치 못한 오류가 발생했습니다.")
 		);
 
 		userRepository.delete(user);
-	}
-
-	@Override
-	public String findId(String name, String phoneOrEmail) {
-		String userId = userDao.findId(name, phoneOrEmail);
-		if (userId == null) {
-			throw new NotFoundException("찾을 수 없는 회원입니다.");
-		}
-		return userId;
-	}
-
-	@Override
-	public User findPw(String name, String phoneOrEmail, String id) {
-		return userDao.findPwd(name, phoneOrEmail, id);
 	}
 
 	@Override
@@ -129,21 +102,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User selectByNick(String userNick) {
-		if (redisTemplate.hasKey(userNick) || userDao.selectByNick(userNick) != null) {
+		if (redisTemplate.hasKey(userNick) || userRepository.findByUserNick(userNick) != null) {
 			throw new ConflictException("이미 사용 중인 닉네임입니다.");
 		}
 
 		redisTemplate.opsForValue().set(userNick, "true", Duration.ofMinutes(10));
-		return userDao.selectByNick(userNick);
+		return userRepository.findByUserNick(userNick).get();
 	}
-
-	@Override
-	public List<User> selectAll() {
-		return userDao.selectAll();
-	}
-
-	@Override
-	public Integer findByEmail(String email) {
-        return userDao.findByEmail(email);
-    }
 }
