@@ -46,10 +46,14 @@ public class GroupController {
         return ResponseEntity.ok().build();
     }
 
+    // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @PostMapping("/{groupId}/members")
     @Operation(summary = "그룹 가입")
-    public ResponseEntity<Void> joinGroup() {
-        groupService.joinGroup();
+    public ResponseEntity<Void> joinGroup(
+            Long userSeq,
+            @PathVariable Long groupId
+    ) {
+        groupService.joinGroup(userSeq, groupId);
         return ResponseEntity.ok().build();
     }
 

@@ -5,7 +5,9 @@ import com.suseok.run.common.NotFoundException;
 import com.suseok.run.model.entity.Group;
 import com.suseok.run.model.entity.Request.CreateGroupReq;
 import com.suseok.run.model.entity.User;
+import com.suseok.run.model.entity.UserGroup;
 import com.suseok.run.model.repository.GroupRepository;
+import com.suseok.run.model.repository.UserGroupRepository;
 import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ public class GroupServiceImpl implements GroupService {
     // Todo: 의존성 고민
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
+    private final UserGroupRepository userGroupRepository;
 
     // Todo: 그룹 생성 후 그룹 상세 페이지로 리다이렉트할 때 보여줄 데이터를 담은 ResponseDTO
     @Override
@@ -58,11 +61,25 @@ public class GroupServiceImpl implements GroupService {
         groupRepository.delete(group);
     }
 
+    // Todo: 그룹 가입 기능은 GroupService or UserService?
     @Override
-    public void joinGroup() {
+    public void joinGroup(Long userSeq, Long groupId) {
+        // 1. 사용자 조회
+        User user = userRepository.findById(userSeq).orElseThrow(
+                () -> new NotFoundException("존재하지 않는 사용자입니다.")
+        );
 
+        // 2. 그룹 조회
+        Group group = groupRepository.findById(groupId).orElseThrow(
+                () -> new NotFoundException("존재하지 않는 그룹입니다.")
+        );
+
+        // 3. 그룹에 가입
+        UserGroup userGroup = new UserGroup(null, user, group);
+        userGroupRepository.save(userGroup);
     }
 
+    // Todo: 그룹 탈퇴 기능은 GroupService or UserService?
     @Override
     public void leaveGroup() {
 

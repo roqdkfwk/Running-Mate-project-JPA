@@ -10,7 +10,7 @@ public interface GroupService {
 
     void deleteGroup(Long userSeq, Long groupId);
 
-    void joinGroup();
+    void joinGroup(Long userSeq, Long groupId);
 
     void leaveGroup();
 
