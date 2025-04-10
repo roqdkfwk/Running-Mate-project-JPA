@@ -12,7 +12,7 @@ public interface GroupService {
 
     void joinGroup(Long userSeq, Long groupId);
 
-    void leaveGroup();
+    void leaveGroup(Long userSeq, Long groupId);
 
     void kickMember();
 }

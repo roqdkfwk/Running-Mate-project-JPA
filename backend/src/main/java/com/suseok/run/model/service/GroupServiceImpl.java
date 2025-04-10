@@ -81,8 +81,12 @@ public class GroupServiceImpl implements GroupService {
 
     // Todo: 그룹 탈퇴 기능은 GroupService or UserService?
     @Override
-    public void leaveGroup() {
+    public void leaveGroup(Long userSeq, Long groupId) {
+        UserGroup userGroup = userGroupRepository.findByUserSeqAndGroupId(userSeq, groupId).orElseThrow(
+                () -> new NotFoundException("")
+        );
 
+        userGroupRepository.delete(userGroup);
     }
 
     @Override

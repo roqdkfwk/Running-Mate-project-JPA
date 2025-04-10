@@ -59,8 +59,11 @@ public class GroupController {
 
     @DeleteMapping("/{groupId}/members")
     @Operation(summary = "그룹 탈퇴")
-    public ResponseEntity<Void> leaveGroup() {
-        groupService.leaveGroup();
+    public ResponseEntity<Void> leaveGroup(
+            Long userSeq,
+            @PathVariable Long groupId
+    ) {
+        groupService.leaveGroup(userSeq, groupId);
         return ResponseEntity.ok().build();
     }
 
