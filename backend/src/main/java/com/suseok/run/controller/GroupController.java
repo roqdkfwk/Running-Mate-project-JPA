@@ -35,10 +35,14 @@ public class GroupController {
         return ResponseEntity.ok().build();
     }
 
+    // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @DeleteMapping
     @Operation(summary = "그룹 삭제")
-    public ResponseEntity<Void> deleteGroup() {
-        groupService.deleteGroup();
+    public ResponseEntity<Void> deleteGroup(
+            Long userSeq,
+            @PathVariable Long groupId
+    ) {
+        groupService.deleteGroup(userSeq, groupId);
         return ResponseEntity.ok().build();
     }
 

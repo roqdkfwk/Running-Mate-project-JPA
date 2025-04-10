@@ -32,7 +32,7 @@ public class Group {
 	@OneToMany(mappedBy = "group")
 	private List<UserGroup> userGroupList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "group")
+	@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Post> posts = new ArrayList<>();
 
 	private Double goalPace;

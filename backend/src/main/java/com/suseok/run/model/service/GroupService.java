@@ -8,7 +8,7 @@ public interface GroupService {
 
     void updateGroup();
 
-    void deleteGroup();
+    void deleteGroup(Long userSeq, Long groupId);
 
     void joinGroup();
 
