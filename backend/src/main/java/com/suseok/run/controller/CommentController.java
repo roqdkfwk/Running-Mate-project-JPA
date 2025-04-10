@@ -32,8 +32,12 @@ public class CommentController {
     // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @PatchMapping
     @Operation(summary = "댓글 수정")
-    public ResponseEntity<Void> updateComment() {
-        commentService.updateComment();
+    public ResponseEntity<Void> updateComment(
+            Long userSeq,
+            Long commentId,
+            @RequestBody String content
+    ) {
+        commentService.updateComment(userSeq, commentId, content);
         return ResponseEntity.status(200).build();
     }
 
@@ -47,4 +51,6 @@ public class CommentController {
         commentService.deleteComment(userSeq, commentId);
         return ResponseEntity.status(200).build();
     }
+
+    // Todo: 내가 작성한 댓글 표시 기능, 신고 기능, 좋아요 기능, 정렬 기능, 대댓글 기능
 }

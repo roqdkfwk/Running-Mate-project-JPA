@@ -44,8 +44,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void updateComment() {
+    public void updateComment(
+            Long userSeq,
+            Long commentId,
+            String content
+    ) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException("")
+        );
 
+        if (!comment.getAuthor().getUserSeq().equals(userSeq)) {
+            throw new AccessDeniedException("");
+        }
+
+        comment.setContent(content);
+        commentRepository.save(comment);
     }
 
     @Override
