@@ -1,10 +1,12 @@
 package com.suseok.run.model.service;
 
+import com.suseok.run.model.entity.Request.CreateCommentReq;
+
 public interface CommentService {
 
-    void createComent();
+    Long createComent(Long userSeq, Long postId, CreateCommentReq createCommentReq);
 
-    void updateComment();
+    void updateComment(Long userSeq, Long commentId, String content);
 
-    void deleteComment();
+    void deleteComment(Long userSeq, Long commentId);
 }
