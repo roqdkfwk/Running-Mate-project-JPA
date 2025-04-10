@@ -6,6 +6,7 @@ import com.suseok.run.model.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,12 @@ public class PostController {
 	@PostMapping
 	@Operation(summary = "게시글 작성")
 	public ResponseEntity<Long> createPost(
-			@RequestParam Long groupId,
 			@RequestParam Long userSeq,
+			@RequestParam Long groupId,
 			@RequestBody CreatePostReq createPostReq
 	) {
 		return ResponseEntity
-				.status(201)
+				.status(HttpStatus.CREATED)
 				.body(postService.createPost(userSeq, groupId, createPostReq));
 	}
 

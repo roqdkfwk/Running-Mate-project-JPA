@@ -6,7 +6,9 @@ import com.suseok.run.model.entity.Post;
 import com.suseok.run.model.entity.Request.CreatePostReq;
 import com.suseok.run.model.entity.Request.UpdatePostReq;
 import com.suseok.run.model.entity.User;
+import com.suseok.run.model.repository.GroupRepository;
 import com.suseok.run.model.repository.PostRespository;
+import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,22 +20,30 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
 
 	private final PostRespository postRepository;
+	private final UserRepository userRepository;
+	private final GroupRepository groupRepository;
 
 	/**
 	 * 게시글 작성
-	 * @return
 	 */
 	@Override
 	public Long createPost(
 			Long userSeq,
 			Long groupId,
-			CreatePostReq createPostReq) {
+			CreatePostReq createPostReq
+	) {
 		// 1. 게시글 작성자
+		User author = userRepository.findById(userSeq).orElseThrow(
+				() -> new NotFoundException("User not found with id " + userSeq)
+		);
 
 		// 2. 게시글을 작성할 게시판(그룹)
+		Group group = groupRepository.findById(groupId).orElseThrow(
+				() -> new NotFoundException("Group not found with id " + groupId)
+		);
 
 		// 3. 게시글 생성 및 저장
-		Post post = createPostReq.toEntity(new User(), new Group());
+		Post post = createPostReq.toEntity(author, group);
 		postRepository.save(post);
 		return post.getPostId();
 	}
