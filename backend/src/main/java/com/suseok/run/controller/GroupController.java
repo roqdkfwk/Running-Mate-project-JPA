@@ -17,11 +17,12 @@ public class GroupController {
 
     private final GroupService groupService;
 
+    // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @PostMapping
     @Operation(summary = "그룹 생성")
     public ResponseEntity<Void> createGroup(
             Long userSeq,
-            CreateGroupReq createGroupReq
+            @RequestBody CreateGroupReq createGroupReq
     ) {
         groupService.createGroup(userSeq, createGroupReq);
         return ResponseEntity.status(HttpStatus.CREATED).build();
