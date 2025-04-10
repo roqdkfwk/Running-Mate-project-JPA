@@ -1,5 +1,6 @@
 package com.suseok.run.model.service;
 
+import com.suseok.run.common.AccessDeniedException;
 import com.suseok.run.common.NotFoundException;
 import com.suseok.run.model.entity.Group;
 import com.suseok.run.model.entity.Post;
@@ -66,12 +67,21 @@ public class PostServiceImpl implements PostService {
 
 	/**
 	 * 게시글 삭제
-	 * @param postId
-	 * @param userSeq
 	 */
 	@Override
-	public void deletePost(Long postId, Long userSeq) {
+	public void deletePost(Long userSeq, Long postId) {
+		// 1. 게시글 조회
+		Post post = postRepository.findById(postId).orElseThrow(
+				() -> new NotFoundException("")
+		);
 
+		// 2. 게시글 작성자 확인
+		if (!post.getAuthor().getUserSeq().equals(userSeq)) {
+			throw new AccessDeniedException("");
+		}
+
+		// 3. 게시글 삭제
+		postRepository.delete(post);
 	}
 
 	/**

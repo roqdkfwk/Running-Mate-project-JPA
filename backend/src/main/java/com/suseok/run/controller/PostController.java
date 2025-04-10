@@ -18,6 +18,7 @@ public class PostController {
 
 	private final PostService postService;
 
+	// Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
 	@PostMapping
 	@Operation(summary = "게시글 작성")
 	public ResponseEntity<Long> createPost(
@@ -30,6 +31,7 @@ public class PostController {
 				.body(postService.createPost(userSeq, groupId, createPostReq));
 	}
 
+	// Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
 	@PatchMapping("/{postId}")
 	@Operation(summary = "게시글 수정")
 	public ResponseEntity<Void> updatePost(
@@ -37,6 +39,17 @@ public class PostController {
 			@RequestBody UpdatePostReq updatePostReq
 	) {
 		postService.updatePost(postId, updatePostReq);
+		return ResponseEntity.status(200).build();
+	}
+
+	// Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
+	@DeleteMapping
+	@Operation(summary = "게시글 삭제")
+	public ResponseEntity<Void> deletePost(
+			@RequestParam Long userSeq,
+			@RequestParam Long postId
+	) {
+		postService.deletePost(userSeq, postId);
 		return ResponseEntity.status(200).build();
 	}
 

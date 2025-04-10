@@ -12,7 +12,7 @@ public interface PostService {
 
 	void updatePost(Long postId, UpdatePostReq updatePostReq);
 
-	void deletePost(Long postId, Long userSeq);
+	void deletePost(Long UserSeq, Long postId);
 
 	Post getPost(Long postId);
 
