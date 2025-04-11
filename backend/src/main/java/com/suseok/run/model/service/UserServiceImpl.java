@@ -1,7 +1,7 @@
 package com.suseok.run.model.service;
 
-import com.suseok.run.common.ConflictException;
-import com.suseok.run.common.NotFoundException;
+import com.suseok.run.common.exception.ConflictException;
+import com.suseok.run.common.exception.NotFoundException;
 import com.suseok.run.model.dao.UserDao;
 import com.suseok.run.model.entity.Request.CreateUserReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;

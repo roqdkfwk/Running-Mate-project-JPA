@@ -1,7 +1,7 @@
 package com.suseok.run.model.service;
 
-import com.suseok.run.common.AccessDeniedException;
-import com.suseok.run.common.NotFoundException;
+import com.suseok.run.common.exception.AccessDeniedException;
+import com.suseok.run.common.exception.NotFoundException;
 import com.suseok.run.model.entity.Comment;
 import com.suseok.run.model.entity.Post;
 import com.suseok.run.model.entity.Request.CreateCommentReq;
