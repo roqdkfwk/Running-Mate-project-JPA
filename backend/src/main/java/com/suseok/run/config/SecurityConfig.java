@@ -1,8 +1,8 @@
 package com.suseok.run.config;
 
-import com.suseok.run.common.JwtAuthenticationFilter;
-import com.suseok.run.common.JwtUtil;
-import com.suseok.run.model.service.CustomUserDetailsService;
+import com.suseok.run.common.auth.JwtAuthenticationFilter;
+import com.suseok.run.common.auth.JwtUtil;
+import com.suseok.run.common.auth.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,14 +1,15 @@
-package com.suseok.run.common;
+package com.suseok.run.common.auth;
 
-import com.suseok.run.model.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
@@ -51,7 +52,7 @@ public class JwtUtil {
     /**
      * AccessToken 발급 메서드
      */
-    public String generateAccessToken(User user) {
+    public String generateAccessToken(com.suseok.run.model.entity.User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", user.getEmail());
         claims.put("name", user.getUserName());
@@ -88,6 +89,11 @@ public class JwtUtil {
         }
     }
 
+    // 토큰에서 사용자 ID를 추출
+    public Long extractId(String token) {
+        return Long.parseLong(extractClaim(token, Claims::getSubject));
+    }
+
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -112,5 +118,20 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    // 인증 정보를 담은 Authentication 객체 반환
+    public Authentication getAuthentication(String token) {
+
+        Claims claims = extractAllClaims(token);
+        Set<SimpleGrantedAuthority> authorities = Collections.singleton(
+                new SimpleGrantedAuthority("ROLE_USER")
+        );
+
+        return new UsernamePasswordAuthenticationToken(
+                new User(claims.getSubject(), "", authorities),
+                token,
+                authorities
+        );
     }
 }
