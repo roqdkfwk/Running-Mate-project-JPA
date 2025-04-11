@@ -2,6 +2,7 @@ package com.suseok.run.model.service;
 
 import com.suseok.run.common.ConflictException;
 import com.suseok.run.common.NotFoundException;
+import com.suseok.run.common.exception.ConflictException;
 import com.suseok.run.model.entity.Request.CreateUserReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;
 import com.suseok.run.model.entity.Response.UpdateUserRes;
