@@ -1,11 +1,8 @@
 package com.suseok.run.controller;
 
-import com.suseok.run.jwtutill.AuthRequired;
 import com.suseok.run.model.entity.Request.CreateUserReq;
-import com.suseok.run.model.entity.Request.FindIdReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;
 import com.suseok.run.model.entity.Response.UpdateUserRes;
-import com.suseok.run.model.entity.User;
 import com.suseok.run.model.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -63,7 +60,6 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@AuthRequired
 	@DeleteMapping
 	@Operation(summary = "회원탈퇴")
 	public ResponseEntity<Void> withdraw(
@@ -73,7 +69,6 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@AuthRequired
 	@PutMapping
 	@Operation(summary = "회원정보수정")
 	public ResponseEntity<UpdateUserRes> updateMyPage(
