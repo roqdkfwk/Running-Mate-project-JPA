@@ -36,9 +36,9 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     public String checkEmailDuplication(String email) {
         validateEmailFormat(email);
 
-        userRepository.findByEmail(email).orElseThrow(
-                () -> new ConflictException("이미 사용 중인 이메일입니다.")
-        );
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new ConflictException("이미 사용 중인 이메일입니다.");
+        }
 
         // 인증 번호를 전송하는 과정을 비동기로 수행
         CompletableFuture.runAsync(() -> sendVerificationCode(email));
