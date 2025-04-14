@@ -25,7 +25,7 @@ public class EmailVerificationController {
             @RequestParam String email
     ) {
         return ResponseEntity.ok(emailVerificationService.checkEmailDuplication(email));
-    };
+    }
 
     /**
      * 이메일 인증번호 검증

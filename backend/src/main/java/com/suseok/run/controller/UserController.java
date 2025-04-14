@@ -42,7 +42,6 @@ public class UserController {
 	public ResponseEntity<Void> checkId(
 			@RequestParam String userId
 	) {
-		System.out.println("userId : " + userId);
 		log.info("userId : " + userId);
 		userService.checkId(userId);
 		return ResponseEntity.status(HttpStatus.OK).build();
