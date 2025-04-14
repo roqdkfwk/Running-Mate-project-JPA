@@ -41,20 +41,22 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void checkId(String userId) {
+		String key = "userId: " + userId;
 		if (redisTemplate.hasKey(userId) || userRepository.findByUserId(userId).isPresent()) {
 			throw new ConflictException("이미 사용 중인 아이디입니다.");
 		}
 
-		redisTemplate.opsForValue().set(userId, "true", Duration.ofMinutes(10));
+		redisTemplate.opsForValue().set(key, "true", Duration.ofMinutes(10));
 	}
 
 	@Override
 	public void checkNickname(String userNick) {
+		String key = "userNick: " + userNick;
 		if (redisTemplate.hasKey(userNick) || userRepository.findByUserNick(userNick).isPresent()) {
 			throw new ConflictException("이미 사용 중인 닉네임입니다.");
 		}
 
-		redisTemplate.opsForValue().set(userNick, "true", Duration.ofMinutes(10));
+		redisTemplate.opsForValue().set(key, "true", Duration.ofMinutes(10));
 	}
 
 	@Override
