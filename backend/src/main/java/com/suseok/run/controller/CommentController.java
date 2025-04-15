@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "CommentRestController", description = "댓글 CRUD")
-@RequestMapping("/groups/{groupId}/posts/{postId}")
+@RequestMapping("/groups/{groupId}/posts/{postId}/comments")
 public class CommentController {
 
     private final CommentService commentService;

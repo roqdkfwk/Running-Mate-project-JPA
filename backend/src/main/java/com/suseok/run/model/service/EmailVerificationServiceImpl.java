@@ -5,9 +5,11 @@ import com.suseok.run.common.exception.ConflictException;
 import com.suseok.run.common.exception.NotFoundException;
 import com.suseok.run.model.entity.EmailVerification;
 import com.suseok.run.model.repository.EmailVerificationRepository;
+import com.suseok.run.model.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailVerificationServiceImpl implements EmailVerificationService {
@@ -26,8 +29,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     private final EmailVerificationRepository emailVerificationRepository;
     private final JavaMailSender javaMailSender;
     private final String VERIFICATION_CODE = "인증번호";
-    private final UserService userService;
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserRepository userRepository;
 
     /**
      * 이메일 중복 체크
@@ -35,7 +38,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     public String checkEmailDuplication(String email) {
         validateEmailFormat(email);
 
-        if (userService.findByEmail(email) != null) {
+        if (userRepository.findByEmail(email).isPresent()) {
             throw new ConflictException("이미 사용 중인 이메일입니다.");
         }
 
@@ -127,6 +130,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
      */
     private void sendEmail(String email, String verificationCode) {
         try {
+            System.out.println("TRY");
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(email);

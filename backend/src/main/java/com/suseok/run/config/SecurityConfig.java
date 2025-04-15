@@ -1,8 +1,8 @@
 package com.suseok.run.config;
 
-import com.suseok.run.common.JwtAuthenticationFilter;
-import com.suseok.run.common.JwtUtil;
-import com.suseok.run.model.service.CustomUserDetailsService;
+import com.suseok.run.common.auth.JwtAuthenticationFilter;
+import com.suseok.run.common.auth.JwtUtil;
+import com.suseok.run.common.auth.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +29,18 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/email-verification/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/api/auth/**",
+                                "/api/users/signup",
+                                "/api/users/check-id/**",
+                                "/api/users/check-nickname/**",
+                                "/api/email-verification/**",
+                                "/error",
+                                "/error/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

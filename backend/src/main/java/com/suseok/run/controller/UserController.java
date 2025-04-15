@@ -1,25 +1,22 @@
 package com.suseok.run.controller;
 
-import com.suseok.run.jwtutill.AuthRequired;
 import com.suseok.run.model.entity.Request.CreateUserReq;
-import com.suseok.run.model.entity.Request.FindIdReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;
 import com.suseok.run.model.entity.Response.UpdateUserRes;
-import com.suseok.run.model.entity.User;
 import com.suseok.run.model.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @Tag(name = "UserRestController", description = "유저 CRUD")
 @RequiredArgsConstructor
 public class UserController {
@@ -45,6 +42,7 @@ public class UserController {
 	public ResponseEntity<Void> checkId(
 			@RequestParam String userId
 	) {
+		log.info("userId : " + userId);
 		userService.checkId(userId);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
@@ -63,7 +61,6 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@AuthRequired
 	@DeleteMapping
 	@Operation(summary = "회원탈퇴")
 	public ResponseEntity<Void> withdraw(
@@ -73,7 +70,6 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@AuthRequired
 	@PutMapping
 	@Operation(summary = "회원정보수정")
 	public ResponseEntity<UpdateUserRes> updateMyPage(
@@ -83,50 +79,5 @@ public class UserController {
 		Long userSeq = 1L;
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(userService.update(userSeq, updateUserReq));
-	}
-
-	@GetMapping
-	@Operation(summary = "selectAllUsers")
-	public ResponseEntity<List<User>> selectAllUsers() {
-		return new ResponseEntity<List<User>>(userService.selectAll(),HttpStatus.OK);
-	}
-
-	@PostMapping("/findId")
-    @Operation(summary = "아이디 찾기")
-    public ResponseEntity<?> findId(
-			@RequestBody FindIdReq findIdReq
-	) {
-		String userId = userService.findId(findIdReq.getUserName(), findIdReq.getPhoneOrEmail());
-		return ResponseEntity.status(HttpStatus.OK).body(userId);
-    }
-
-    @PostMapping("/findPwd")
-    @Operation(summary = "비밀번호 찾기")
-    public ResponseEntity<?> findPwd(
-			@RequestBody User user
-	) {
-        User foundUser = userService.findPw(user.getUserName(), user.getPhone(), user.getUserId());
-        if (foundUser == null) {
-            foundUser = userService.findPw(user.getUserName(), user.getEmail(), user.getUserId());
-        }
-
-        if (foundUser == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        // 새로운 비밀번호 생성
-        String newPwd = userService.sendNewPassword(foundUser);
-        return new ResponseEntity<>(newPwd, HttpStatus.OK);
-    }
-
-
-	@PostMapping("/search")
-	@Operation(summary = "searchUser")
-	public ResponseEntity<List<User>> searchUser(
-			@RequestParam String con
-	) {
-		List<User> users = userService.search(con);
-		if (users != null)
-			return new ResponseEntity<List<User>>(users, HttpStatus.OK);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
