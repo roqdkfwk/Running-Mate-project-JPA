@@ -1,7 +1,8 @@
 package com.suseok.run.common.exception;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -15,9 +16,11 @@ import java.lang.annotation.Target;
 @ApiResponses(value = {
         @ApiResponse(responseCode = "403", description = "인증 실패")
 })
-@ApiImplicitParams
-        ({
-        @ApiImplicitParam(name = "Authorization", value = "Bearer 로 시작하는 JWT 토큰 필요", required = false, dataTypeClass = String.class, paramType = "header")
+@Parameters({
+        @Parameter(name = "Authorization",
+                description = "Bearer 로 시작하는 JWT 토큰 필요",
+                required = true,
+                in = ParameterIn.HEADER)
 })
 public @interface RequiredAuth {
 }
