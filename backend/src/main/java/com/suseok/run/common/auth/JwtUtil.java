@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 
@@ -24,6 +25,10 @@ public class JwtUtil {
 
     @Value("${jwt.expiration}")
     private long expiration;
+
+    private byte[] getSecretKeyBytes() {
+        return secretKey.getBytes(StandardCharsets.UTF_8);
+    }
 
     /**
      * 토큰 생성 메서드
@@ -45,7 +50,7 @@ public class JwtUtil {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .setIssuer(ISSUER)
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
+                .signWith(Keys.hmacShaKeyFor(getSecretKeyBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -63,7 +68,6 @@ public class JwtUtil {
 
     /**
      * RefreshToken 발급 메서드
-     * 유효기간은 1h * 24 * 15 = 15days
      */
     public String generateRefreshToken(Long userSeq) {
         return createToken(new HashMap<>(), userSeq.toString(), expiration * 24 * 15, true);
@@ -74,13 +78,12 @@ public class JwtUtil {
      */
     public boolean validateToken(String token) {
         try {
-            // 접두사 제거
             String actualToken = token.replace(TOKEN_PREFIX, "");
-            Jwts.parserBuilder().setSigningKey(secretKey)
+            Jwts.parserBuilder()
+                    .setSigningKey(getSecretKeyBytes())
                     .requireIssuer(ISSUER)
                     .build()
-                    .parseClaimsJws(actualToken)
-                    .getBody();
+                    .parseClaimsJws(actualToken);
 
             return !isTokenExpired(actualToken);
         } catch (ExpiredJwtException e) {
@@ -90,7 +93,6 @@ public class JwtUtil {
         }
     }
 
-    // 토큰에서 사용자 ID를 추출
     public Long extractId(String token) {
         return Long.parseLong(extractClaim(token, Claims::getSubject));
     }
@@ -109,21 +111,23 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(getSecretKeyBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public String getUserIdFromToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(secretKey.getBytes())
+                .setSigningKey(getSecretKeyBytes())
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
 
-    // 인증 정보를 담은 Authentication 객체 반환
     public Authentication getAuthentication(String token) {
-
         Claims claims = extractAllClaims(token);
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(
                 new SimpleGrantedAuthority("ROLE_USER")

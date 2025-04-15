@@ -13,7 +13,7 @@ public interface UserService {
 
 	void checkNickname(String userNick);
 
-	void delete(String userId);
+	void delete(Long userSeq);
 
 	UpdateUserRes update(Long userSeq, UpdateUserReq updateUserReq);
 

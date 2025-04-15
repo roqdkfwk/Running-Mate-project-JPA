@@ -1,5 +1,6 @@
 package com.suseok.run.controller;
 
+import com.suseok.run.common.exception.RequiredAuth;
 import com.suseok.run.model.entity.Request.CreateUserReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;
 import com.suseok.run.model.entity.Response.UpdateUserRes;
@@ -7,11 +8,13 @@ import com.suseok.run.model.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -61,12 +64,13 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
+	@SecurityRequirement(name = "JWT")
+	@SecurityRequirement(name = "basicAuth")
 	@DeleteMapping
 	@Operation(summary = "회원탈퇴")
-	public ResponseEntity<Void> withdraw(
-			@RequestBody String userId
-	) {
-		userService.delete(userId);
+	@RequiredAuth
+	public ResponseEntity<Void> withdraw(Authentication authentication) {
+		userService.delete(Long.valueOf(authentication.getName()));
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
