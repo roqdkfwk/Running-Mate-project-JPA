@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,5 +23,6 @@ import java.lang.annotation.Target;
                 required = true,
                 in = ParameterIn.HEADER)
 })
+@SecurityRequirement(name = "JWT")
 public @interface RequiredAuth {
 }
