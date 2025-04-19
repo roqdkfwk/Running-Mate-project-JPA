@@ -33,7 +33,8 @@ export const useMainStore
                     userStore.user = {
                         userSeq: response.data.userSeq,
                         userName: response.data.userName,
-                        userNick: response.data.userNick
+                        userNick: response.data.userNick,
+                        email: response.data.email
                     }
 
                     alert(JSON.stringify(response.data, null, 2))
