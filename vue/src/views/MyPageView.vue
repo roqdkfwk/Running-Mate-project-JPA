@@ -1,6 +1,5 @@
 <script setup>
 
-import { useMainStore } from '@/stores/main';
 import { useUserStore } from '@/stores/user';
 import { onMounted, ref } from 'vue';
 
