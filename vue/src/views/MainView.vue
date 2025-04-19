@@ -3,18 +3,15 @@
     <div class="profile-container">
       <ProfilePicture />
     </div>
-    <RouterView/>
+    <RouterView />
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import MyLog from './MyLog.vue';
 import ProfilePicture from '@/components/user/ProfilePicture.vue';
 import { useMainStore } from '@/stores/main';
 import { useUserStore } from '@/stores/user';
-import RecordView from './RecordView.vue';
-import MyRecord from '@/components/record/MyRecord.vue';
 import { useRouter } from 'vue-router';
 
 const store = useMainStore()

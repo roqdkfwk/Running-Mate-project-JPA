@@ -1,6 +1,5 @@
 package com.suseok.run.controller;
 
-import com.suseok.run.common.exception.RequiredAuth;
 import com.suseok.run.model.entity.Request.CreateUserReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;
 import com.suseok.run.model.entity.Response.UpdateUserRes;
@@ -68,8 +67,11 @@ public class UserController {
 	@SecurityRequirement(name = "basicAuth")
 	@DeleteMapping
 	@Operation(summary = "회원탈퇴")
-	@RequiredAuth
-	public ResponseEntity<Void> withdraw(Authentication authentication) {
+//	@RequiredAuth
+	public ResponseEntity<Void> withdraw(
+			Authentication authentication,
+			@RequestHeader("Authorization") String accessToken
+	) {
 		userService.delete(Long.valueOf(authentication.getName()));
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

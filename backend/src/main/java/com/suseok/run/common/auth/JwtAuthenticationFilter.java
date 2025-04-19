@@ -17,7 +17,6 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -28,6 +27,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 1. HTTP 요청의 헤더들 중에서 "Authorization"이라는 이름을 가진 헤더를 찾음
         String header = request.getHeader(JwtUtil.HEADER_STRING);
+
+        logger.info("들어온 요청 URI: " + request.getRequestURI());
+        logger.info("Authorization 헤더: " + request.getHeader("Authorization"));
 
         // 2. 헤더가 없거나 TOKEN_PREFIX로 시작하지 않으면 다음 필터로
         if (header == null || !header.startsWith(JwtUtil.TOKEN_PREFIX)) {

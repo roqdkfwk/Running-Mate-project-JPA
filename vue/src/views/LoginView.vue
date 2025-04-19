@@ -9,7 +9,7 @@
         <input type="text" id="id" v-model="user.userId" placeholder="아이디" required>
       </div>
       <div class="input-group">
-        <input type="password" id="password" v-model="user.userPwd" placeholder="비밀번호" required>
+        <input type="password" id="password" v-model="user.userPw" placeholder="비밀번호" required>
       </div>
       <button type="submit" class="login-button">로그인</button>
     </form>
@@ -31,15 +31,16 @@ const store = useMainStore();
 const router = useRouter();
 const user = ref({
   userId: '',
-  userPwd: ''
+  userPw: ''
 })
 
+/**
+ * 로그인 메서드
+ */
 const login = function () {
   store.login(user.value)
   router.push({ name: 'main' })
-  console.log("로그인 됨")
 }
-
 
 </script>
 
@@ -48,7 +49,7 @@ const login = function () {
   max-width: 400px;
   margin: 50px auto;
   padding: 20px;
-  background-color: rgba(255,255,255,0.7);
+  background-color: rgba(255, 255, 255, 0.7);
   text-align: center;
 }
 
@@ -56,7 +57,7 @@ const login = function () {
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
-  
+
 }
 
 .input-group input {
@@ -70,14 +71,14 @@ const login = function () {
   padding: 10px;
   border: none;
   border-radius: 4px;
-  background-color: rgba(255,255,255,0.8);
+  background-color: rgba(255, 255, 255, 0.8);
   color: black;
   cursor: pointer;
 }
 
 .login-button:hover {
   background-color: #6c757d;
-  color : white;
+  color: white;
 }
 
 .links {
@@ -92,6 +93,4 @@ const login = function () {
 .links a:hover {
   text-decoration: underline;
 }
-
-
 </style>
