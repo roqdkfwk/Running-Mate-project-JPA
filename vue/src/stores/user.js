@@ -15,8 +15,6 @@ export const useUserStore
         const users = ref([]);
         const user = ref({})
 
-        console.log("유저스토어")
-
         /**
          * 회원 가입
          */
@@ -24,7 +22,7 @@ export const useUserStore
             axios.post(`${REST_USER_API}/signup`, newUser)
                 .then((response) => {
                     if (response.status === 201) {
-                        alert('회원 가입에 성공했습니다.') // 성공 메시지 출력
+                        alert('회원 가입에 성공했습니다.')
                         router.push({name: 'loginView'})
                     }
                 })
