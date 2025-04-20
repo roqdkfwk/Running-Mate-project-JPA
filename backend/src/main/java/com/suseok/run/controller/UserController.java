@@ -1,5 +1,6 @@
 package com.suseok.run.controller;
 
+import com.suseok.run.common.exception.RequiredAuth;
 import com.suseok.run.model.entity.Request.CreateUserReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;
 import com.suseok.run.model.entity.Response.UpdateUserRes;
@@ -67,23 +68,24 @@ public class UserController {
 	@SecurityRequirement(name = "basicAuth")
 	@DeleteMapping
 	@Operation(summary = "회원탈퇴")
-//	@RequiredAuth
-	public ResponseEntity<Void> withdraw(
-			Authentication authentication,
-			@RequestHeader("Authorization") String accessToken
-	) {
+	@RequiredAuth
+	public ResponseEntity<Void> withdraw(Authentication authentication) {
 		userService.delete(Long.valueOf(authentication.getName()));
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	@PutMapping
 	@Operation(summary = "회원정보수정")
+	@RequiredAuth
 	public ResponseEntity<UpdateUserRes> updateMyPage(
-//			userSeq필요
+			Authentication authentication,
 			@RequestBody UpdateUserReq updateUserReq
 	) {
-		Long userSeq = 1L;
+		Long userSeq = Long.valueOf(authentication.getName());
+		UpdateUserRes updateUserRes = userService.update(userSeq, updateUserReq);
+
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(userService.update(userSeq, updateUserReq));
+				.header("Authorization", updateUserRes.getAccessToken())
+				.body(updateUserRes);
 	}
 }

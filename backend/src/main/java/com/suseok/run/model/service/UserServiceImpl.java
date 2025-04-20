@@ -1,5 +1,6 @@
 package com.suseok.run.model.service;
 
+import com.suseok.run.common.auth.JwtUtil;
 import com.suseok.run.common.exception.ConflictException;
 import com.suseok.run.common.exception.NotFoundException;
 import com.suseok.run.model.entity.Request.CreateUserReq;
@@ -20,6 +21,7 @@ import java.util.Random;
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
+	private final JwtUtil jwtUtil;
 	private final RedisTemplate<String, String> redisTemplate;
 
 	@Transactional
@@ -69,7 +71,12 @@ public class UserServiceImpl implements UserService {
 		);
 
 		updateUserReq.toEntity(user);
-		return UpdateUserRes.fromEntity(user);
+		userRepository.save(user);
+
+		// 업데이트된 사용자 정보를 바탕으로 accessToken 재발급
+		String accessToken = jwtUtil.generateAccessToken(user);
+
+		return UpdateUserRes.fromEntity(user, accessToken);
 	}
 
 	@Override

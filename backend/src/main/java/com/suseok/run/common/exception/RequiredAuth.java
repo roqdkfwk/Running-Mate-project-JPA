@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 @Parameters({
         @Parameter(name = "Authorization",
                 description = "Bearer 로 시작하는 JWT 토큰 필요",
-                required = true,
+                required = false,
                 in = ParameterIn.HEADER)
 })
 @SecurityRequirement(name = "JWT")

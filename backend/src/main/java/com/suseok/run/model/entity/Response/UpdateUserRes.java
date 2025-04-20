@@ -21,17 +21,23 @@ public class UpdateUserRes {
     private String phone;
     private boolean exposure;
     private LocalDateTime createdAt;
+    private String accessToken;
 
-    public static UpdateUserRes fromEntity(User user) {
+    public static UpdateUserRes fromEntity(
+            User user,
+            String accessToken
+    ) {
         return UpdateUserRes.builder()
-                        .userId(user.getUserId())
-                        .userNick(user.getUserNick())
-                        .userName(user.getUserName())
-                        .email(user.getEmail())
-                        .img(user.getImg())
-                        .address(user.getAddress())
-                        .phone(user.getPhone())
-                        .exposure(user.isExposure())
-                        .createdAt(user.getCreatedAt())
-                        .build();}
+                .userId(user.getUserId())
+                .userNick(user.getUserNick())
+                .userName(user.getUserName())
+                .email(user.getEmail())
+                .img(user.getImg())
+                .address(user.getAddress())
+                .phone(user.getPhone())
+                .exposure(user.isExposure())
+                .createdAt(user.getCreatedAt())
+                .accessToken(accessToken)
+                .build();
+    }
 }
