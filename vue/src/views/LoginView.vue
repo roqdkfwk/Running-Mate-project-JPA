@@ -39,7 +39,7 @@ const user = ref({
  */
 const login = function () {
   store.login(user.value)
-  router.push({ name: 'main' })
+  router.push({ name: 'mainView' })
 }
 
 </script>

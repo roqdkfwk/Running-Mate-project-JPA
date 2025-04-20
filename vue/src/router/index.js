@@ -42,13 +42,13 @@ const router = createRouter({
   routes: [
     {
       path: "",
-      name: "main",
+      name: "mainView",
       component: MainView,
       
     },
     {
       path: "/",
-      name: "main",
+      name: "mainView",
       component: MainView,
     },
     {

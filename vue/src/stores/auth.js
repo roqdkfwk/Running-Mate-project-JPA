@@ -1,11 +1,15 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { useUserStore } from "./user";
+import { useRouter } from 'vue-router'
 
+const AUTH_REST_API = `http://localhost:8080/api/users`
 const REST_API = `http://localhost:8080/api/email-verification`
 
 export const useAuthStore = defineStore('auth', () => {
-    // 이메일 인증 여부
+    const userStore = useUserStore()
+    const router = useRouter()
     const isEmailVerified = ref(false)
 
     /**
@@ -63,10 +67,42 @@ export const useAuthStore = defineStore('auth', () => {
             })
     }
 
+    /**
+     * 회원탈퇴
+     */
+    const withdraw = function () {
+        const accessToken = sessionStorage.getItem('accessToken') || ''
+        console.log("accessToken:", accessToken)
+
+        return axios.delete(`${AUTH_REST_API}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
+            .then((response) => {
+                alert('회원 탈퇴가 완료되었습니다.')
+                
+                // 1. 탈퇴 후 로그인되어 있던 사용자 정보 삭제
+                sessionStorage.removeItem('accessToken')
+                sessionStorage.removeItem('userId')
+                
+                userStore.user = {}
+                userStore.accessToken = {}
+
+                // 2. 메인페이지로 리다이렉트
+                router.push({name: 'mainView'})
+            })
+            .catch((error) => {
+                alert('회원 탈퇴 중 오류가 발생했습니다.')
+            
+        })
+    }
+
     return {
         isEmailVerified,
         sendVerificationCode,
         verifyCode,
-        resendVerificationCode
+        resendVerificationCode,
+        withdraw
     }
 })
