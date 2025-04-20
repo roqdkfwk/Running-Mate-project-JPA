@@ -1,17 +1,3 @@
-<script setup>
-
-import { useUserStore } from '@/stores/user';
-import { onMounted, ref } from 'vue';
-
-const user = ref({})
-const store = useUserStore()
-
-onMounted(() => {
-    store.myPage()
-    user.value = store.user
-})
-</script>
-
 <template>
     <div class="container">
         <h2>My Page</h2>
@@ -57,9 +43,35 @@ onMounted(() => {
                 <input id="exposure" v-model="user.exposure" type="checkbox" />
             </div>
 
+            <div class="actions">
+                <button @click="onSave" class="btn-save">수정</button>
+                <button @click="withdraw" class="btn-delete">회원탈퇴</button>
+            </div>
+
         </div>
     </div>
 </template>
+
+<script setup>
+
+import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from '@/stores/user';
+import { onMounted, ref } from 'vue';
+
+const user = ref({})
+const userStore = useUserStore()
+const authStore = useAuthStore()
+
+onMounted(() => {
+    userStore.myPage()
+    user.value = userStore.user
+})
+
+const withdraw = function () {
+    authStore.withdraw()
+}
+</script>
+
 
 <style scoped>
 .container {

@@ -1,7 +1,7 @@
-import {ref} from 'vue';
-import {defineStore} from 'pinia';
+import { ref } from 'vue';
+import { defineStore } from 'pinia';
 import axios from 'axios';
-import {useRouter} from 'vue-router';
+import { useRouter } from 'vue-router';
 
 const REST_USER_API = `http://localhost:8080/api/users`;
 const REST_RANK_API = `http://localhost:8080/api/rank`
@@ -69,8 +69,7 @@ export const useUserStore
         const myPage = function () {
             return axios.get(`${REST_USER_API}/myPage`, {
                 headers: {
-                    Authorization: `${sessionStorage.getItem('accessToken')}`,
-                    userId: sessionStorage.getItem('userId')
+                    Authorization: `${sessionStorage.getItem('accessToken')}`
                 }
             })
                 .then((response) => {
