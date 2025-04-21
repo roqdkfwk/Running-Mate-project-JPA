@@ -6,12 +6,12 @@ import lombok.Getter;
 @Getter
 public class UpdateUserReq {
 
-    private String pw;
+    private String userName;
     private String userNick;
     private String address;
 
     public void toEntity(User user) {
-        user.setUserPw(this.pw);
+        user.setUserName(this.userName);
         user.setUserNick(this.userNick);
         user.setAddress(this.address);
     }
