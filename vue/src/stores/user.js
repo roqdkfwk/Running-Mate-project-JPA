@@ -99,6 +99,9 @@ export const useUserStore
                     
                     // 2. 세션에 토큰 저장
                     sessionStorage.setItem('accessToken', newToken)
+                    sessionStorage.setItem('userName', response.data.userName)
+                    sessionStorage.setItem('userNick', response.data.userNick)
+                    sessionStorage.setItem('address', response.data.address)
 
                     // 3. 스토어에 토큰 저장
                     accessToken.value = newToken

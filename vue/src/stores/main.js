@@ -38,6 +38,7 @@ export const useMainStore
                         userSeq: response.data.userSeq,
                         userName: response.data.userName,
                         userNick: response.data.userNick,
+                        address: response.data.address,
                         email: response.data.email
                     }
 
