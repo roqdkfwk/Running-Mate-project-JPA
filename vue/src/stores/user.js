@@ -16,7 +16,7 @@ export const useUserStore
         const user = ref({})
 
         /**
-         * 회원 가입
+         * 회원가입
          */
         const signup = function (newUser) {
             axios.post(`${REST_USER_API}/signup`, newUser)
@@ -69,7 +69,7 @@ export const useUserStore
         const myPage = function () {
             return axios.get(`${REST_USER_API}/myPage`, {
                 headers: {
-                    Authorization: `${sessionStorage.getItem('accessToken')}`
+                    Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
                 }
             })
                 .then((response) => {
@@ -79,6 +79,37 @@ export const useUserStore
                 })
         }
 
+        /**
+         * 회원정보수정
+         */
+        const update = function (updateUserReq) {
+            return axios.patch(`${REST_USER_API}`, updateUserReq, {
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+                }
+            })
+                .then((response) => {
+                    // 1. 헤더에서 새로 발급된 토큰 추출
+                    const authorization = response.headers['getAuthorization'] || ''
+                    const accessToken = authorization.startsWith('Bearer')
+                        ? authorization.slice(7) : authorization
+                    
+                    // 2. 세션에 토큰 저장
+                    sessionStorage.setItem('accessToken', accessToken)
+
+                    // 3. 스토어에 토큰 저장
+                    accessToken.value = accessToken
+                    user.value = {
+                        userName: response.data.userName,
+                        userNick: response.data.userNick,
+                        email: response.data.email
+                    }
+                })
+                .catch((error) => {
+                    console.error(error)                
+            })
+        }
+            
         const addRival = function (userId, rivalId) {
             if (!sessionStorage.getItem('accessToken')) {
                 router.push({name: 'loginView'}) // 로그인 페이지로 이동

@@ -5,7 +5,7 @@
 
             <div class="user-info-row">
                 <label for="userId">ID:</label>
-                <input id="userId" v-model="user.userId" type="text" />
+                <input id="userId" v-model="user.userId" type="text" readonly />
             </div>
 
             <div class="user-info-row">
