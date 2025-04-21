@@ -4,16 +4,6 @@
         <div class="user-info-box">
 
             <div class="user-info-row">
-                <label for="userId">ID:</label>
-                <input id="userId" v-model="user.userId" type="text" readonly />
-            </div>
-
-            <div class="user-info-row">
-                <label for="userPwd">Password:</label>
-                <input id="userPwd" v-model="user.userPwd" type="password" />
-            </div>
-
-            <div class="user-info-row">
                 <label for="userName">Name:</label>
                 <input id="userName" v-model="user.userName" type="text" />
             </div>
@@ -44,7 +34,7 @@
             </div>
 
             <div class="actions">
-                <button @click="onSave" class="btn-save">수정</button>
+                <button @click="update" class="btn-save">수정</button>
                 <button @click="withdraw" class="btn-delete">회원탈퇴</button>
             </div>
 
@@ -63,9 +53,17 @@ const userStore = useUserStore()
 const authStore = useAuthStore()
 
 onMounted(() => {
-    userStore.myPage()
     user.value = userStore.user
 })
+
+const update = function () {
+    const updateUserReq = {
+        username: user.value.userName,
+        userNick: user.value.userNick,
+        address: user.value.address
+    }
+    userStore.update(updateUserReq)
+}
 
 const withdraw = function () {
     authStore.withdraw()
