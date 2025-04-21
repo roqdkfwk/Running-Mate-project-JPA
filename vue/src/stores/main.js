@@ -26,6 +26,10 @@ export const useMainStore
                     
                     // 2. 세션에 토큰 저장
                     sessionStorage.setItem('accessToken', accessToken)
+                    sessionStorage.setItem('userName', response.data.userName)
+                    sessionStorage.setItem('userNick', response.data.userNick)
+                    sessionStorage.setItem('eamil', response.data.email)
+                    sessionStorage.setItem('address', response.data.address)
                     sessionStorage.setItem('userId', response.data.userId)
 
                     // 3. 스토어에 토큰 저장

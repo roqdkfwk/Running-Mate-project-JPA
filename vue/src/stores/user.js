@@ -66,6 +66,9 @@ export const useUserStore
                 })
         }
 
+        /**\
+         * 마이페이지
+         */
         const myPage = function () {
             return axios.get(`${REST_USER_API}/myPage`, {
                 headers: {
@@ -90,15 +93,15 @@ export const useUserStore
             })
                 .then((response) => {
                     // 1. 헤더에서 새로 발급된 토큰 추출
-                    const authorization = response.headers['getAuthorization'] || ''
-                    const accessToken = authorization.startsWith('Bearer')
+                    const authorization = response.headers['authorization'] || ''
+                    const newToken = authorization.startsWith('Bearer')
                         ? authorization.slice(7) : authorization
                     
                     // 2. 세션에 토큰 저장
-                    sessionStorage.setItem('accessToken', accessToken)
+                    sessionStorage.setItem('accessToken', newToken)
 
                     // 3. 스토어에 토큰 저장
-                    accessToken.value = accessToken
+                    accessToken.value = newToken
                     user.value = {
                         userName: response.data.userName,
                         userNick: response.data.userNick,
@@ -144,7 +147,7 @@ export const useUserStore
         }
 
         return {
-            user, router, signup, checkId, checkNick, myPage, addRival, getAllUsers, users,
+            user, router, signup, checkId, checkNick, update, myPage, addRival, getAllUsers, users,
             isIdChecked, accessToken,
         }
     },
