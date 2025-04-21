@@ -58,9 +58,9 @@ onMounted(() => {
 
 const update = function () {
     const updateUserReq = {
-        username: user.value.userName,
+        userName: user.value.userName,
         userNick: user.value.userNick,
-        address: user.value.address
+        address: user.value.address || null
     }
     userStore.update(updateUserReq)
 }
