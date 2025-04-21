@@ -4,6 +4,7 @@ import com.suseok.run.common.exception.RequiredAuth;
 import com.suseok.run.model.entity.Request.CreateUserReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;
 import com.suseok.run.model.entity.Response.UpdateUserRes;
+import com.suseok.run.model.entity.Response.UpdateUserResult;
 import com.suseok.run.model.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -82,10 +83,10 @@ public class UserController {
 			@RequestBody UpdateUserReq updateUserReq
 	) {
 		Long userSeq = Long.valueOf(authentication.getName());
-		UpdateUserRes updateUserRes = userService.update(userSeq, updateUserReq);
+		UpdateUserResult updateUserResult = userService.update(userSeq, updateUserReq);
 
 		return ResponseEntity.status(HttpStatus.OK)
-				.header("Authorization", updateUserRes.getAccessToken())
-				.body(updateUserRes);
+				.header("Authorization", updateUserResult.getAcccessToken())
+				.body(updateUserResult.getUpdateUserRes());
 	}
 }

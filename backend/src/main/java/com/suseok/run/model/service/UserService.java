@@ -2,7 +2,7 @@ package com.suseok.run.model.service;
 
 import com.suseok.run.model.entity.Request.CreateUserReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;
-import com.suseok.run.model.entity.Response.UpdateUserRes;
+import com.suseok.run.model.entity.Response.UpdateUserResult;
 import com.suseok.run.model.entity.User;
 
 public interface UserService {
@@ -15,7 +15,7 @@ public interface UserService {
 
 	void delete(Long userSeq);
 
-	UpdateUserRes update(Long userSeq, UpdateUserReq updateUserReq);
+	UpdateUserResult update(Long userSeq, UpdateUserReq updateUserReq);
 
 	User selectByNick(String userNick);
 

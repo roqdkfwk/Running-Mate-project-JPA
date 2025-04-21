@@ -6,6 +6,7 @@ import com.suseok.run.common.exception.NotFoundException;
 import com.suseok.run.model.entity.Request.CreateUserReq;
 import com.suseok.run.model.entity.Request.UpdateUserReq;
 import com.suseok.run.model.entity.Response.UpdateUserRes;
+import com.suseok.run.model.entity.Response.UpdateUserResult;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -61,8 +62,11 @@ public class UserServiceImpl implements UserService {
 		redisTemplate.opsForValue().set(key, "true", Duration.ofMinutes(10));
 	}
 
+	/**
+	 * 회원정보수정
+	 */
 	@Override
-	public UpdateUserRes update(
+	public UpdateUserResult update(
 			Long userSeq,
 			UpdateUserReq updateUserReq
 	) {
@@ -76,7 +80,7 @@ public class UserServiceImpl implements UserService {
 		// 업데이트된 사용자 정보를 바탕으로 accessToken 재발급
 		String accessToken = jwtUtil.generateAccessToken(user);
 
-		return UpdateUserRes.fromEntity(user, accessToken);
+		return new UpdateUserResult(UpdateUserRes.fromEntity(user), accessToken);
 	}
 
 	@Override
