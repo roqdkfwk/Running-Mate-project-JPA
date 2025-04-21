@@ -4,11 +4,13 @@ import com.suseok.run.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class UpdateUserRes {
 
@@ -21,12 +23,8 @@ public class UpdateUserRes {
     private String phone;
     private boolean exposure;
     private LocalDateTime createdAt;
-    private String accessToken;
 
-    public static UpdateUserRes fromEntity(
-            User user,
-            String accessToken
-    ) {
+    public static UpdateUserRes fromEntity(User user) {
         return UpdateUserRes.builder()
                 .userId(user.getUserId())
                 .userNick(user.getUserNick())
@@ -37,7 +35,6 @@ public class UpdateUserRes {
                 .phone(user.getPhone())
                 .exposure(user.isExposure())
                 .createdAt(user.getCreatedAt())
-                .accessToken(accessToken)
                 .build();
     }
 }
