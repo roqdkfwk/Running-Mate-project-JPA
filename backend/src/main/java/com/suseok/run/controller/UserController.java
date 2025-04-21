@@ -75,7 +75,7 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@PutMapping
+	@PatchMapping
 	@Operation(summary = "회원정보수정")
 	@RequiredAuth
 	public ResponseEntity<UpdateUserRes> updateMyPage(
