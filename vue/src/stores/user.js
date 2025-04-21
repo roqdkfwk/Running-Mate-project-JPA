@@ -105,7 +105,7 @@ export const useUserStore
                     user.value = {
                         userName: response.data.userName,
                         userNick: response.data.userNick,
-                        email: response.data.email
+                        address: response.data.address
                     }
                 })
                 .catch((error) => {
