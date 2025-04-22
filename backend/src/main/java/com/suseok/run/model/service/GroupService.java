@@ -1,10 +1,11 @@
 package com.suseok.run.model.service;
 
 import com.suseok.run.model.entity.Request.CreateGroupReq;
+import com.suseok.run.model.entity.Response.CreateGroupRes;
 
 public interface GroupService {
 
-    void createGroup(Long userSeq, CreateGroupReq createGroupReq);
+    CreateGroupRes createGroup(Long userSeq, CreateGroupReq createGroupReq);
 
     void updateGroup();
 

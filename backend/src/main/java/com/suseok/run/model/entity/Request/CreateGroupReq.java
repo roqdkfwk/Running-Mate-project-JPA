@@ -2,7 +2,9 @@ package com.suseok.run.model.entity.Request;
 
 import com.suseok.run.model.entity.Group;
 import com.suseok.run.model.entity.User;
+import lombok.Getter;
 
+@Getter
 public class CreateGroupReq {
 
     private String groupName;

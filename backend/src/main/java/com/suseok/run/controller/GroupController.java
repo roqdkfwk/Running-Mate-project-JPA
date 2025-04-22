@@ -1,6 +1,8 @@
 package com.suseok.run.controller;
 
+import com.suseok.run.common.exception.RequiredAuth;
 import com.suseok.run.model.entity.Request.CreateGroupReq;
+import com.suseok.run.model.entity.Response.CreateGroupRes;
 import com.suseok.run.model.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,12 +22,14 @@ public class GroupController {
     // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @PostMapping
     @Operation(summary = "그룹 생성")
-    public ResponseEntity<Void> createGroup(
+    @RequiredAuth
+    public ResponseEntity<CreateGroupRes> createGroup(
             Long userSeq,
             @RequestBody CreateGroupReq createGroupReq
     ) {
-        groupService.createGroup(userSeq, createGroupReq);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        CreateGroupRes createGroupRes = groupService.createGroup(userSeq, createGroupReq);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(createGroupRes);
     }
 
     @PatchMapping
