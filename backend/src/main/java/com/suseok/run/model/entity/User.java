@@ -43,12 +43,12 @@ public class User {
 	private String phone;
 	private boolean exposure;
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<UserGroup> userGroupList = new ArrayList<>();
 
 	@OneToOne(mappedBy = "groupAdmin")
 	private Group group;
 
-	@OneToMany(mappedBy = "author")
+	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
 	private List<Post> postList = new ArrayList<>();
 }

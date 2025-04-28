@@ -4,6 +4,7 @@ import com.suseok.run.common.auth.JwtUtil;
 import com.suseok.run.common.exception.UnAuthorizedException;
 import com.suseok.run.model.entity.Request.LoginReq;
 import com.suseok.run.model.entity.Response.LoginRes;
+import com.suseok.run.model.entity.Response.LoginResult;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class AuthServiceImpl implements AuthService {
     private final String ERROR_MESSAGE = "아이디 혹은 비밀번호가 일치하지 않습니다.";
 
     @Override
-    public LoginRes login(LoginReq loginReq) {
+    public LoginResult login(LoginReq loginReq) {
         User user = userRepository.findByUserId(loginReq.getUserId()).orElseThrow(
                 () -> new UnAuthorizedException(ERROR_MESSAGE)
         );
@@ -30,6 +31,6 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtUtil.generateAccessToken(user);
 //        String refreshToken = jwtUtil.generateRefreshToken(user.getUserSeq());
 
-        return LoginRes.fromEntity(user, accessToken);
+        return new LoginResult(LoginRes.fromEntity(user), accessToken);
     }
 }

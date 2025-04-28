@@ -1,9 +1,9 @@
 package com.suseok.run.model.service;
 
 import com.suseok.run.model.entity.Request.LoginReq;
-import com.suseok.run.model.entity.Response.LoginRes;
+import com.suseok.run.model.entity.Response.LoginResult;
 
 public interface AuthService {
 
-    LoginRes login(LoginReq loginReq);
+    LoginResult login(LoginReq loginReq);
 }
