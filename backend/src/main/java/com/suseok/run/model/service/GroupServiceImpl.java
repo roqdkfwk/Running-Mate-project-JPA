@@ -5,12 +5,15 @@ import com.suseok.run.common.exception.NotFoundException;
 import com.suseok.run.model.entity.Group;
 import com.suseok.run.model.entity.Request.CreateGroupReq;
 import com.suseok.run.model.entity.Response.CreateGroupRes;
+import com.suseok.run.model.entity.Response.ReadGroupRes;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.entity.UserGroup;
 import com.suseok.run.model.repository.GroupRepository;
 import com.suseok.run.model.repository.UserGroupRepository;
 import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,6 +39,12 @@ public class GroupServiceImpl implements GroupService {
         userGroupRepository.save(userGroup);
 
         return new CreateGroupRes(admin.getUserName(), group.getGroupName(), group.getGroupDesc());
+    }
+
+    @Override
+    public Page<ReadGroupRes> getGroupList(Pageable pageable) {
+        return groupRepository.findAll(pageable)
+                .map(ReadGroupRes::new);
     }
 
     @Override

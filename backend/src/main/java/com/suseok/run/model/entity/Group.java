@@ -35,12 +35,6 @@ public class Group {
 	@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Post> posts = new ArrayList<>();
 
-	private Double goalPace;
-	private Double goalFrequency;
-	private Double goalTotalDistance;
-	private Double conPace;
-	private Double conFrequency;
-	private Double conTotalDistance;
 	private Double pace;
 	private Double frequency;
 	private Double totalDistance;

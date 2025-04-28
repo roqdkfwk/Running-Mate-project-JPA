@@ -3,10 +3,16 @@ package com.suseok.run.controller;
 import com.suseok.run.common.exception.RequiredAuth;
 import com.suseok.run.model.entity.Request.CreateGroupReq;
 import com.suseok.run.model.entity.Response.CreateGroupRes;
+import com.suseok.run.model.entity.Response.ReadGroupRes;
 import com.suseok.run.model.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -31,6 +37,21 @@ public class GroupController {
         CreateGroupRes createGroupRes = groupService.createGroup(userSeq, createGroupReq);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(createGroupRes);
+    }
+
+    @GetMapping
+    @Operation(summary = "그룹 조회", description = "page(0부터 시작)와 size 파라미터로 페이징 조회")
+    public ResponseEntity<Page<ReadGroupRes>> getGroupList(
+            @ParameterObject
+            @PageableDefault(
+                    page      = 0,
+                    size      = 10,
+                    sort      = "pace",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        Page<ReadGroupRes> page = groupService.getGroupList(pageable);
+        return ResponseEntity.ok(page);
     }
 
     @PatchMapping
