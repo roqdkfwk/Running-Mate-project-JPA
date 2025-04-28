@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,14 +19,14 @@ public class PostController {
 
 	private final PostService postService;
 
-	// Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
 	@PostMapping
 	@Operation(summary = "게시글 작성")
 	public ResponseEntity<Long> createPost(
-			@RequestParam Long userSeq,
+			Authentication authentication,
 			@RequestParam Long groupId,
 			@RequestBody CreatePostReq createPostReq
 	) {
+		Long userSeq = Long.valueOf(authentication.getName());
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.body(postService.createPost(userSeq, groupId, createPostReq));

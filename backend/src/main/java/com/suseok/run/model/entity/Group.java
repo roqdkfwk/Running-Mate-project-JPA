@@ -29,18 +29,12 @@ public class Group {
 	@JoinColumn(name = "group_admin", unique = true)
 	private User groupAdmin;
 
-	@OneToMany(mappedBy = "group")
+	@OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
 	private List<UserGroup> userGroupList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Post> posts = new ArrayList<>();
 
-	private Double goalPace;
-	private Double goalFrequency;
-	private Double goalTotalDistance;
-	private Double conPace;
-	private Double conFrequency;
-	private Double conTotalDistance;
 	private Double pace;
 	private Double frequency;
 	private Double totalDistance;

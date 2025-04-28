@@ -4,12 +4,16 @@ import com.suseok.run.common.exception.AccessDeniedException;
 import com.suseok.run.common.exception.NotFoundException;
 import com.suseok.run.model.entity.Group;
 import com.suseok.run.model.entity.Request.CreateGroupReq;
+import com.suseok.run.model.entity.Response.CreateGroupRes;
+import com.suseok.run.model.entity.Response.ReadGroupRes;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.entity.UserGroup;
 import com.suseok.run.model.repository.GroupRepository;
 import com.suseok.run.model.repository.UserGroupRepository;
 import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,15 +26,25 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
     private final UserGroupRepository userGroupRepository;
 
-    // Todo: 그룹 생성 후 그룹 상세 페이지로 리다이렉트할 때 보여줄 데이터를 담은 ResponseDTO
     @Override
-    public void createGroup(Long userSeq, CreateGroupReq createGroupReq) {
+    public CreateGroupRes createGroup(Long userSeq, CreateGroupReq createGroupReq) {
         User admin = userRepository.findById(userSeq).orElseThrow(
                 () -> new NotFoundException("존재하지 않는 사용자입니다.")
         );
 
         Group group = createGroupReq.toEntity(admin);
         groupRepository.save(group);
+
+        UserGroup userGroup = new UserGroup(null, admin, group);
+        userGroupRepository.save(userGroup);
+
+        return new CreateGroupRes(admin.getUserName(), group.getGroupName(), group.getGroupDesc());
+    }
+
+    @Override
+    public Page<ReadGroupRes> getGroupList(Pageable pageable) {
+        return groupRepository.findAll(pageable)
+                .map(ReadGroupRes::new);
     }
 
     @Override
