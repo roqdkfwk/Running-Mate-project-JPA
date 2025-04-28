@@ -6,135 +6,88 @@ import { useRankStore } from '@/stores/rank';
 
 const groupStore = useGroupStore();
 const rankStore = useRankStore();
-const groups= ref([])
 
+// 페이징 & 정렬 상태
 const currentPage = ref(1);
 const pageSize = 10;
-const sortBy = ref(''); // 현재 정렬 기준
+const sortBy = ref('pace');  // 기본 정렬 기준을 pace 로 설정
 
-// onMounted에서 그룹 데이터를 불러옵니다.
+// 페이지 진입 시 자동으로 pace 기준 정렬 호출
 onMounted(() => {
-  rankStore.sortGroupByHighestPace();
+  sortByPace();
 });
 
-const totalPages = computed(() => {
-  return Math.ceil(filteredGroups.value.length / pageSize);
-});
+// 1) 전체 그룹 리스트(필터링 없음)
+const filteredGroups = computed(() => rankStore.groups);
 
-const filteredGroups = computed(() => {
-  return rankStore.groups; // 검색 필터가 없어서 모든 그룹을 반환
-});
-
+// 2) 클라이언트 측 정렬 (서버 정렬과 동기화)
 const sortedGroups = computed(() => {
   if (sortBy.value === 'pace') {
-    return [...filteredGroups.value].sort((a, b) => a.pace - b.pace); // 페이스 기준 정렬
-  } else if (sortBy.value === 'frequency') {
-    return [...filteredGroups.value].sort((a, b) => b.frequency - a.frequency); // 빈도 기준 정렬
-  } else if (sortBy.value === 'totalDistance') {
-    return [...filteredGroups.value].sort((a, b) => b.totalDistance - a.totalDistance); // 누적거리 기준 정렬
-  } else {
-    return filteredGroups.value; // 기본 정렬
+    return [...filteredGroups.value].sort((a, b) => a.pace - b.pace);
   }
+  if (sortBy.value === 'frequency') {
+    return [...filteredGroups.value].sort((a, b) => b.frequency - a.frequency);
+  }
+  if (sortBy.value === 'totalDistance') {
+    return [...filteredGroups.value].sort((a, b) => b.totalDistance - a.totalDistance);
+  }
+  return filteredGroups.value;
 });
 
+// 3) 페이징 슬라이스 계산
 const paginatedGroups = computed(() => {
   const start = (currentPage.value - 1) * pageSize;
-  const end = start + pageSize;
-  return sortedGroups.value.slice(start, end);
+  return sortedGroups.value.slice(start, start + pageSize);
 });
 
-const visiblePages = computed(() => {
-  let pages = [];
-  let startPage = Math.max(1, currentPage.value - 2);
-  let endPage = Math.min(totalPages.value, currentPage.value + 2);
+// 4) 전체 페이지 수
+const totalPages = computed(() =>
+  Math.ceil(filteredGroups.value.length / pageSize)
+);
 
-  if (startPage === 1) {
-    endPage = Math.min(5, totalPages.value);
-  } else if (endPage === totalPages.value) {
-    startPage = Math.max(1, totalPages.value - 4);
-  }
+// 페이징 핸들러
+const setPage = (page) => { currentPage.value = page; };
+const goToFirstPage = () => { currentPage.value = 1; };
+const goToLastPage = () => { currentPage.value = totalPages.value; };
+const goToPreviousPage = () => { if (currentPage.value > 1) currentPage.value--; };
+const goToNextPage = () => { if (currentPage.value < totalPages.value) currentPage.value++; };
 
-  if (totalPages.value < 5) {
-    startPage = 1;
-    endPage = totalPages.value;
-  }
-
-  for (let i = startPage; i <= endPage; i++) {
-    pages.push(i);
-  }
-
-  return pages;
-});
-
-const setPage = (page) => {
-  currentPage.value = page;
-};
-
-const goToFirstPage = () => {
-  currentPage.value = 1;
-};
-
-const goToLastPage = () => {
-  currentPage.value = totalPages.value;
-};
-
-const goToNextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
-};
-
-const goToPreviousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-};
-
-const joinGroup = (groupId) => {
-  groupStore.joinGroup(groupId);
-};
-
-
-
-// 레코드 헤더와 내용 가져오기
+// 레코드 헤더
 const getRecordHeader = () => {
   if (sortBy.value === 'pace') return 'Pace';
   if (sortBy.value === 'frequency') return 'Frequency';
   if (sortBy.value === 'totalDistance') return 'Total distance';
-  return sortByPace();
+  return '';
 };
 
+// 레코드 표시
 const getGroupRecord = (group) => {
-  if (sortBy.value === 'pace') return `${Math.floor((group.pace) / 60)}' ${Math.floor((group.pace) % 60)}''`;
+  if (sortBy.value === 'pace') return `${Math.floor(group.pace / 60)}' ${group.pace % 60}''`;
   if (sortBy.value === 'frequency') return `${group.frequency} 회`;
   if (sortBy.value === 'totalDistance') return `${Math.floor(group.totalDistance)}km`;
-  return ''
+  return '';
 };
 
+// 정렬 버튼 핸들러
+function sortByPace() {
+  sortBy.value = 'pace';
+  rankStore.sortGroupByHighestPace();
+}
 
-// 정렬 버튼 클릭 핸들러
-const sortByPace = function() {
-  sortBy.value='pace'
-  rankStore.sortByHighestPace()
-  groups.value = rankStore.groups
-  console.log("페이스로드됨")
+function sortByFrequency() {
+  sortBy.value = 'frequency';
+  rankStore.sortGroupByFrequency();
+}
+
+function sortByDistance() {
+  sortBy.value = 'totalDistance';
+  rankStore.sortGroupByTotalDistance();
+}
+
+// 그룹 가입
+const joinGroup = (groupId) => {
+  groupStore.joinGroup(groupId);
 };
-
-const sortByFrequency = () => {
-  sortBy.value='frequency'
-  rankStore.sortGroupByFrequency()
-  groups.value = rankStore.groups
-  console.log("프리퀀시 로드됨")
-};
-
-const sortByDistance = () => {
-  sortBy.value='totalDistance'
-  rankStore.sortGroupByTotalDistance()
-  groups.value = rankStore.groups
-  console.log("디스턴스 로드됨")
-};
-
-
 </script>
 
 <template>
@@ -145,25 +98,31 @@ const sortByDistance = () => {
       <button @click="sortByFrequency">Frequency</button>
       <button @click="sortByDistance">Total distance</button>
     </div>
-    <!-- 그룹 목록 -->
-    <div>
-      <div class="group-item header">
-        <div class="rank">랭킹</div>
-        <div class="name">이름</div>
-        <div class="record">{{ getRecordHeader() }}</div>
-      </div>
-      <div v-for="(group, index) in paginatedGroups" :key="group.groupId" class="group-item">
-        <div class="rank">{{ (currentPage - 1) * pageSize + index + 1 }}위</div>
-        <RouterLink :to="{ name: 'groupMemberRank', params: { groupId: group.groupId } }" class="name">{{ group.groupName }}</RouterLink>
-        <div class="record">{{ getGroupRecord(group) }}</div>
-        <button @click="joinGroup(group.groupId)" class="join-button">가입하기</button>
-      </div>
+
+    <!-- 그룹 목록 헤더 -->
+    <div class="group-item header">
+      <div class="rank">랭킹</div>
+      <div class="name">이름</div>
+      <div class="record">{{ getRecordHeader() }}</div>
     </div>
+
+    <!-- 그룹 아이템 -->
+    <div v-for="(group, index) in paginatedGroups" :key="group.groupId" class="group-item">
+      <div class="rank">{{ (currentPage - 1) * pageSize + index + 1 }}위</div>
+      <RouterLink :to="{ name: 'groupMemberRank', params: { groupId: group.groupId } }" class="name">
+        {{ group.groupName }}
+      </RouterLink>
+      <div class="record">{{ getGroupRecord(group) }}</div>
+      <button @click="joinGroup(group.groupId)" class="join-button">
+        가입하기
+      </button>
+    </div>
+
     <!-- 페이지네이션 -->
     <div class="pagination">
       <button @click="goToFirstPage">&laquo;</button>
       <button @click="goToPreviousPage">&lsaquo;</button>
-      <button v-for="page in visiblePages" :key="page" @click="setPage(page)" :class="{ 'active': currentPage.value === page }">
+      <button v-for="page in totalPages" :key="page" @click="setPage(page)" :class="{ active: currentPage === page }">
         {{ page }}
       </button>
       <button @click="goToNextPage">&rsaquo;</button>
@@ -177,7 +136,7 @@ const sortByDistance = () => {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: rgb(2, 21, 30, 0.8);
+  background-color: rgba(2, 21, 30, 0.8);
   border-radius: 10px;
   color: white;
 }
@@ -190,20 +149,20 @@ const sortByDistance = () => {
 
 .sort-buttons button {
   padding: 10px;
-  border: 1px solid #ccc;
+  border: none;
   border-radius: 4px;
-  background-color: rgb(2, 21, 30, 0.8);
+  background-color: rgba(2, 21, 30, 0.8);
   cursor: pointer;
-  color : white;
+  color: white;
 }
 
 .sort-buttons button:hover {
   background-color: #565e64;
-} 
+}
 
 .group-item {
   display: grid;
-  grid-template-columns: 100px 100px 150px auto;
+  grid-template-columns: 80px 1fr 150px auto;
   align-items: center;
   margin-bottom: 10px;
 }
@@ -213,7 +172,7 @@ const sortByDistance = () => {
 }
 
 .rank {
-  width: 50px;
+  text-align: center;
 }
 
 .join-button {
@@ -237,7 +196,7 @@ const sortByDistance = () => {
 .pagination button {
   margin: 0 2px;
   padding: 5px 10px;
-  border: 1px solid #ccc;
+  border: none;
   background-color: #f4f4f4;
   cursor: pointer;
 }
