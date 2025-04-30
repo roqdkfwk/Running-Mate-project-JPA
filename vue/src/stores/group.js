@@ -5,15 +5,31 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
 
-const REST_GROUP_API = `http://localhost:8080/group`
+const REST_GROUP_API = `http://localhost:8080/api/groups`
 
 export const useGroupStore = defineStore('group', () => {
 
     const group = ref({})
-    const members=ref([])
     const groups = ref([])
+    const members = ref([])
     const mainStore = useMainStore()
     const router = useRouter()
+
+    const totalPages = ref(0)
+    const totalElements = ref(0)
+
+    const sortByCondition = (page = 0, size = 10, condition = 'pace,asc') => {
+        return axios.get(REST_GROUP_API,
+            {
+                params: { page, size, sort: condition }
+            })
+            .then(response => {
+                groups.value = response.data.content
+                totalPages.value = response.data.totalPages
+                totalElements.value = response.data.totalElements
+            })
+            .catch((error) => console.error(error))
+    }
 
     const getGroups = function () {
         axios.get(REST_GROUP_API)
@@ -91,7 +107,11 @@ export const useGroupStore = defineStore('group', () => {
     }
 
     return {
-        group, groups, getGroups, getAllGroupMember, createGroup, deleteGroup, updateGroup,
+        group,
+        groups,
+        totalPages,
+        totalElements,
+        sortByCondition, getGroups, getAllGroupMember, createGroup, deleteGroup, updateGroup,
         joinGroup, joinGroupRequest, members
     }
 },

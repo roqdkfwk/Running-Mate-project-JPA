@@ -10,16 +10,13 @@
 import { ref, onMounted } from 'vue'
 import { useGroupStore } from '@/stores/group'
 import GroupList from './GroupList.vue'
-import { useRankStore } from '@/stores/rank';
 
 const store = useGroupStore()
-const rankStore = useRankStore();
 const searchQuery = ref('')
 const searchFilter = ref('id') // 기본 필터는 'id'
 
 // onMounted에서 그룹 데이터를 불러옵니다.
 onMounted(() => {
-  rankStore.sortGroupByHighestPace()
 })
 
 const performSearch = function () {
