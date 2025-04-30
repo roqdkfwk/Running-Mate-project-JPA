@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useMainStore } from '@/stores/main'
 
-import BoardView from '@/views/BoardView.vue'
+import PostView from '@/views/PostView.vue'
 import MainView from '@/views/MainView.vue'
 import SignupView from '@/views/SignupView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -27,10 +27,10 @@ import GroupCreate from '@/components/group/GroupCreate.vue'
 import GroupDetail from '@/components/group/GroupDetail.vue'
 import GroupUpdate from '@/components/group/GroupUpdate.vue'
 
-import BoardCreate from '@/components/board/BoardCreate.vue'
-import BoardUpdate from '@/components/board/BoardUpdate.vue'
-import BoardDetail from '@/components/board/BoardDetail.vue'
-import BoardList from '@/components/board/BoardList.vue'
+import PostCreate from '@/components/post/PostCreate.vue'
+import PostUpdate from '@/components/post/PostUpdate.vue'
+import PostDetail from '@/components/post/PostDetail.vue'
+import PostList from '@/components/post/PostList.vue'
 import StravaAuth from '@/views/StravaAuth.vue'
 
 
@@ -95,15 +95,6 @@ const router = createRouter({
       // 로그인이 필요한 페이지
       meta: { requiresAuth: true },
       children: [
-    //     { // 없어도 될듯
-    //       path: "",
-    //       name: "startRecording",
-    //       component: LATER
-    //     },
-    //     { // 없어도 될듯
-    //       path: "",
-    //       name: "endRecording"
-    //     },
         {
           path: "recent",
           name: "recentRecord",
@@ -177,45 +168,45 @@ const router = createRouter({
           component: GroupUpdate
         },
         {
-          path: "board",
-          name: "board",
-          component: BoardView,
+          path: "post",
+          name: "post",
+          component: PostView,
           children: [
             {
               path: "list",
-              name: "boardList",
-              component: BoardList
+              name: "postList",
+              component: PostList
             },
             { // 게시글 작성
               path: "create",
-              name: "boardCreate",
-              component: BoardCreate,
+              name: "postCreate",
+              component: PostCreate,
               meta: { requiresAuth: true }
 
             },
             { // 게시글 수정
               path: ":id/update",
-              name: "boardUpdate",
-              component: BoardUpdate,
+              name: "postUpdate",
+              component: PostUpdate,
               meta: { requiresAuth: true }
             },
             //       { // 없어도 될듯
             //         path: "search",
-            //         name: "boardSearch",
-            //         component: BoardSearch
+            //         name: "postSearch",
+            //         component: PostSearch
             //       },
             { // 게시글보기
               path: ":id",
-              name: "boardDetail",
-              component: BoardDetail
+              name: "postDetail",
+              component: PostDetail
             },
             //       { // 없어도 될듯
-            //         path: ":boardId/reply",
+            //         path: ":postId/reply",
             //         name: "replyCreate",
             //         component: replyCreate
             //       },
             //       { // 없어도 될듯
-            //         path: ":boardId/reply",
+            //         path: ":postId/reply",
             //         name: "replyDetele",
             //         component: replyDelete
             //       }
