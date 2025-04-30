@@ -47,6 +47,7 @@ public class SecurityConfig {
                                 "/api/users/check-nickname/**",
                                 "/api/email-verification/**",
                                 "/api/groups/**",
+                                "/api/admin",
                                 "/rank/**",
                                 "/error",
                                 "/error/**"
