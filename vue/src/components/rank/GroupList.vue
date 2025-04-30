@@ -1,132 +1,103 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useGroupStore } from '@/stores/group';
-import { useRankStore } from '@/stores/rank';
+import { ref, computed, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
+// import { storeToRefs } from 'pinia'
+import { useGroupStore } from '@/stores/group'
 
-const groupStore = useGroupStore();
-const rankStore = useRankStore();
+const groupStore = useGroupStore()
 
-// 페이징 & 정렬 상태
-const currentPage = ref(1);
-const pageSize = 10;
-const sortBy = ref('pace');  // 기본 정렬 기준을 pace 로 설정
+const currentPage = ref(1)
+const pageSize = 10
+const sortBy = ref('pace')
 
-// 페이지 진입 시 자동으로 pace 기준 정렬 호출
-onMounted(() => {
-  sortByPace();
-});
+const filteredGroups = computed(() => groupStore.groups)
+// const { groups, totalPages } = storeToRefs(groupStore)
+// const filteredGroups = computed(() => groups.value)
 
-// 1) 전체 그룹 리스트(필터링 없음)
-const filteredGroups = computed(() => rankStore.groups);
-
-// 2) 클라이언트 측 정렬 (서버 정렬과 동기화)
-const sortedGroups = computed(() => {
+// 서버 호출: 서버-사이드 페이징 & 소팅
+const loadPage = () => {
   if (sortBy.value === 'pace') {
-    return [...filteredGroups.value].sort((a, b) => a.pace - b.pace);
+    groupStore.sortByCondition(currentPage.value - 1, 10, 'pace,asc')
+  } else if (sortBy.value === 'frequency') {
+    groupStore.sortByCondition(currentPage.value - 1, 10, 'frequency,asc')
+  } else if (sortBy.value === 'totalDistance') {
+    groupStore.sortByCondition(currentPage.value - 1, 10, 'totalDistance,desc')
   }
-  if (sortBy.value === 'frequency') {
-    return [...filteredGroups.value].sort((a, b) => b.frequency - a.frequency);
-  }
-  if (sortBy.value === 'totalDistance') {
-    return [...filteredGroups.value].sort((a, b) => b.totalDistance - a.totalDistance);
-  }
-  return filteredGroups.value;
-});
+}
 
-// 3) 페이징 슬라이스 계산
-const paginatedGroups = computed(() => {
-  const start = (currentPage.value - 1) * pageSize;
-  return sortedGroups.value.slice(start, start + pageSize);
-});
+onMounted(loadPage)
 
-// 4) 전체 페이지 수
-const totalPages = computed(() =>
-  Math.ceil(filteredGroups.value.length / pageSize)
-);
+function changeSort(field) {
+  sortBy.value = field
+  currentPage.value = 1
+  loadPage()
+}
 
-// 페이징 핸들러
-const setPage = (page) => { currentPage.value = page; };
-const goToFirstPage = () => { currentPage.value = 1; };
-const goToLastPage = () => { currentPage.value = totalPages.value; };
-const goToPreviousPage = () => { if (currentPage.value > 1) currentPage.value--; };
-const goToNextPage = () => { if (currentPage.value < totalPages.value) currentPage.value++; };
+function goToPage(page) {
+  if (page < 1 || page > groupStore.totalPages) return
+  currentPage.value = page
+  loadPage()
+}
 
-// 레코드 헤더
 const getRecordHeader = () => {
-  if (sortBy.value === 'pace') return 'Pace';
-  if (sortBy.value === 'frequency') return 'Frequency';
-  if (sortBy.value === 'totalDistance') return 'Total distance';
-  return '';
-};
+  if (sortBy.value === 'pace') return 'Pace'
+  if (sortBy.value === 'frequency') return 'Frequency'
+  if (sortBy.value === 'totalDistance') return 'Total distance'
+  return ''
+}
 
-// 레코드 표시
 const getGroupRecord = (group) => {
-  if (sortBy.value === 'pace') return `${Math.floor(group.pace / 60)}' ${group.pace % 60}''`;
-  if (sortBy.value === 'frequency') return `${group.frequency} 회`;
-  if (sortBy.value === 'totalDistance') return `${Math.floor(group.totalDistance)}km`;
-  return '';
-};
-
-// 정렬 버튼 핸들러
-function sortByPace() {
-  sortBy.value = 'pace';
-  rankStore.sortGroupByHighestPace();
+  if (sortBy.value === 'pace')
+    return `${Math.floor(group.pace / 60)}' ${group.pace % 60}''`
+  if (sortBy.value === 'frequency')
+    return `${group.frequency} 회`
+  if (sortBy.value === 'totalDistance')
+    return `${Math.floor(group.totalDistance)}km`
+  return ''
 }
 
-function sortByFrequency() {
-  sortBy.value = 'frequency';
-  rankStore.sortGroupByFrequency();
-}
-
-function sortByDistance() {
-  sortBy.value = 'totalDistance';
-  rankStore.sortGroupByTotalDistance();
-}
-
-// 그룹 가입
 const joinGroup = (groupId) => {
-  groupStore.joinGroup(groupId);
-};
+  groupStore.joinGroup(groupId)
+}
 </script>
 
 <template>
   <div class="container">
     <!-- 정렬 버튼 -->
     <div class="sort-buttons">
-      <button @click="sortByPace">Pace</button>
-      <button @click="sortByFrequency">Frequency</button>
-      <button @click="sortByDistance">Total distance</button>
+      <button @click="changeSort('pace')">Pace</button>
+      <button @click="changeSort('frequency')">Frequency</button>
+      <button @click="changeSort('totalDistance')">Total distance</button>
     </div>
 
-    <!-- 그룹 목록 헤더 -->
+    <!-- 헤더 -->
     <div class="group-item header">
       <div class="rank">랭킹</div>
       <div class="name">이름</div>
       <div class="record">{{ getRecordHeader() }}</div>
+      <div></div>
     </div>
 
-    <!-- 그룹 아이템 -->
-    <div v-for="(group, index) in paginatedGroups" :key="group.groupId" class="group-item">
-      <div class="rank">{{ (currentPage - 1) * pageSize + index + 1 }}위</div>
+    <!-- group 출력 -->
+    <div v-for="(group, idx) in filteredGroups" :key="group.groupId" class="group-item">
+      <div class="rank">{{ (currentPage - 1) * pageSize + idx + 1 }}위</div>
       <RouterLink :to="{ name: 'groupMemberRank', params: { groupId: group.groupId } }" class="name">
         {{ group.groupName }}
       </RouterLink>
       <div class="record">{{ getGroupRecord(group) }}</div>
-      <button @click="joinGroup(group.groupId)" class="join-button">
-        가입하기
-      </button>
+      <button class="join-button" @click="joinGroup(group.groupId)">가입하기</button>
     </div>
 
     <!-- 페이지네이션 -->
     <div class="pagination">
-      <button @click="goToFirstPage">&laquo;</button>
-      <button @click="goToPreviousPage">&lsaquo;</button>
-      <button v-for="page in totalPages" :key="page" @click="setPage(page)" :class="{ active: currentPage === page }">
+      <button @click="goToPage(1)" :disabled="currentPage === 1">«</button>
+      <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">‹</button>
+      <button v-for="page in groupStore.totalPages" :key="page" :class="{ active: page === currentPage }"
+        @click="goToPage(page)">
         {{ page }}
       </button>
-      <button @click="goToNextPage">&rsaquo;</button>
-      <button @click="goToLastPage">&raquo;</button>
+      <button @click="goToPage(currentPage + 1)" :disabled="currentPage === groupStore.totalPages">›</button>
+      <button @click="goToPage(groupStore.totalPages)" :disabled="currentPage === groupStore.totalPages">»</button>
     </div>
   </div>
 </template>
@@ -162,8 +133,9 @@ const joinGroup = (groupId) => {
 
 .group-item {
   display: grid;
-  grid-template-columns: 80px 1fr 150px auto;
+  grid-template-columns: 80px 120px 150px auto;
   align-items: center;
+  column-gap: 10px;
   margin-bottom: 10px;
 }
 
@@ -171,9 +143,28 @@ const joinGroup = (groupId) => {
   font-weight: bold;
 }
 
+/* 컬럼별 정렬 방향 지정 */
 .rank {
-  text-align: center;
+  justify-self: center;   /* 랭킹 칸은 가운데 */
 }
+
+.name {
+  justify-self: center;    /* 이름 칸은 왼쪽 */
+}
+
+.group-item.header .name {
+  justify-self: left;
+  padding-left: 45px; /* 필요에 따라 여백 조정 */
+}
+
+.record {
+  justify-self: center;   /* 기록 칸은 가운데로! */
+}
+
+.group-item.header .record {
+  justify-self: center;
+}
+
 
 .join-button {
   padding: 5px 10px;
