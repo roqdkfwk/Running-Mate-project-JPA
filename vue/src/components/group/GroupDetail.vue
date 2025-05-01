@@ -3,9 +3,9 @@ import { ref, computed } from 'vue'
 import { useRouter, RouterLink, RouterView, useRoute } from 'vue-router'
 import { useGroupStore } from '@/stores/group'
 import GroupMemberRank from '../rank/GroupMemberRank.vue'
-import BoardCreate from '../board/BoardCreate.vue';
-import BoardView from '@/views/BoardView.vue';
-import BoardDetail from '../board/BoardDetail.vue';
+import PostCreate from '../post/PostCreate.vue';
+import PostView from '@/views/PostView.vue';
+import PostDetail from '../post/PostDetail.vue';
 
 const store = useGroupStore()
 const router = useRouter()
@@ -16,7 +16,7 @@ const joinGroup = function() {
 }
 
 // 게시판 페이지인지 여부를 확인하는 계산 속성
-const isBoardPage = computed(() => {
+const isPostPage = computed(() => {
   return route.name
 })
 </script>

@@ -138,7 +138,7 @@ const joinGroup = (groupId) => {
   <div class="container">
     <div class="group-actions">
       <RouterLink :to="{ name: 'groupRank'}" class="action-button">Group home</RouterLink>
-      <RouterLink :to="{ name: 'boardList', params: { groupId: route.params.groupId } }" class="action-button">게시판</RouterLink>
+      <RouterLink :to="{ name: 'postList', params: { groupId: route.params.groupId } }" class="action-button">게시판</RouterLink>
       <button @click="joinGroup(route.params.groupId)" class="action-button join-group-button">그룹 {{ route.params.groupId}} 가입하기</button>
     </div>
     <div>
