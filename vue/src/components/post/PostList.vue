@@ -11,16 +11,16 @@
           <th class="column-view">조회수</th>
           <th class="column-date">등록일</th>
         </tr>
-        <tr v-for="(board, index) in paginatedBoards" :key="board.id">
+        <tr v-for="(post, index) in paginatedPosts" :key="post.id">
           
           <td class="column-number">{{ index + 1 + (currentPage - 1) * pageSize }}</td>
           <td class="column-title">
-            <RouterLink :to="`/group/${groupId}/board/${board.id}`">{{ board.title }}</RouterLink>
+            <RouterLink :to="`/group/${groupId}/post/${post.id}`">{{ post.title }}</RouterLink>
           </td>
-          <td class="column-writer">{{ board.writerNick }}</td>
-          <td class="column-view">{{ board.viewCnt }}</td>
-          <td class="column-date">{{ formatDate(board.createdAt) }}</td>
-          <!-- <p>{{ board }}</p> -->
+          <td class="column-writer">{{ post.writerNick }}</td>
+          <td class="column-view">{{ post.viewCnt }}</td>
+          <td class="column-date">{{ formatDate(post.createdAt) }}</td>
+          <!-- <p>{{ post }}</p> -->
         </tr>
       </table>
     </div>
@@ -35,7 +35,7 @@
         <input type="text" v-model="searchQuery" placeholder="Search..." class="search-input" />
         <button @click="performSearch" class="search-button">🔍</button>
       </div>
-      <button @click="createBoard" class="create-board-button">게시글 작성</button>
+      <button @click="createPost" class="create-post-button">게시글 작성</button>
     </div>
 
     <!-- 페이지네이션 -->
@@ -53,17 +53,17 @@
 </template>
 
 <script setup>
-import { useBoardStore } from '@/stores/board';
+import { usePostStore } from '@/stores/post';
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
 const groupId = route.params.groupId
-const store = useBoardStore()
+const store = usePostStore()
 
-const createBoard = function() {
-  router.push({ name: 'boardCreate', params: { groupId } })
+const createPost = function() {
+  router.push({ name: 'postCreate', params: { groupId } })
 }
 
 const currentPage = ref(1)
@@ -73,29 +73,29 @@ const searchFilter = ref('title')
 
 // 전체 게시글 목록 가져오기
 onMounted(() => {
-  store.getBoardList(groupId)
+  store.getPostList(groupId)
 })
 
-// 게시글 목록을 가져오기 위해 store의 boardList를 사용
-const boards = computed(() => store.boardList)
+// 게시글 목록을 가져오기 위해 store의 postList를 사용
+const posts = computed(() => store.postList)
 
-const filteredBoards = computed(() => {
+const filteredPosts = computed(() => {
   if (!searchQuery.value) {
-    return boards.value
+    return posts.value
   }
-  return boards.value.filter(board => {
-    return board[searchFilter.value].toLowerCase().includes(searchQuery.value.toLowerCase())
+  return posts.value.filter(post => {
+    return post[searchFilter.value].toLowerCase().includes(searchQuery.value.toLowerCase())
   })
 })
 
 const totalPages = computed(() => {
-  return Math.ceil(filteredBoards.value.length / pageSize)
+  return Math.ceil(filteredPosts.value.length / pageSize)
 })
 
-const paginatedBoards = computed(() => {
+const paginatedPosts = computed(() => {
   const start = (currentPage.value - 1) * pageSize
   const end = start + pageSize
-  return filteredBoards.value.slice(start, end)
+  return filteredPosts.value.slice(start, end)
 })
 
 const visiblePages = computed(() => {
@@ -261,7 +261,7 @@ th {
   font-size: 16px;
 }
 
-.create-board-button {
+.create-post-button {
   padding: 8px 16px;
   border: none;
   border-radius: 5px;
@@ -273,7 +273,7 @@ th {
   display: inline-block;
 }
 
-.create-board-button:hover {
+.create-post-button:hover {
   background-color:rgba(108, 117, 125);
 }
 

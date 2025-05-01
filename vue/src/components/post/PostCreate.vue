@@ -1,8 +1,8 @@
 
 <template>
-  <div class="board-create-container">
+  <div class="post-create-container">
     <h1>게시글 작성</h1>
-    <form @submit.prevent="submitForm" class="board-create-form">
+    <form @submit.prevent="submitForm" class="post-create-form">
       <div class="input-row">
         <div class="input-group medium-input">
           <input type="text" id="title" v-model="form.title" placeholder="제목" required>
@@ -22,12 +22,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useBoardStore } from '@/stores/board'
+import { usePostStore } from '@/stores/post'
 import { useMainStore } from '@/stores/main' // 사용자의 정보를 가져오는 스토어
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
-const boardStore = useBoardStore()
+const postStore = usePostStore()
 const mainStore = useMainStore() // 사용자 스토어 인스턴스
 
 const userId = ref(mainStore.loginUser.userId)  // 현재 사용자의 ID
@@ -43,12 +43,12 @@ const form = ref({
 })
 
 const submitForm = function() {
-  boardStore.createBoard(form.value)
+  postStore.createPost(form.value)
 }
 </script>
 
 <style scoped>
-.board-create-container {
+.post-create-container {
   max-width: 800px;
   margin: 50px auto;
   padding: 20px;

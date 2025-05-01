@@ -3,23 +3,22 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useRoute, useRouter } from 'vue-router'
 
-const REST_BOARD_API = `http://localhost:8080/group`
+const REST_POST_API = `http://localhost:8080/api/groups`
 
-export const useBoardStore = defineStore('board', () => {
+export const usePostStore = defineStore('post', () => {
 
   const router = useRouter()
   const route = useRoute()
-  const board = ref({})
-  const boardList = ref([])
+  const post = ref({})
+  const postList = ref([])
 
   // 전체 게시글 가져오기
-  const getBoardList = function (groupId) {
-
-    axios.get(`${REST_BOARD_API}/${groupId}/board`)
+  const getPostList = function (groupId) {
+    axios.get(`${REST_POST_API}/${groupId}/post`)
       .then((response) => {
         console.log(response)
         console.log(response.data)
-        boardList.value = response.data
+        postList.value = response.data
       })
       .catch((error) => {
         console.log(error)
@@ -27,27 +26,26 @@ export const useBoardStore = defineStore('board', () => {
   }
 
   // 게시글 작성
-  const createBoard = function (form) {
-    axios.post(
-      `${REST_BOARD_API}/${form.groupId}/board`,
+  const createPost = function (form) {
+    axios.post(`${REST_Post_API}/${form.groupId}/post`,
+      {
+        headers: {
+          Authorization: `${sessionStorage.getItem('accessToken')}`,
+          userId: form.writerId
+        }
+      },
       {
         groupId: form.groupId,
         title: form.title,
         content: form.content,
         img: form.img,
         notice: form.notice
-      },
-      {
-        headers: {
-          Authorization: `${sessionStorage.getItem('accessToken')}`,
-          userId: form.writerId
-        }
       }
     )
       .then(response => {
         if (response.status === 201) {
           const id = response.data.id;
-          const boardData = {
+          const postData = {
             groupId: form.groupId,
             id: id,
             title: form.title,
@@ -60,7 +58,7 @@ export const useBoardStore = defineStore('board', () => {
           console.log("typeof : ", typeof (form.id))
 
           // 게시글 상세 페이지로 GET 요청
-          axios.get(`${REST_BOARD_API}/${form.groupId}/board/${id}`, {
+          axios.get(`${REST_Post_API}/${form.groupId}/post/${id}`, {
             headers: {
               Authorization: `${sessionStorage.getItem('accessToken')}`,
               userId: form.writerId
@@ -68,11 +66,11 @@ export const useBoardStore = defineStore('board', () => {
           })
             .then(detailResponse => {
               console.log("게시글 상세 페이지")
-              console.log('Board details:', detailResponse.data);
+              console.log('Post details:', detailResponse.data);
 
               // 게시글 상세 페이지로 이동
               router.push({
-                name: 'boardDetail',
+                name: 'postDetail',
                 params: {
                   groupId: form.groupId,
                   id: id
@@ -81,26 +79,26 @@ export const useBoardStore = defineStore('board', () => {
             })
             .catch(detailError => {
               console.log("게시글 상세 페이지 실패")
-              console.error('Error fetching board details:', detailError);
+              console.error('Error fetching post details:', detailError);
             });
         } else {
-          console.error('Failed to create board:', response);
+          console.error('Failed to create post:', response);
         }
       })
       .catch(error => {
         console.log(error);
-        console.error('Error creating board:', error);
+        console.error('Error creating post:', error);
       });
   };
 
   // 게시글 수정
-  const updateBoard = function (board, groupId) {
+  const updatePost = function (post, groupId) {
 
-    console.log("board : ", board.id)
-    console.log("board : ", board.writerId)
+    console.log("post : ", post.id)
+    console.log("post : ", post.writerId)
     console.log("groupId : ", groupId)
 
-    axios.put(`${REST_BOARD_API}/${groupId}/board/${board.id}`, board, {
+    axios.put(`${REST_POST_API}/${groupId}/post/${post.id}`, post, {
       headers: {
         Authorization: `${sessionStorage.getItem('accessToken')}`,
         userId: `${sessionStorage.getItem('userId')}`
@@ -109,37 +107,37 @@ export const useBoardStore = defineStore('board', () => {
       .then(() => {   // 게시글 업데이트 성공
         console.log("then으로 왔음")
         // if (sessionStorage.getItem('userid') === )
-        // 작성한 게시글이 보이도록 boardDetail페이지로 이동
-        router.push({ name: 'boardUpdate', params: { groupId: board.groupId } })
+        // 작성한 게시글이 보이도록 postDetail페이지로 이동
+        router.push({ name: 'postUpdate', params: { groupId: post.groupId } })
       })
       .catch((error) => { // 게시글 업데이트 실패
         alert("자신이 작성하지 않은 글은 수정할 수 없습니다.")
       })
   }
 
-  const deleteBoard = function (groupId, boardId, userId) {
+  const deletePost = function (groupId, postId, userId) {
     // setUserIdHeader(userId)
-    axios.delete(`${REST_BOARD_API}/${groupId}/board/${boardId}`)
+    axios.delete(`${REST_POST_API}/${groupId}/post/${postId}`)
       .then(() => {
-        router.push({ name: 'boardList', params: { groupId } })
+        router.push({ name: 'postList', params: { groupId } })
       })
   }
 
-  const detailBoard = function (groupId, boardId) {
+  const detailPost = function (groupId, postId) {
     // setUserIdHeader(userId)
-    axios.get(`${REST_BOARD_API}/${groupId}/board/${boardId}`)
+    axios.get(`${REST_POST_API}/${groupId}/post/${postId}`)
       .then((response) => {
-        board.value = response.data
+        post.value = response.data
       })
       .catch((error) => {
         console.log(error)
       })
   }
 
-  const getBoard = function (boardId) {
-    axios.get(`${REST_BOARD_API}/${boardId}`)
+  const getPost = function (postId) {
+    axios.get(`${REST_POST_API}/${postId}`)
       .then((response) => {
-        board.value = response.data
+        post.value = response.data
       })
       .catch((error) => {
         console.log(error)
@@ -147,8 +145,8 @@ export const useBoardStore = defineStore('board', () => {
   }
 
   return {
-    board, boardList, getBoardList, createBoard, updateBoard, deleteBoard,
-    detailBoard, getBoard
+    post, postList, getPostList, createPost, updatePost, deletePost,
+    detailPost, getPost
   }
 },
   {

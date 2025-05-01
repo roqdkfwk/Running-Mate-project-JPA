@@ -1,22 +1,22 @@
 <template>
-  <div class="board-detail-container">
-    <h2 class="board-title">{{ board.title }}</h2>
-    <div v-if="board.img" class="board-image-container">
-      <img :src="board.img" alt="Board Image" class="board-image" />
+  <div class="post-detail-container">
+    <h2 class="post-title">{{ post.title }}</h2>
+    <div v-if="post.img" class="post-image-container">
+      <img :src="post.img" alt="Post Image" class="post-image" />
     </div>
-    <div class="board-meta">
-      <span class="board-writer">작성자: {{ board.writerNick }}</span>
-      <span class="board-date">작성일: {{ formatDate(board.createdAt) }}</span>
-      <span class="board-views">조회수: {{ board.viewCnt }}</span>
+    <div class="post-meta">
+      <span class="post-writer">작성자: {{ post.writerNick }}</span>
+      <span class="post-date">작성일: {{ formatDate(post.createdAt) }}</span>
+      <span class="post-views">조회수: {{ post.viewCnt }}</span>
     </div>
-    <div class="board-content-box">
-      <p>{{ board.content }}</p>
+    <div class="post-content-box">
+      <p>{{ post.content }}</p>
     </div>
-    <div class="board-actions">
-      <button @click="updateBoard" class="edit-button">수정</button>
-      <button @click="deleteBoard" class="delete-button">삭제</button>
+    <div class="post-actions">
+      <button @click="updatePost" class="edit-button">수정</button>
+      <button @click="deletePost" class="delete-button">삭제</button>
     </div>
-    <p v-if="board.notice" class="board-notice">Notice: This is an important board.</p>
+    <p v-if="post.notice" class="post-notice">Notice: This is an important post.</p>
     <button @click="goBack" class="back-button">목록</button>
   </div>
 </template>
@@ -25,29 +25,29 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
-import { useBoardStore } from '@/stores/board'
+import { usePostStore } from '@/stores/post'
 
 const route = useRoute();
 const router = useRouter();
-const board = ref({});
-const store = useBoardStore()
+const post = ref({});
+const store = usePostStore()
 
-const fetchBoardDetail = () => {
+const fetchPostDetail = () => {
   const { groupId, id } = route.params;
   console.log("group : ", groupId)
-  console.log("board : ", id)
-  axios.get(`http://localhost:8080/group/${groupId}/board/${id}`, {
+  console.log("post : ", id)
+  axios.get(`http://localhost:8080/group/${groupId}/post/${id}`, {
     headers: {
       // Authorization: `${sessionStorage.getItem('accessToken')}`,
       userId: sessionStorage.getItem('userId')
     }
   })
   .then(response => {
-    board.value = response.data;
-    console.log(board.value)
+    post.value = response.data;
+    console.log(post.value)
   })
   .catch(error => {
-    console.error('Error fetching board details:', error);
+    console.error('Error fetching post details:', error);
   });
 };
 
@@ -57,37 +57,37 @@ const formatDate = (dateString) => {
 };
 
 // 게시글 수정
-const updateBoard = function() {
-  store.updateBoard(board.value, route.params.groupId)
+const updatePost = function() {
+  store.updatePost(post.value, route.params.groupId)
 }
 
 // 게시글 삭제
-const deleteBoard = () => {
+const deletePost = () => {
   const { groupId, id } = route.params;
   console.log(groupId, id)
-  axios.delete(`http://localhost:8080/group/${groupId}/board/${id}`, {
+  axios.delete(`http://localhost:8080/group/${groupId}/post/${id}`, {
     headers: {
       Authorization: `${sessionStorage.getItem('accessToken')}`,
       userId: sessionStorage.getItem('userId')
     }
   })
   .then(() => {
-    router.push({ name: 'boardList', params: { groupId } });
+    router.push({ name: 'postList', params: { groupId } });
   })
   .catch(error => {
-    console.error('Error deleting board:', error);
+    console.error('Error deleting post:', error);
   });
 };
 
 const goBack = () => {
-  router.push({ name: 'boardList', params: { groupId: route.params.groupId } });
+  router.push({ name: 'postList', params: { groupId: route.params.groupId } });
 }
 
-onMounted(fetchBoardDetail);
+onMounted(fetchPostDetail);
 </script>
 
 <style scoped>
-.board-detail-container {
+.post-detail-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
@@ -98,25 +98,25 @@ onMounted(fetchBoardDetail);
   
 }
 
-.board-title {
+.post-title {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
 }
 
-.board-image-container {
+.post-image-container {
   text-align: center;
   margin-bottom: 20px;
 }
 
-.board-image {
+.post-image {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.board-meta {
+.post-meta {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
@@ -124,7 +124,7 @@ onMounted(fetchBoardDetail);
   color: #888;
 }
 
-.board-content-box {
+.post-content-box {
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -133,13 +133,13 @@ onMounted(fetchBoardDetail);
   margin-bottom: 20px;
 }
 
-.board-content-box p {
+.post-content-box p {
   font-size: 16px;
   line-height: 1.6;
   color: #555;
 }
 
-.board-actions {
+.post-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -184,7 +184,7 @@ onMounted(fetchBoardDetail);
   background-color: #ccc;
 }
 
-.board-notice {
+.post-notice {
   padding: 10px;
   background-color: #ffefc1;
   border: 1px solid #ffd700;
