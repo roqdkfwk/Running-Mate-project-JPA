@@ -60,6 +60,7 @@ const update = function () {
     const updateUserReq = {
         userName: user.value.userName,
         userNick: user.value.userNick,
+        email: user.value.email,
         address: user.value.address || null
     }
     userStore.update(updateUserReq)

@@ -35,7 +35,7 @@ const userName = ref(mainStore.loginUser.userName) // 현재 사용자의 이름
 
 const form = ref({
   groupId: route.params.groupId,
-  writerId: sessionStorage.getItem('userId'),
+  author: sessionStorage.getItem('userNick'),
   title: '',
   content: '',
   img: '',

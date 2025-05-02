@@ -3,6 +3,7 @@ package com.suseok.run.model.service;
 import com.suseok.run.model.entity.Post;
 import com.suseok.run.model.entity.Request.CreatePostReq;
 import com.suseok.run.model.entity.Request.UpdatePostReq;
+import com.suseok.run.model.entity.Response.ReadPostRes;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface PostService {
 
 	void deletePost(Long UserSeq, Long postId);
 
-	Post getPost(Long postId);
+	ReadPostRes getPost(Long postId);
 
 	List<Post> getPostsByGroup(Long groupId);
 

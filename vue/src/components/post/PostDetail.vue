@@ -5,7 +5,7 @@
       <img :src="post.img" alt="Post Image" class="post-image" />
     </div>
     <div class="post-meta">
-      <span class="post-writer">작성자: {{ post.writerNick }}</span>
+      <span class="post-writer">작성자: {{ post.author }}</span>
       <span class="post-date">작성일: {{ formatDate(post.createdAt) }}</span>
       <span class="post-views">조회수: {{ post.viewCnt }}</span>
     </div>
@@ -22,34 +22,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { usePostStore } from '@/stores/post'
 
 const route = useRoute();
 const router = useRouter();
-const post = ref({});
-const store = usePostStore()
+const post = computed(() => postStore.post)
+const postStore = usePostStore()
 
-const fetchPostDetail = () => {
-  const { groupId, id } = route.params;
-  console.log("group : ", groupId)
-  console.log("post : ", id)
-  axios.get(`http://localhost:8080/group/${groupId}/post/${id}`, {
-    headers: {
-      // Authorization: `${sessionStorage.getItem('accessToken')}`,
-      userId: sessionStorage.getItem('userId')
-    }
-  })
-  .then(response => {
-    post.value = response.data;
-    console.log(post.value)
-  })
-  .catch(error => {
-    console.error('Error fetching post details:', error);
-  });
-};
+const fetchPostDetail = function () {
+  const { groupId, postId } = route.params
+  postStore.getPost(groupId, postId)
+}
+
+onMounted(fetchPostDetail)
 
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -82,8 +70,6 @@ const deletePost = () => {
 const goBack = () => {
   router.push({ name: 'postList', params: { groupId: route.params.groupId } });
 }
-
-onMounted(fetchPostDetail);
 </script>
 
 <style scoped>

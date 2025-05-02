@@ -196,7 +196,7 @@ const router = createRouter({
             //         component: PostSearch
             //       },
             { // 게시글보기
-              path: ":id",
+              path: ":postId",
               name: "postDetail",
               component: PostDetail
             },

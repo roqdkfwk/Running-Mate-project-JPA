@@ -6,6 +6,7 @@ import com.suseok.run.model.entity.Group;
 import com.suseok.run.model.entity.Post;
 import com.suseok.run.model.entity.Request.CreatePostReq;
 import com.suseok.run.model.entity.Request.UpdatePostReq;
+import com.suseok.run.model.entity.Response.ReadPostRes;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.repository.GroupRepository;
 import com.suseok.run.model.repository.PostRespository;
@@ -100,10 +101,12 @@ public class PostServiceImpl implements PostService {
 	 * @return
 	 */
 	@Override
-	public Post getPost(Long postId) {
-		return postRepository.findById(postId).orElseThrow(
+	public ReadPostRes getPost(Long postId) {
+		Post post = postRepository.findById(postId).orElseThrow(
 				() -> new NotFoundException("존재하지 않는 게시글입니다.")
 		);
+
+		return ReadPostRes.fromEntity(post);
 	}
 
     /**

@@ -102,6 +102,7 @@ export const useUserStore
                     sessionStorage.setItem('userName', response.data.userName)
                     sessionStorage.setItem('userNick', response.data.userNick)
                     sessionStorage.setItem('address', response.data.address)
+                    sessionStorage.setItem('email', response.data.email)
 
                     // 3. 스토어에 토큰 저장
                     accessToken.value = newToken
