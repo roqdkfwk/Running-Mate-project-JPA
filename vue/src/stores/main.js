@@ -28,7 +28,7 @@ export const useMainStore
                     sessionStorage.setItem('accessToken', accessToken)
                     sessionStorage.setItem('userName', response.data.userName)
                     sessionStorage.setItem('userNick', response.data.userNick)
-                    sessionStorage.setItem('eamil', response.data.email)
+                    sessionStorage.setItem('email', response.data.email)
                     sessionStorage.setItem('address', response.data.address)
                     sessionStorage.setItem('userId', response.data.userId)
 

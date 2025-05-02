@@ -14,7 +14,7 @@ export const usePostStore = defineStore('post', () => {
 
   // 전체 게시글 가져오기
   const getPostList = function (groupId) {
-    axios.get(`${REST_POST_API}/${groupId}/post`)
+    axios.get(`${REST_POST_API}/${groupId}/posts`)
       .then((response) => {
         console.log(response)
         console.log(response.data)
@@ -25,71 +25,101 @@ export const usePostStore = defineStore('post', () => {
       })
   }
 
+  // 단일 게시글 가져오기
+  const getPost = function (groupId, postId) {
+    axios.get(`${REST_POST_API}/${groupId}/posts/${postId}`)
+      .then((response) => {
+      post.value = response.data
+      })
+      .catch((error) => {
+      console.error(error)
+    })
+  }
+
   // 게시글 작성
-  const createPost = function (form) {
-    axios.post(`${REST_Post_API}/${form.groupId}/post`,
+  const createPost = form => { 
+    axios.post(`${REST_POST_API}/${form.groupId}/posts`,
       {
-        headers: {
-          Authorization: `${sessionStorage.getItem('accessToken')}`,
-          userId: form.writerId
-        }
-      },
-      {
-        groupId: form.groupId,
         title: form.title,
         content: form.content,
         img: form.img,
         notice: form.notice
-      }
-    )
-      .then(response => {
-        if (response.status === 201) {
-          const id = response.data.id;
-          const postData = {
-            groupId: form.groupId,
-            id: id,
-            title: form.title,
-            content: form.content,
-            img: form.img,
-            notice: form.notice
-          };
-
-          console.log("userId : ", form.writerId)
-          console.log("typeof : ", typeof (form.id))
-
-          // 게시글 상세 페이지로 GET 요청
-          axios.get(`${REST_Post_API}/${form.groupId}/post/${id}`, {
-            headers: {
-              Authorization: `${sessionStorage.getItem('accessToken')}`,
-              userId: form.writerId
-            }
-          })
-            .then(detailResponse => {
-              console.log("게시글 상세 페이지")
-              console.log('Post details:', detailResponse.data);
-
-              // 게시글 상세 페이지로 이동
-              router.push({
-                name: 'postDetail',
-                params: {
-                  groupId: form.groupId,
-                  id: id
-                }
-              });
-            })
-            .catch(detailError => {
-              console.log("게시글 상세 페이지 실패")
-              console.error('Error fetching post details:', detailError);
-            });
-        } else {
-          console.error('Failed to create post:', response);
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
         }
       })
+      .then(response => {
+        if (response.status === 201) {
+          // 1) 올바른 id 추출
+          console.log("올바른 id: " + response.data)
+          const id = response.data
+  
+          // 2) 수정된 GET 경로
+          return axios.get(`${REST_POST_API}/${form.groupId}/posts/${id}`)
+        }
+        throw new Error('게시글 작성 실패');
+      })
+      .then(response => {
+        console.log("res: ", response)
+        console.log("응답: ", response.data)
+        router.push({
+          name: 'postDetail',
+          params: {
+            groupId: form.groupId,
+            postId: response.data.postId
+          }
+        })
+      })
       .catch(error => {
-        console.log(error);
-        console.error('Error creating post:', error);
-      });
-  };
+        console.error(error)
+      })
+  }
+  
+//   const createPost = form => {
+//   const url = `${REST_POST_API}/${form.groupId}/posts`;
+//   const body = {
+//     title:   form.title,
+//     content: form.content,
+//     img:     form.img,
+//     notice:  form.notice
+//   };
+//   const config = {
+//     headers: {
+//       Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+//     }
+//   };
+
+//   axios.post(url, body, config)
+//     .then(response => {
+//       if (response.status === 201) {
+//         // 1) 올바른 id 추출
+//         const id = response.data;
+
+//         // 2) 수정된 GET 경로
+//         return axios.get(
+//           `${REST_POST_API}/${form.groupId}/posts/${id}`,
+//           config
+//         );
+//       }
+//       throw new Error('게시글 작성 실패');
+//     })
+//     .then(detailResponse => {
+//       // detailResponse.data 에 실제 포스트 데이터가 담겨있어야 합니다.
+//       router.push({
+//         name: 'postDetail',
+//         params: {
+//           groupId: form.groupId,
+//           postId:  detailResponse.data.id
+//         }
+//       });
+//     })
+//     .catch(error => {
+//       console.error(error);
+//     });
+// };
+
 
   // 게시글 수정
   const updatePost = function (post, groupId) {
@@ -126,16 +156,6 @@ export const usePostStore = defineStore('post', () => {
   const detailPost = function (groupId, postId) {
     // setUserIdHeader(userId)
     axios.get(`${REST_POST_API}/${groupId}/post/${postId}`)
-      .then((response) => {
-        post.value = response.data
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-  }
-
-  const getPost = function (postId) {
-    axios.get(`${REST_POST_API}/${postId}`)
       .then((response) => {
         post.value = response.data
       })

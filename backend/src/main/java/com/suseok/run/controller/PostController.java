@@ -2,6 +2,7 @@ package com.suseok.run.controller;
 
 import com.suseok.run.model.entity.Request.CreatePostReq;
 import com.suseok.run.model.entity.Request.UpdatePostReq;
+import com.suseok.run.model.entity.Response.ReadPostRes;
 import com.suseok.run.model.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/groups/{groupId}/posts")
+@RequestMapping("/api/groups/{groupId}/posts")
 @Tag(name = "PostRestController", description = "게시글 CRUD")
 @RequiredArgsConstructor
 public class PostController {
@@ -23,7 +24,7 @@ public class PostController {
 	@Operation(summary = "게시글 작성")
 	public ResponseEntity<Long> createPost(
 			Authentication authentication,
-			@RequestParam Long groupId,
+			@PathVariable Long groupId,
 			@RequestBody CreatePostReq createPostReq
 	) {
 		Long userSeq = Long.valueOf(authentication.getName());
@@ -56,7 +57,8 @@ public class PostController {
 
 	@GetMapping("/{postId}")
 	@Operation(summary = "게시글 상세보기")
-	public ResponseEntity<Void> getPost(@PathVariable("postId") Long postId) {
-		return ResponseEntity.status(200).build();
+	public ResponseEntity<ReadPostRes> getPost(@PathVariable("postId") Long postId) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(postService.getPost(postId));
 	}
 }
