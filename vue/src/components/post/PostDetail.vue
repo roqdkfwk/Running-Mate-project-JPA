@@ -13,11 +13,21 @@
       <p>{{ post.content }}</p>
     </div>
     <div class="post-actions">
-      <button @click="updatePost" class="edit-button">수정</button>
-      <button @click="deletePost" class="delete-button">삭제</button>
+      <button @click="goBack" class="back-button">목록</button>
+      <div class="action-group">
+        <button @click="updatePost" class="edit-button">수정</button>
+        <button @click="deletePost" class="delete-button">삭제</button>
+      </div>
     </div>
     <p v-if="post.notice" class="post-notice">Notice: This is an important post.</p>
-    <button @click="goBack" class="back-button">목록</button>
+    <h3>댓글</h3>
+    <ul>
+      <li v-for="comment in commentList" :key="comment.id">
+        {{ comment.author }}: {{ comment.content }}
+      </li>
+    </ul>
+
+    <CreateComment />
   </div>
 </template>
 
@@ -26,18 +36,39 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { usePostStore } from '@/stores/post'
+import { useCommentStore } from "@/stores/comment";
+import CreateComment from '@/components/comment/CreateComment.vue'
 
 const route = useRoute();
 const router = useRouter();
-const post = computed(() => postStore.post)
-const postStore = usePostStore()
 
-const fetchPostDetail = function () {
-  const { groupId, postId } = route.params
-  postStore.getPost(groupId, postId)
+const groupId = route.params.groupId
+const postId = route.params.postId
+
+const postStore = usePostStore()
+const commentStore = useCommentStore()
+
+const post = computed(() => postStore.post)
+const commentList = ref([])
+
+function fetchPostDetail() {
+  postStore.getPost(groupId, postId);
 }
 
-onMounted(fetchPostDetail)
+function fetchComments() {
+  commentStore.getCommentList(groupId, postId)
+    .then(response => {
+      commentList.value = response.data;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+onMounted(() => {
+  fetchPostDetail();
+  fetchComments();
+})
 
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -127,7 +158,13 @@ const goBack = () => {
 
 .post-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.action-group {
+  display: flex;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -146,6 +183,7 @@ const goBack = () => {
 .edit-button {
   background-color:rgba(108, 117, 125, 0.7);
   color: white;
+  margin-right: 10px;
 }
 
 .delete-button {

@@ -22,6 +22,7 @@ public class CommentController {
     @Operation(summary = "댓글 작성")
     public ResponseEntity<Long> createComment(
             Long userSeq,
+            @PathVariable Long groupId,
             @PathVariable Long postId,
             @RequestBody CreateCommentReq createCommentReq
     ) {

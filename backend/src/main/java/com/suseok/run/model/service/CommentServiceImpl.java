@@ -9,20 +9,16 @@ import com.suseok.run.model.entity.User;
 import com.suseok.run.model.repository.CommentRepository;
 import com.suseok.run.model.repository.PostRespository;
 import com.suseok.run.model.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final UserRepository userRepository;
     private final PostRespository postRespository;
     private final CommentRepository commentRepository;
-
-    public CommentServiceImpl(UserRepository userRepository, PostRespository postRespository, CommentRepository commentRepository) {
-        this.userRepository = userRepository;
-        this.postRespository = postRespository;
-        this.commentRepository = commentRepository;
-    }
 
     @Override
     public Long createComent(
