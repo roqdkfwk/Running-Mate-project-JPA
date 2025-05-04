@@ -64,6 +64,7 @@ export const usePostStore = defineStore('post', () => {
       .then(response => {
         console.log("res: ", response)
         console.log("응답: ", response.data)
+        post.value = response.data
         router.push({
           name: 'postDetail',
           params: {
