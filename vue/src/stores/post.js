@@ -16,9 +16,8 @@ export const usePostStore = defineStore('post', () => {
   const getPostList = function (groupId) {
     axios.get(`${REST_POST_API}/${groupId}/posts`)
       .then((response) => {
-        console.log(response)
-        console.log(response.data)
         postList.value = response.data
+        console.log("postResponse: ", response)
       })
       .catch((error) => {
         console.log(error)
@@ -27,7 +26,8 @@ export const usePostStore = defineStore('post', () => {
 
   // 단일 게시글 가져오기
   const getPost = function (groupId, postId) {
-    axios.get(`${REST_POST_API}/${groupId}/posts/${postId}`)
+    console.log("스토어postId:", postId)
+    return axios.get(`${REST_POST_API}/${groupId}/posts/${postId}`)
       .then((response) => {
       post.value = response.data
       })
@@ -52,18 +52,15 @@ export const usePostStore = defineStore('post', () => {
       })
       .then(response => {
         if (response.status === 201) {
-          // 1) 올바른 id 추출
-          console.log("올바른 id: " + response.data)
-          const id = response.data
+          // 1) postId 추출
+          const postId = response.data
   
-          // 2) 수정된 GET 경로
-          return axios.get(`${REST_POST_API}/${form.groupId}/posts/${id}`)
+          // 2) 작성된 게시글 조회
+          return axios.get(`${REST_POST_API}/${form.groupId}/posts/${postId}`)
         }
         throw new Error('게시글 작성 실패');
       })
       .then(response => {
-        console.log("res: ", response)
-        console.log("응답: ", response.data)
         post.value = response.data
         router.push({
           name: 'postDetail',

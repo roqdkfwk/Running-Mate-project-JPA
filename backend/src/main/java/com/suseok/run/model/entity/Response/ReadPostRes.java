@@ -22,7 +22,7 @@ public class ReadPostRes {
                 .author(post.getAuthor().getUserNick())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .createdAt(LocalDateTime.now())
+                .createdAt(post.getCreatedAt())
                 .build();
     }
 }

@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/groups/{groupId}/posts")
 @Tag(name = "PostRestController", description = "게시글 CRUD")
@@ -31,6 +33,28 @@ public class PostController {
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.body(postService.createPost(userSeq, groupId, createPostReq));
+	}
+
+	@GetMapping("/{postId}")
+	@Operation(summary = "게시글 조회")
+	public ResponseEntity<ReadPostRes> readPosts(
+			@PathVariable("postId") Long postId
+	) {
+		ReadPostRes readPostRes = postService.readPost(postId);
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(readPostRes);
+	}
+
+	@GetMapping
+	@Operation(summary = "게시글 목록 조회")
+	public ResponseEntity<List<ReadPostRes>> readAllPosts(
+			@PathVariable("groupId") Long groupId
+	) {
+		List<ReadPostRes> postList = postService.readAllPosts(groupId);
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(postList);
 	}
 
 	// Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
@@ -53,12 +77,5 @@ public class PostController {
 	) {
 		postService.deletePost(userSeq, postId);
 		return ResponseEntity.status(200).build();
-	}
-
-	@GetMapping("/{postId}")
-	@Operation(summary = "게시글 상세보기")
-	public ResponseEntity<ReadPostRes> getPost(@PathVariable("postId") Long postId) {
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(postService.getPost(postId));
 	}
 }
