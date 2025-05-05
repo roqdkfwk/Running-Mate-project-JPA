@@ -185,7 +185,7 @@ const router = createRouter({
 
             },
             { // 게시글 수정
-              path: ":id/update",
+              path: ":postId/update",
               name: "postUpdate",
               component: PostUpdate,
               meta: { requiresAuth: true }
@@ -198,7 +198,8 @@ const router = createRouter({
             { // 게시글보기
               path: ":postId",
               name: "postDetail",
-              component: PostDetail
+              component: PostDetail,
+              props: true
             },
             //       { // 없어도 될듯
             //         path: ":postId/reply",

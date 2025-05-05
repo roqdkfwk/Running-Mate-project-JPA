@@ -41,6 +41,8 @@ const router = useRouter();
 const groupId = route.params.groupId
 const postId = route.params.postId
 
+console.log("라우트: ", route.params)
+
 const postStore = usePostStore()
 const commentStore = useCommentStore()
 
@@ -48,6 +50,8 @@ const post = computed(() => postStore.post)
 const commentList = computed(() => commentStore.commentList)
 
 function fetchPostDetail() {
+  console.log("groupId - detail:", groupId)
+  console.log("postId - detail:", postId)
   postStore.getPost(groupId, postId);
 }
 
@@ -73,9 +77,8 @@ const updatePost = function() {
 
 // 게시글 삭제
 const deletePost = () => {
-  const { groupId, id } = route.params;
-  console.log(groupId, id)
-  axios.delete(`http://localhost:8080/group/${groupId}/post/${id}`, {
+  const { groupId, postId } = route.params;
+  axios.delete(`http://localhost:8080/group/${groupId}/post/${postId}`, {
     headers: {
       Authorization: `${sessionStorage.getItem('accessToken')}`,
       userId: sessionStorage.getItem('userId')

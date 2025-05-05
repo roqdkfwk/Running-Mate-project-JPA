@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +49,34 @@ public class PostServiceImpl implements PostService {
 		Post post = createPostReq.toEntity(author, group);
 		postRepository.save(post);
 		return post.getPostId();
+	}
+
+	/**
+	 * 게시글 단건 조회
+	 * @param postId
+	 * @return
+	 */
+	@Override
+	public ReadPostRes readPost(Long postId) {
+		Post post = postRepository.findById(postId).orElseThrow(
+				() -> new NotFoundException("")
+		);
+
+		return ReadPostRes.fromEntity(post);
+	}
+
+	/**
+	 * 게시판 내 게시글 목록 조회
+	 * @param groupId
+	 * @return
+	 */
+	@Override
+	public List<ReadPostRes> readAllPosts(Long groupId) {
+		List<Post> postList = postRepository.findAllByGroup_GroupId(groupId);
+
+		return postList.stream()
+				.map(ReadPostRes::fromEntity)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -85,15 +114,6 @@ public class PostServiceImpl implements PostService {
 		postRepository.delete(post);
 	}
 
-	/**
-	 * 게시판 내 게시글 목록 조회
-	 * @param groupId
-	 * @return
-	 */
-	@Override
-	public List<Post> getPostsByGroup(Long groupId) {
-		return List.of();
-	}
 
 	/**
 	 * 게시글 상세 조회

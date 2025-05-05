@@ -26,12 +26,12 @@ public class CommentController {
     @Operation(summary = "댓글 작성")
     public ResponseEntity<CreateCommentRes> createComment(
             Authentication authentication,
-            @PathVariable("groupId") Long groupId,
             @PathVariable("postId") Long postId,
             @RequestBody CreateCommentReq createCommentReq
     ) {
         Long userSeq = Long.valueOf(authentication.getName());
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
                 .body(commentService.createComment(userSeq, postId, createCommentReq));
     }
 
@@ -41,7 +41,8 @@ public class CommentController {
             @PathVariable("postId") Long postId
     ) {
         List<CreateCommentRes> commentList = commentService.readAllComments(postId);
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(commentList);
     }
 
