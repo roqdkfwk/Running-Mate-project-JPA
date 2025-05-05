@@ -5,12 +5,16 @@ import com.suseok.run.common.exception.NotFoundException;
 import com.suseok.run.model.entity.Comment;
 import com.suseok.run.model.entity.Post;
 import com.suseok.run.model.entity.Request.CreateCommentReq;
+import com.suseok.run.model.entity.Response.CreateCommentRes;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.repository.CommentRepository;
 import com.suseok.run.model.repository.PostRespository;
 import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +25,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
 
     @Override
-    public Long createComent(
+    public CreateCommentRes createComment(
             Long userSeq,
             Long postId,
             CreateCommentReq createCommentReq
@@ -36,7 +40,16 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = createCommentReq.toEntity(author, post);
         commentRepository.save(comment);
-        return comment.getCommentId();
+        return CreateCommentRes.fromEntity(comment);
+    }
+
+    @Override
+    public List<CreateCommentRes> readAllComments(Long postId) {
+        List<Comment> commentList = commentRepository.findAllByPost_PostId(postId);
+
+        return commentList.stream()
+                .map(CreateCommentRes::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override

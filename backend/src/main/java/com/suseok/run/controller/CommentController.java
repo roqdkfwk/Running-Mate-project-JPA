@@ -1,18 +1,22 @@
 package com.suseok.run.controller;
 
 import com.suseok.run.model.entity.Request.CreateCommentReq;
+import com.suseok.run.model.entity.Response.CreateCommentRes;
 import com.suseok.run.model.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "CommentRestController", description = "댓글 CRUD")
-@RequestMapping("/groups/{groupId}/posts/{postId}/comments")
+@RequestMapping("/api/groups/{groupId}/posts/{postId}/comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -20,14 +24,25 @@ public class CommentController {
     // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @PostMapping
     @Operation(summary = "댓글 작성")
-    public ResponseEntity<Long> createComment(
-            Long userSeq,
-            @PathVariable Long groupId,
-            @PathVariable Long postId,
+    public ResponseEntity<CreateCommentRes> createComment(
+            Authentication authentication,
+            @PathVariable("groupId") Long groupId,
+            @PathVariable("postId") Long postId,
             @RequestBody CreateCommentReq createCommentReq
     ) {
+        Long userSeq = Long.valueOf(authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(commentService.createComent(userSeq, postId, createCommentReq));
+                .body(commentService.createComment(userSeq, postId, createCommentReq));
+    }
+
+    @GetMapping
+    @Operation(summary = "댓글 목록 조회")
+    public ResponseEntity<List<CreateCommentRes>> readAllComments(
+            @PathVariable("postId") Long postId
+    ) {
+        List<CreateCommentRes> commentList = commentService.readAllComments(postId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(commentList);
     }
 
     // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출

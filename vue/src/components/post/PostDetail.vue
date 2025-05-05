@@ -21,13 +21,8 @@
     </div>
     <p v-if="post.notice" class="post-notice">Notice: This is an important post.</p>
     <h3>댓글</h3>
-    <ul>
-      <li v-for="comment in commentList" :key="comment.id">
-        {{ comment.author }}: {{ comment.content }}
-      </li>
-    </ul>
-
     <CreateComment />
+    <CommentList :comments="commentList" />
   </div>
 </template>
 
@@ -38,6 +33,7 @@ import axios from 'axios'
 import { usePostStore } from '@/stores/post'
 import { useCommentStore } from "@/stores/comment";
 import CreateComment from '@/components/comment/CreateComment.vue'
+import CommentList from '@/components/comment/CommentList.vue'
 
 const route = useRoute();
 const router = useRouter();
@@ -49,7 +45,7 @@ const postStore = usePostStore()
 const commentStore = useCommentStore()
 
 const post = computed(() => postStore.post)
-const commentList = ref([])
+const commentList = computed(() => commentStore.commentList)
 
 function fetchPostDetail() {
   postStore.getPost(groupId, postId);
@@ -57,16 +53,11 @@ function fetchPostDetail() {
 
 function fetchComments() {
   commentStore.getCommentList(groupId, postId)
-    .then(response => {
-      commentList.value = response.data;
-    })
-    .catch(error => {
-      console.error(error);
-    });
 }
 
 onMounted(() => {
   fetchPostDetail();
+  console.log("postDetail commentList: ", commentList)
   fetchComments();
 })
 
