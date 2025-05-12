@@ -1,14 +1,9 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useRouter, RouterLink, RouterView, useRoute } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
 import { useGroupStore } from '@/stores/group'
-import GroupMemberRank from '../rank/GroupMemberRank.vue'
-import PostCreate from '../post/PostCreate.vue';
-import PostView from '@/views/PostView.vue';
-import PostDetail from '../post/PostDetail.vue';
 
 const store = useGroupStore()
-const router = useRouter()
 const route = useRoute()
 
 const joinGroup = function() {
@@ -26,8 +21,6 @@ const isPostPage = computed(() => {
 </template>
 
 <style scoped>
-
-
 
 .group-actions {
   margin-bottom: 20px;

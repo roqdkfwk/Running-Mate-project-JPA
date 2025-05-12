@@ -82,6 +82,8 @@ public class UserController {
 			Authentication authentication,
 			@RequestBody UpdateUserReq updateUserReq
 	) {
+		log.info("authentication: {}", authentication.toString());
+		System.out.println("authenticationSYS: " + authentication.getName());
 		Long userSeq = Long.valueOf(authentication.getName());
 		UpdateUserResult updateUserResult = userService.update(userSeq, updateUserReq);
 

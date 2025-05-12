@@ -17,7 +17,6 @@ export const usePostStore = defineStore('post', () => {
     axios.get(`${REST_POST_API}/${groupId}/posts`)
       .then((response) => {
         postList.value = response.data
-        console.log("postResponse: ", response)
       })
       .catch((error) => {
         console.log(error)
@@ -37,7 +36,8 @@ export const usePostStore = defineStore('post', () => {
   }
 
   // 게시글 작성
-  const createPost = form => { 
+  const createPost = function (form) {
+    console.log("Authorization: ", sessionStorage.getItem('accessToken'))
     axios.post(`${REST_POST_API}/${form.groupId}/posts`,
       {
         title: form.title,
@@ -75,50 +75,6 @@ export const usePostStore = defineStore('post', () => {
       })
   }
   
-//   const createPost = form => {
-//   const url = `${REST_POST_API}/${form.groupId}/posts`;
-//   const body = {
-//     title:   form.title,
-//     content: form.content,
-//     img:     form.img,
-//     notice:  form.notice
-//   };
-//   const config = {
-//     headers: {
-//       Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
-//     }
-//   };
-
-//   axios.post(url, body, config)
-//     .then(response => {
-//       if (response.status === 201) {
-//         // 1) 올바른 id 추출
-//         const id = response.data;
-
-//         // 2) 수정된 GET 경로
-//         return axios.get(
-//           `${REST_POST_API}/${form.groupId}/posts/${id}`,
-//           config
-//         );
-//       }
-//       throw new Error('게시글 작성 실패');
-//     })
-//     .then(detailResponse => {
-//       // detailResponse.data 에 실제 포스트 데이터가 담겨있어야 합니다.
-//       router.push({
-//         name: 'postDetail',
-//         params: {
-//           groupId: form.groupId,
-//           postId:  detailResponse.data.id
-//         }
-//       });
-//     })
-//     .catch(error => {
-//       console.error(error);
-//     });
-// };
-
-
   // 게시글 수정
   const updatePost = function (post, groupId) {
 

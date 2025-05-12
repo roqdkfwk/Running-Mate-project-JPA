@@ -8,7 +8,7 @@ import com.suseok.run.model.entity.Request.CreateCommentReq;
 import com.suseok.run.model.entity.Response.CreateCommentRes;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.repository.CommentRepository;
-import com.suseok.run.model.repository.PostRespository;
+import com.suseok.run.model.repository.PostRepository;
 import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final UserRepository userRepository;
-    private final PostRespository postRespository;
+    private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
     @Override
@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
                 () -> new NotFoundException("")
         );
 
-        Post post = postRespository.findById(postId).orElseThrow(
+        Post post = postRepository.findById(postId).orElseThrow(
                 () -> new NotFoundException("")
         );
 
