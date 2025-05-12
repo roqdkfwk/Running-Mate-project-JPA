@@ -11,16 +11,16 @@
           <th class="column-view">조회수</th>
           <th class="column-date">등록일</th>
         </tr>
-        <tr v-for="(post, index) in paginatedPosts" :key="post.id">
-          
+        <tr v-for="(post, index) in paginatedPosts" :key="post.postId">
           <td class="column-number">{{ index + 1 + (currentPage - 1) * pageSize }}</td>
           <td class="column-title">
-            <RouterLink :to="`/group/${groupId}/post/${post.id}`">{{ post.title }}</RouterLink>
+            <RouterLink :to="{ name: 'postDetail', params: { groupId, postId: post.postId } }">
+              {{ post.title }}
+            </RouterLink>
           </td>
-          <td class="column-writer">{{ post.writerNick }}</td>
+          <td class="column-writer">{{ post.author }}</td>
           <td class="column-view">{{ post.viewCnt }}</td>
           <td class="column-date">{{ formatDate(post.createdAt) }}</td>
-          <!-- <p>{{ post }}</p> -->
         </tr>
       </table>
     </div>
@@ -60,7 +60,8 @@ import { useRoute, useRouter } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 const groupId = route.params.groupId
-const store = usePostStore()
+console.log("리스트: ", route.params)
+const postStore = usePostStore()
 
 const createPost = function() {
   router.push({ name: 'postCreate', params: { groupId } })
@@ -73,11 +74,11 @@ const searchFilter = ref('title')
 
 // 전체 게시글 목록 가져오기
 onMounted(() => {
-  store.getPostList(groupId)
+  postStore.getPostList(groupId)
 })
 
 // 게시글 목록을 가져오기 위해 store의 postList를 사용
-const posts = computed(() => store.postList)
+const posts = computed(() => postStore.postList)
 
 const filteredPosts = computed(() => {
   if (!searchQuery.value) {

@@ -13,10 +13,7 @@ export const useCommentStore = defineStore('comment', () => {
     const getCommentList = function (groupId, postId) {
         return axios.get(`${REST_COMMENT_API}/${groupId}/posts/${postId}/comments`)
             .then(response => {
-                console.log("response: ", response.data)
                 commentList.value = [...response.data]
-                console.log("commentList: ", commentList.value)
-                console.log("commentList2: ", commentList)
             })
             .catch(error => {
                 console.error(error)

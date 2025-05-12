@@ -9,7 +9,7 @@ import com.suseok.run.model.entity.Request.UpdatePostReq;
 import com.suseok.run.model.entity.Response.ReadPostRes;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.repository.GroupRepository;
-import com.suseok.run.model.repository.PostRespository;
+import com.suseok.run.model.repository.PostRepository;
 import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-	private final PostRespository postRepository;
+	private final PostRepository postRepository;
 	private final UserRepository userRepository;
 	private final GroupRepository groupRepository;
 

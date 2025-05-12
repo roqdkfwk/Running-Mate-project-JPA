@@ -8,6 +8,7 @@ import com.suseok.run.model.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/groups")
 @Tag(name = "GroupRestController", description = "그룹 CRUD")
@@ -33,6 +35,8 @@ public class GroupController {
             Authentication authentication,
             @RequestBody CreateGroupReq createGroupReq
     ) {
+        log.info("authentication: {}", authentication.toString());
+        System.out.println("authenticationSYS: " + authentication.getName());
         Long userSeq = Long.valueOf(authentication.getName());
         CreateGroupRes createGroupRes = groupService.createGroup(userSeq, createGroupReq);
         return ResponseEntity.status(HttpStatus.CREATED)
