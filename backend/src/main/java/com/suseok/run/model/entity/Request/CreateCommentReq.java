@@ -19,7 +19,8 @@ public class CreateCommentReq {
         return Comment.builder()
                 .content(content)
                 .createdAt(LocalDateTime.now())
-                .author(author)
+                .author(author.getUserSeq())
+                .authorNick(author.getUserNick())
                 .post(post)
                 .build();
     }
