@@ -25,9 +25,8 @@ public class Group {
 	@Column(name = "group_desc")
 	private String groupDesc;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "group_admin", unique = true)
-	private User groupAdmin;
+	@Column(name = "group_admin")
+	private Long groupAdmin;
 
 	@OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
 	private List<UserGroup> userGroupList = new ArrayList<>();
