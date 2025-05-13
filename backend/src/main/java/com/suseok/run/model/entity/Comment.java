@@ -27,7 +27,8 @@ public class Comment {
 	@JoinColumn(name = "post_id")
 	private Post post;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_seq")
-	private User author;
+	@Column(name = "user_seq")
+	private Long author;
+
+	private String authorNick;
 }

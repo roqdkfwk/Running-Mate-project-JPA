@@ -2,13 +2,11 @@ package com.suseok.run.model.entity.Response;
 
 import com.suseok.run.model.entity.Comment;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Builder
-@Getter
-public class CreateCommentRes {
+public class ReadCommentRes {
 
     private Long commentId;
     private Long author;
@@ -16,8 +14,8 @@ public class CreateCommentRes {
     private String content;
     private LocalDateTime createdAt;
 
-    public static CreateCommentRes fromEntity(Comment comment) {
-        return CreateCommentRes.builder()
+    public static ReadCommentRes fromEntity(Comment comment) {
+        return ReadCommentRes.builder()
                 .commentId(comment.getCommentId())
                 .author(comment.getAuthor())
                 .authorNick(comment.getAuthorNick())
