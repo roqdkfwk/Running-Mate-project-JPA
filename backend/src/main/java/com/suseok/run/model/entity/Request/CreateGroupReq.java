@@ -14,7 +14,7 @@ public class CreateGroupReq {
         return Group.builder()
                 .groupName(this.groupName)
                 .groupDesc(this.groupDesc)
-                .groupAdmin(admin)
+                .groupAdmin(admin.getUserSeq())
                 .build();
     }
 }
