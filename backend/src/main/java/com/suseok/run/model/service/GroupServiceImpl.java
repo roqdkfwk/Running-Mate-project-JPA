@@ -67,7 +67,7 @@ public class GroupServiceImpl implements GroupService {
         );
 
         // 3. 관리자 여부 확인
-        if (!group.getGroupAdmin().getUserId().equals(user.getUserId())) {
+        if (!group.getGroupAdmin().equals(user.getUserSeq())) {
             throw new AccessDeniedException("그룹의 관리자만 삭제할 수 있습니다.");
         }
 
