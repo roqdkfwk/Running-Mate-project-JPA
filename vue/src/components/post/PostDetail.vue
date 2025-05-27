@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { usePostStore } from '@/stores/post'
@@ -41,8 +41,6 @@ const router = useRouter();
 const groupId = route.params.groupId
 const postId = route.params.postId
 
-console.log("라우트: ", route.params)
-
 const postStore = usePostStore()
 const commentStore = useCommentStore()
 
@@ -50,8 +48,6 @@ const post = computed(() => postStore.post)
 const commentList = computed(() => commentStore.commentList)
 
 function fetchPostDetail() {
-  console.log("groupId - detail:", groupId)
-  console.log("postId - detail:", postId)
   postStore.getPost(groupId, postId);
 }
 
@@ -61,7 +57,6 @@ function fetchComments() {
 
 onMounted(() => {
   fetchPostDetail();
-  console.log("postDetail commentList: ", commentList)
   fetchComments();
 })
 

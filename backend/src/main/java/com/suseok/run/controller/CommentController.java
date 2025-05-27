@@ -41,10 +41,25 @@ public class CommentController {
             @PathVariable("postId") Long postId
     ) {
         List<CreateCommentRes> commentList = commentService.readAllComments(postId);
+        System.out.println("댓글의 개수 : " + commentList.size());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(commentList);
     }
+
+//    @GetMapping
+//    @Operation(summary = "댓글 조회", description = "page(0부터 시작)와 size 파라미터로 페이징 조회")
+//    public ResponseEntity<Page<ReadCommentRes>> getGroupList(
+//            @ParameterObject
+//            @PageableDefault(
+//                    page      = 0,
+//                    size      = 10,
+//                    sort      = "pace"
+//            ) Pageable pageable
+//    ) {
+//        Page<ReadCommentRes> page = commentService.getCommentList(pageable);
+//        return ResponseEntity.ok(page);
+//    }
 
     // Todo: userSeq는 SpringSecurity + JWT 적용 후 Authentication에서 추출
     @PatchMapping

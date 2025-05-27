@@ -6,11 +6,14 @@ import com.suseok.run.model.entity.Comment;
 import com.suseok.run.model.entity.Post;
 import com.suseok.run.model.entity.Request.CreateCommentReq;
 import com.suseok.run.model.entity.Response.CreateCommentRes;
+import com.suseok.run.model.entity.Response.ReadCommentRes;
 import com.suseok.run.model.entity.User;
 import com.suseok.run.model.repository.CommentRepository;
 import com.suseok.run.model.repository.PostRepository;
 import com.suseok.run.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +27,9 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
+    /**
+     * 댓글 작성
+     */
     @Override
     public CreateCommentRes createComment(
             Long userSeq,
@@ -53,6 +59,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public Page<ReadCommentRes> getCommentList(Pageable pageable) {
+        return commentRepository.findAll(pageable)
+                .map(ReadCommentRes::fromEntity);
+    }
+
+    @Override
     public void updateComment(
             Long userSeq,
             Long commentId,
@@ -62,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
                 () -> new NotFoundException("")
         );
 
-        if (!comment.getAuthor().getUserSeq().equals(userSeq)) {
+        if (!comment.getAuthor().equals(userSeq)) {
             throw new AccessDeniedException("");
         }
 
@@ -79,9 +91,9 @@ public class CommentServiceImpl implements CommentService {
                 () -> new NotFoundException("")
         );
 
-        if (!comment.getAuthor().getUserSeq().equals(userSeq)) {
-            throw new AccessDeniedException("");
-        }
+//        if (!comment.getAuthor().getUserSeq().equals(userSeq)) {
+//            throw new AccessDeniedException("");
+//        }
 
         commentRepository.delete(comment);
     }

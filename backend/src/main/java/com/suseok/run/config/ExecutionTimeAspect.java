@@ -16,7 +16,9 @@ public class ExecutionTimeAspect {
     /**
      * 이메일 인증 서비스의 실행 시간 측정
      */
-    @Around("execution(* com.suseok.run.model.service.EmailVerificationServiceImpl.*(..))")
+    @Around("execution(* com.suseok.run.model.service.EmailVerificationServiceImpl.*(..)) ||" +
+            "execution(* com.suseok.run.controller.CommentController.readAllComments(..)) ||" +
+            "execution(* com.suseok.run.controller.TestController.*(..))")
     public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         Object result = joinPoint.proceed();
